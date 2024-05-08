@@ -1,6 +1,5 @@
 package com.gftworkshop.cartMicroservice.api.dto;
 
-<<<<<<< HEAD
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import lombok.Builder;
 import lombok.Data;
