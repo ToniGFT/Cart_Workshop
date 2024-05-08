@@ -10,6 +10,8 @@ public class CartProductDto {
     private Integer quantity;
     private BigDecimal price;
 
+    public CartProductDto() {}
+
     public Long getId() {
         return id;
     }
