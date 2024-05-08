@@ -1,27 +1,21 @@
 package com.gftworkshop.cartMicroservice.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.TemporalType;
-import jakarta.persistence.Temporal;
 
-import java.util.Date;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
+@Table(name = "cart")
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long userId;
+    @OneToMany(mappedBy = "cart")
+    private List<CartProduct> cartProducts;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-
-    public Cart() {
-    }
+    public Cart() {}
 
     public Long getId() {
         return id;
@@ -31,19 +25,11 @@ public class Cart {
         this.id = id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public List<CartProduct> getCartProducts() {
+        return cartProducts;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setCartProducts(List<CartProduct> cartProducts) {
+        this.cartProducts = cartProducts;
     }
 }

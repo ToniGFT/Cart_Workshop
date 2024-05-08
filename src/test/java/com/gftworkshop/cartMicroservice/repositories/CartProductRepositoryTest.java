@@ -1,4 +1,4 @@
 package com.gftworkshop.cartMicroservice.repositories;
 
-public interface CartItemRepository {
+public class CartProductRepositoryTest {
 }
