@@ -1,27 +1,18 @@
 package com.gftworkshop.cartMicroservice.api.dto;
 
+import com.gftworkshop.cartMicroservice.model.CartProduct;
+import lombok.Builder;
+import lombok.Data;
 
+import java.util.Date;
 import java.util.List;
 
+@Data
+@Builder
 public class CartDto {
     private Long id;
-    private List<CartProductDto> cartProducts;
+    private Long user_id;
+    private Date updated_at;
+    private List<CartProduct> cartProducts;
 
-    public CartDto() {}
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public List<CartProductDto> getCartProducts() {
-        return cartProducts;
-    }
-
-    public void setCartProducts(List<CartProductDto> cartProducts) {
-        this.cartProducts = cartProducts;
-    }
 }
