@@ -1,4 +1,4 @@
 package com.gftworkshop.cartMicroservice.api.dto;
 
-public class CartItemDto {
+public class CartProductDto {
 }
