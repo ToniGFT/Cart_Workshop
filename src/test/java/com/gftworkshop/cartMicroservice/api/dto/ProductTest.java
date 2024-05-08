@@ -1,7 +1,4 @@
 package com.gftworkshop.cartMicroservice.api.dto;
-
-public class CartDtoTest {
-
+public class ProductTest {
 
 }
-
