@@ -16,6 +16,11 @@ public class CartController {
         this.cartServiceImpl = cartServiceImpl;
     }
 
+    @PostMapping("/carts/{id}")
+    public ResponseEntity<Cart> addCartById(@PathVariable Long id) {
+        return null;
+    }
+
     @GetMapping("/carts/{id}")
     public ResponseEntity<Cart> getCartById(@PathVariable Long id) {
         return null;
@@ -32,7 +37,7 @@ public class CartController {
     }
 
     @PatchMapping("/cartProducts")
-    public ResponseEntity<Cart> modifyProduct() {
+    public ResponseEntity<Cart> updateProduct() {
         return null;
     }
 

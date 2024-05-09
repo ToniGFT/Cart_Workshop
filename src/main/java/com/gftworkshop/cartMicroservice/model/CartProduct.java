@@ -30,12 +30,17 @@ public class CartProduct {
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
-    // Constructor, Getters and Setters
     public CartProduct() {
     }
 
-    public CartProduct(Cart cart) {
+    public CartProduct(Long id, Cart cart, String productName, String productCategory, String productDescription, Integer quantity, BigDecimal price) {
+        this.id = id;
         this.cart = cart;
+        this.productName = productName;
+        this.productCategory = productCategory;
+        this.productDescription = productDescription;
+        this.quantity = quantity;
+        this.price = price;
     }
 
     public Long getId() {
