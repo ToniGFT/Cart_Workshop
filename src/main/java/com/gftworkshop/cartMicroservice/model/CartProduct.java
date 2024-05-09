@@ -1,10 +1,12 @@
 package com.gftworkshop.cartMicroservice.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.math.BigDecimal;
 
 @Entity
+@Data
 @Table(name = "cart_products")
 public class CartProduct {
     @Id
@@ -31,7 +33,12 @@ public class CartProduct {
     private BigDecimal price;
 
     // Constructor, Getters and Setters
-    public CartProduct() {}
+    public CartProduct() {
+    }
+
+    public CartProduct(Cart cart) {
+        this.cart = cart;
+    }
 
     public Long getId() {
         return id;
