@@ -25,6 +25,15 @@ public class CartControllerTest {
     }
 
     @Test
+    @DisplayName("When adding cart by ID, then expect OK status")
+    void addCartByIdTest() throws Exception {
+        Long cartId = 1L;
+        mockMvc.perform(post("/carts/{id}", cartId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     @DisplayName("When getting cart by ID, then expect OK status")
     void getCartByIdTest() throws Exception {
         Long cartId = 1L;
