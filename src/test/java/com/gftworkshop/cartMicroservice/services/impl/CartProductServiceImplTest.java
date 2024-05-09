@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -27,26 +29,25 @@ public class CartProductServiceImplTest {
         cartProductService = new CartProductServiceImpl(cartProductRepository);
 
         cartProduct = mock(CartProduct.class);
-        product = mock(Product.class);
 
     }
 
     @Test
-    void productAddedIsSavedCorrectly() {
+    void testSave() {
 
         when(cartProductRepository.save(any(CartProduct.class))).thenReturn(cartProduct);
 
-        cartProductService.addProduct(product);
+        CartProduct result = cartProductService.save(cartProduct);
 
+        assertEquals(cartProduct, result);
         verify(cartProductRepository).save(any(CartProduct.class));
     }
 
     @Test
     void productNameIsAssignedCorrectly() {
 
-        Product product = new Product();
-        product.setName("Airmax");
-        cartProductService.addProduct(product);
+        cartProduct.setProductName("Airmax");
+        cartProductService.save(cartProduct);
 
         ArgumentCaptor<CartProduct> cartProductCaptor = ArgumentCaptor.forClass(CartProduct.class);
         verify(cartProductRepository).save(cartProductCaptor.capture());
@@ -54,6 +55,13 @@ public class CartProductServiceImplTest {
         CartProduct savedCartProduct = cartProductCaptor.getValue();
 
         assertEquals("Airmax", savedCartProduct.getProductName());
+
+    }
+
+    @Test
+    void productFieldAreSavedCorrectly() {
+
+
 
     }
 }

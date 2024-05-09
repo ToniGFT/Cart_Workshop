@@ -5,7 +5,7 @@ import com.gftworkshop.cartMicroservice.model.CartProduct;
 
 public interface CartProductService {
 
-    void addProduct(Product product);
+    CartProduct save(CartProduct cartProduct);
     void updateQuantity(Long id, int quantity);
 
     CartProduct removeProduct(Long id);
