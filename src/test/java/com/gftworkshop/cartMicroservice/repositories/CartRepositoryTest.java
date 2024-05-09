@@ -2,6 +2,7 @@ package com.gftworkshop.cartMicroservice.repositories;
 
 import com.gftworkshop.cartMicroservice.model.Cart;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -25,6 +26,7 @@ public class CartRepositoryTest {
     }
 
     @Test
+    @DisplayName("When getting a specified id, then I get a cart")
     void findCartByIdTest() {
         Long cartId = 1L;
         cart.setId(cartId);
@@ -36,6 +38,7 @@ public class CartRepositoryTest {
     }
 
     @Test
+    @DisplayName("When getting a specified id, then I delete a cart")
     void removeCartByIdTest() {
         Long cartIdToDelete = 1L;
         cart.setId(cartIdToDelete);
@@ -47,6 +50,7 @@ public class CartRepositoryTest {
     }
 
     @Test
+    @DisplayName("When getting a specified id, then I add a cart")
     void addCartByIdTest() {
         when(cartRepository.save(cart)).thenReturn(cart);
 
