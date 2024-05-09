@@ -47,7 +47,7 @@ public class CartControllerTest {
     }
 
     @Test
-    void modifyProductTest() throws Exception {
+    void updateProductTest() throws Exception {
         mockMvc.perform(patch("/cartProducts")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

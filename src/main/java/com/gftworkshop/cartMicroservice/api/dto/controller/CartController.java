@@ -32,7 +32,7 @@ public class CartController {
     }
 
     @PatchMapping("/cartProducts")
-    public ResponseEntity<Cart> modifyProduct() {
+    public ResponseEntity<Cart> updateProduct() {
         return null;
     }
 
