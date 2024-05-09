@@ -1,13 +1,9 @@
 package com.gftworkshop.cartMicroservice.model;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-
 import java.math.BigDecimal;
 
-@Data
-@Builder
+
 @Entity
 @Table(name = "cart_products")
 public class CartProduct {
@@ -34,5 +30,16 @@ public class CartProduct {
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
+    public CartProduct() {
+    }
 
+    public CartProduct(Long id, Cart cart, String productName, String productCategory, String productDescription, Integer quantity, BigDecimal price) {
+        this.id = id;
+        this.cart = cart;
+        this.productName = productName;
+        this.productCategory = productCategory;
+        this.productDescription = productDescription;
+        this.quantity = quantity;
+        this.price = price;
+    }
 }
