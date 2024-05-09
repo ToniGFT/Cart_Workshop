@@ -27,10 +27,4 @@ public class Cart {
     @OneToMany(mappedBy = "cart")
     private List<CartProduct> cartProducts;
 
-    public Cart() {}
-
-//    public static CartDto fromEntity(Cart entity){
-//        return Cart.builder()
-//                .id()
-//    }
 }

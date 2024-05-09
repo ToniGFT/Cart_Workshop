@@ -1,4 +1,4 @@
 package com.gftworkshop.cartMicroservice.services;
 
-public interface CartItemService {
+public interface CartProductService {
 }
