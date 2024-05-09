@@ -4,6 +4,7 @@ import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public interface CartService {
     void addProductToCart(Cart cart, CartProduct cartProduct);
@@ -13,4 +14,6 @@ public interface CartService {
     BigDecimal getCartTotal(Cart cart);
 
     void clearCart(Cart cart);
+
+    List<Cart> identifyAbandonedCarts();
 }
