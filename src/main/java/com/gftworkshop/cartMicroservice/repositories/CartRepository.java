@@ -15,7 +15,4 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
 
     @Query("SELECT c FROM Cart c WHERE c.updated_at < :thresholdDate")
     List<Cart> identifyAbandonedCarts(@Param("thresholdDate") Date thresholdDate);
-
-    @Query("SELECT c FROM Cart c WHERE c.updated_at >= :thresholdDate")
-    List<Cart> getActiveCarts(@Param("thresholdDate") Date thresholdDate);
 }
