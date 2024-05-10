@@ -121,6 +121,9 @@ public class CartServiceImplTest {
 
 
     @Test
+    @DisplayName("Identify Abandoned Carts - Given Current Date " +
+            "When Identifying " +
+            "Then Return List of Abandoned Carts")
     public void testIdentifyAbandonedCarts() {
         Date currentDate = new Date();
 

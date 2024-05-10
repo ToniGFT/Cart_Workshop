@@ -3,11 +3,13 @@ package com.gftworkshop.cartMicroservice.services;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 
+import java.util.Optional;
+
 public interface CartProductService {
 
     CartProduct save(CartProduct cartProduct);
-    void updateQuantity(Long id, int quantity);
+    int updateQuantity(Long id, int quantity);
 
-    CartProduct removeProduct(Long id);
+    void removeProduct(Long id);
 
 }

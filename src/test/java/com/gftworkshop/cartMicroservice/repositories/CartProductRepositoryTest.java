@@ -23,7 +23,8 @@ public class CartProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("When adding a product to the cart, then the product should be saved")
+    @DisplayName("When adding a product to the cart, " +
+            "then the product should be saved")
     void addProductToCartTest() {
         when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
         CartProduct savedCartProduct = cartProductRepository.save(cartProduct);
@@ -32,7 +33,8 @@ public class CartProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("When updating the quantity of a product in the cart, then the quantity should be updated and return the number of affected rows")
+    @DisplayName("When updating the quantity of a product in the cart, " +
+            "then the quantity should be updated and return the number of affected rows")
     void updateProductQuantityTest() {
         long productId = 1L;
         int newQuantity = 5;
@@ -44,7 +46,8 @@ public class CartProductRepositoryTest {
     }
 
     @Test
-    @DisplayName("When passing an id, then removing a product from cart")
+    @DisplayName("When passing an id, " +
+            "then removing a product from cart")
     void removeProductTest() {
         long productId = 1L;
         doNothing().when(cartProductRepository).deleteById(productId);

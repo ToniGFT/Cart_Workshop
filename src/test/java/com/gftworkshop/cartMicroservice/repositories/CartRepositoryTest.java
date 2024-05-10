@@ -28,7 +28,8 @@ public class CartRepositoryTest {
     }
 
     @Test
-    @DisplayName("When getting a specified id, then I get a cart")
+    @DisplayName("When getting a specified id, " +
+            "then I get a cart")
     void findCartByIdTest() {
         Long cartId = 1L;
 
@@ -41,7 +42,8 @@ public class CartRepositoryTest {
     }
 
     @Test
-    @DisplayName("When getting a specified id, then I delete a cart")
+    @DisplayName("When getting a specified id, " +
+            "then I delete a cart")
     void removeCartByIdTest() {
         Long cartIdToDelete = 1L;
 
@@ -53,7 +55,8 @@ public class CartRepositoryTest {
     }
 
     @Test
-    @DisplayName("When getting a specified id, then I add a cart")
+    @DisplayName("When getting a specified id, " +
+            "then I add a cart")
     void addCartByIdTest() {
         Long cartId = 1L;
 

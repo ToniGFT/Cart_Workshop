@@ -25,7 +25,8 @@ public class CartControllerTest {
     }
 
     @Test
-    @DisplayName("When adding cart by ID, then expect OK status")
+    @DisplayName("When adding cart by ID, " +
+            "then expect OK status")
     void addCartByIdTest() throws Exception {
         Long cartId = 1L;
         mockMvc.perform(post("/carts/{id}", cartId)
@@ -34,7 +35,8 @@ public class CartControllerTest {
     }
 
     @Test
-    @DisplayName("When getting cart by ID, then expect OK status")
+    @DisplayName("When getting cart by ID, " +
+            "then expect OK status")
     void getCartByIdTest() throws Exception {
         Long cartId = 1L;
         mockMvc.perform(get("/carts/{id}", cartId)
@@ -43,7 +45,8 @@ public class CartControllerTest {
     }
 
     @Test
-    @DisplayName("When removing cart by ID, then expect OK status")
+    @DisplayName("When removing cart by ID, " +
+            "then expect OK status")
     void removeCartByIdTest() throws Exception {
         Long cartId = 1L;
         mockMvc.perform(delete("/carts/{id}", cartId)
@@ -52,7 +55,8 @@ public class CartControllerTest {
     }
 
     @Test
-    @DisplayName("When adding product, then expect OK status")
+    @DisplayName("When adding product, " +
+            "then expect OK status")
     void addProductTest() throws Exception {
         mockMvc.perform(post("/cartProducts")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -60,7 +64,8 @@ public class CartControllerTest {
     }
 
     @Test
-    @DisplayName("When updating product, then expect OK status")
+    @DisplayName("When updating product, " +
+            "then expect OK status")
     void updateProductTest() throws Exception {
         mockMvc.perform(patch("/cartProducts")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -68,7 +73,8 @@ public class CartControllerTest {
     }
 
     @Test
-    @DisplayName("When removing product by ID, then expect OK status")
+    @DisplayName("When removing product by ID, " +
+            "then expect OK status")
     void removeProductByIdTest() throws Exception{
         Long productId = 1L;
         mockMvc.perform(delete("/cartProducts/{id}", productId)

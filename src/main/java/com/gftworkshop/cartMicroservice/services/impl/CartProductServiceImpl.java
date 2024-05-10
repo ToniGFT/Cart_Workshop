@@ -6,6 +6,8 @@ import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.services.CartProductService;
 
+import java.util.Optional;
+
 public class CartProductServiceImpl implements CartProductService {
 
     private CartProductRepository cartProductRepository;
@@ -20,12 +22,12 @@ public class CartProductServiceImpl implements CartProductService {
     }
 
     @Override
-    public void updateQuantity(Long id, int quantity) {
-
+    public int updateQuantity(Long id, int quantity) {
+        return cartProductRepository.updateProductQuantity(id, quantity);
     }
 
     @Override
-    public CartProduct removeProduct(Long id) {
-        return null;
+    public void removeProduct(Long id) {
+        cartProductRepository.deleteById(id);
     }
 }
