@@ -67,7 +67,8 @@ public class CartRepositoryTest {
     }
 
     @Test
-    @DisplayName("When identifying abandoned carts, then return the correct list")
+    @DisplayName("When identifying abandoned carts, " +
+            "then return the correct list")
     void identifyAbandonedCartsTest() {
         Date thresholdDate = new Date();
         List<Cart> expectedAbandonedCarts = List.of(mock(Cart.class), mock(Cart.class));
