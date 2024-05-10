@@ -13,11 +13,12 @@ public class Product {
     private Integer stock;
     private String category;
     private Double discount;
+    private Double weight;
 
     public Product() {
     }
 
-    public Product(Long id, String name, String description, BigDecimal price, Integer stock, String category, Double discount) {
+    public Product(Long id, String name, String description, BigDecimal price, Integer stock, String category, Double discount, Double weight) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -25,6 +26,7 @@ public class Product {
         this.stock = stock;
         this.category = category;
         this.discount = discount;
+        this.weight = weight;
     }
 
     public Long getId() {
@@ -81,5 +83,13 @@ public class Product {
 
     public void setDiscount(Double discount) {
         this.discount = discount;
+    }
+
+    public Double getWeight() {
+        return weight;
+    }
+
+    public void setWeight(Double weight) {
+        this.weight = weight;
     }
 }
