@@ -1,4 +1,141 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PropertiesComponent">{}</component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="da14c95a-c91e-452c-9b90-0e3a2329ae49" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageOptionsProvider">
+    <option name="myAddOrReplace" value="0" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2gPjqMO9fn0XdrRYjuRxHhxN2LI" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JUnit.All in cartMicroservice (1).executor&quot;: &quot;Coverage&quot;,
+    &quot;JUnit.All in cartMicroservice.executor&quot;: &quot;Coverage&quot;,
+    &quot;JUnit.CartControllerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CartMicroserviceApplicationTests.executor&quot;: &quot;Coverage&quot;,
+    &quot;JUnit.CartProductRepositoryTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CartRepositoryTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.CartServiceImplTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.com.gftworkshop.cartMicroservice.api.dto.controller in cartMicroservice.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;
+  }
+}</component>
+  <component name="RunManager" selected="JUnit.All in cartMicroservice (2)">
+    <configuration name="All in cartMicroservice (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="cartMicroservice" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in cartMicroservice (2)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="cartMicroservice" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in cartMicroservice" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="cartMicroservice" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CartProductRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="cartMicroservice" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.gftworkshop.cartMicroservice.repositories.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.gftworkshop.cartMicroservice.repositories" />
+      <option name="MAIN_CLASS_NAME" value="com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CartRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="cartMicroservice" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.gftworkshop.cartMicroservice.repositories.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.gftworkshop.cartMicroservice.repositories" />
+      <option name="MAIN_CLASS_NAME" value="com.gftworkshop.cartMicroservice.repositories.CartRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.All in cartMicroservice (2)" />
+        <item itemvalue="JUnit.All in cartMicroservice (1)" />
+        <item itemvalue="JUnit.All in cartMicroservice" />
+        <item itemvalue="JUnit.CartRepositoryTest" />
+        <item itemvalue="JUnit.CartProductRepositoryTest" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="da14c95a-c91e-452c-9b90-0e3a2329ae49" name="Changes" comment="" />
+      <created>1715606298808</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1715606298808</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/cart_workshop$All_in_cartMicroservice.ic" NAME="All in cartMicroservice Coverage Results" MODIFIED="1715608114240" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
+    <SUITE FILE_PATH="coverage/cart_workshop$CartMicroserviceApplicationTests.ic" NAME="CartMicroserviceApplicationTests Coverage Results" MODIFIED="1715607963315" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>com.gftworkshop.cartMicroservice.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/cart_workshop$All_in_cartMicroservice__1_.ic" NAME="All in cartMicroservice (1) Coverage Results" MODIFIED="1715608131754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
+  </component>
 </project>
