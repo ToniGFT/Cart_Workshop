@@ -158,5 +158,25 @@ public class CartServiceImplTest {
         verify(cartRepository).identifyAbandonedCarts(thresholdDate);
     }
 
+    @Test
+    @DisplayName("Given a user id, " +
+            "when creating a cart, " +
+            "then a cart should be created successfully")
+    void createCartTest() {
+        Long userId = 123L;
+
+        Cart cart = mock(Cart.class);
+        when(cart.getId()).thenReturn(userId);
+        when(cart.getUser_id()).thenReturn(userId);
+
+        when(cartRepository.save(any(Cart.class))).thenReturn(cart);
+
+        Cart createdCart = cartServiceImpl.createCart(userId);
+
+        assertEquals(userId, createdCart.getUser_id());
+        assertEquals(userId, createdCart.getId());
+        verify(cartRepository).save(any(Cart.class));
+    }
+
 
 }
