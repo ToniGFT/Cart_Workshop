@@ -65,6 +65,14 @@ public class CartControllerTest {
         @Test
         @DisplayName("When adding cart by ID, then expect OK status")
         void addCartByIdTest() throws Exception {
+            Long cartId = 1L;
+            Cart cart = new Cart();
+            cart.setId(cartId);
+
+            when(cartService.createCart(cartId)).thenReturn(cart);
+
+            String requestBodyCart = "{ \"id\": 1 }";
+
             mockMvc.perform(post("/carts/{id}", cartId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBodyCart))
@@ -74,6 +82,12 @@ public class CartControllerTest {
         @Test
         @DisplayName("When getting cart by ID, then expect OK status")
         void getCartByIdTest() throws Exception {
+            Long cartId = 1L;
+            Cart cart = new Cart();
+            cart.setId(cartId);
+
+            when(cartService.getCart(cartId)).thenReturn(cart);
+
             mockMvc.perform(get("/carts/{id}", cartId)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -129,11 +143,11 @@ public class CartControllerTest {
             Cart cart = new Cart();
             cart.setId(cartId);
 
-            when(cartService.createCart(cartId)).thenReturn(cart);
+            when(cartService.createCart(1L)).thenReturn(cart);
 
             ResponseEntity<Cart> response = cartController.addCartById(cart);
 
-            verify(cartService, times(1)).createCart(cartId);
+            assertEquals(ResponseEntity.ok(cart), response);
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 

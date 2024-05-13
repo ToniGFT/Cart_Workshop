@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da14c95a-c91e-452c-9b90-0e3a2329ae49" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -38,7 +36,9 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Application.CartMicroserviceApplication.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.All in cartMicroservice (1).executor&quot;: &quot;Coverage&quot;,
+    &quot;JUnit.All in cartMicroservice (2).executor&quot;: &quot;Coverage&quot;,
     &quot;JUnit.All in cartMicroservice.executor&quot;: &quot;Coverage&quot;,
     &quot;JUnit.CartControllerTest.executor&quot;: &quot;Run&quot;,
     &quot;JUnit.CartMicroserviceApplicationTests.executor&quot;: &quot;Coverage&quot;,
@@ -55,7 +55,7 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;
   }
 }</component>
-  <component name="RunManager" selected="JUnit.All in cartMicroservice (2)">
+  <component name="RunManager" selected="JUnit.All in cartMicroservice (3)">
     <configuration name="All in cartMicroservice (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="cartMicroservice" />
       <option name="PACKAGE_NAME" value="" />
@@ -72,7 +72,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="All in cartMicroservice" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="All in cartMicroservice (3)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="cartMicroservice" />
       <option name="PACKAGE_NAME" value="" />
       <option name="TEST_OBJECT" value="package" />
@@ -80,17 +80,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="CartProductRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="All in cartMicroservice" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="cartMicroservice" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="com.gftworkshop.cartMicroservice.repositories.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="com.gftworkshop.cartMicroservice.repositories" />
-      <option name="MAIN_CLASS_NAME" value="com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -112,11 +105,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.All in cartMicroservice (3)" />
         <item itemvalue="JUnit.All in cartMicroservice (2)" />
         <item itemvalue="JUnit.All in cartMicroservice (1)" />
         <item itemvalue="JUnit.All in cartMicroservice" />
         <item itemvalue="JUnit.CartRepositoryTest" />
-        <item itemvalue="JUnit.CartProductRepositoryTest" />
       </list>
     </recent_temporary>
   </component>
@@ -137,5 +130,6 @@
       <FILTER>com.gftworkshop.cartMicroservice.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/cart_workshop$All_in_cartMicroservice__1_.ic" NAME="All in cartMicroservice (1) Coverage Results" MODIFIED="1715608131754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
+    <SUITE FILE_PATH="coverage/Cart_Workshop$All_in_cartMicroservice__2_.ic" NAME="All in cartMicroservice (2) Coverage Results" MODIFIED="1715608474958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
   </component>
 </project>
