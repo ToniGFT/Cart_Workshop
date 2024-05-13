@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="da14c95a-c91e-452c-9b90-0e3a2329ae49" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="da14c95a-c91e-452c-9b90-0e3a2329ae49" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -34,27 +32,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.CartMicroserviceApplication.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.All in cartMicroservice (1).executor&quot;: &quot;Coverage&quot;,
-    &quot;JUnit.All in cartMicroservice (2).executor&quot;: &quot;Coverage&quot;,
-    &quot;JUnit.All in cartMicroservice.executor&quot;: &quot;Coverage&quot;,
-    &quot;JUnit.CartControllerTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CartMicroserviceApplicationTests.executor&quot;: &quot;Coverage&quot;,
-    &quot;JUnit.CartProductRepositoryTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CartRepositoryTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.CartServiceImplTest.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.com.gftworkshop.cartMicroservice.api.dto.controller in cartMicroservice.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;MavenSettings&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.CartMicroserviceApplication.executor": "Run",
+    "JUnit.All in cartMicroservice (1).executor": "Coverage",
+    "JUnit.All in cartMicroservice (2).executor": "Coverage",
+    "JUnit.All in cartMicroservice (3).executor": "Coverage",
+    "JUnit.All in cartMicroservice.executor": "Coverage",
+    "JUnit.CartControllerTest.executor": "Run",
+    "JUnit.CartMicroserviceApplicationTests.executor": "Coverage",
+    "JUnit.CartProductRepositoryTest.executor": "Run",
+    "JUnit.CartRepositoryTest.executor": "Run",
+    "JUnit.CartServiceImplTest.executor": "Run",
+    "JUnit.com.gftworkshop.cartMicroservice.api.dto.controller in cartMicroservice.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "MavenSettings"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="JUnit.All in cartMicroservice (3)">
     <configuration name="All in cartMicroservice (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="cartMicroservice" />
@@ -130,6 +129,7 @@
       <FILTER>com.gftworkshop.cartMicroservice.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/cart_workshop$All_in_cartMicroservice__1_.ic" NAME="All in cartMicroservice (1) Coverage Results" MODIFIED="1715608131754" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
+    <SUITE FILE_PATH="coverage/Cart_Workshop$All_in_cartMicroservice__3_.ic" NAME="All in cartMicroservice (3) Coverage Results" MODIFIED="1715609552041" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
     <SUITE FILE_PATH="coverage/Cart_Workshop$All_in_cartMicroservice__2_.ic" NAME="All in cartMicroservice (2) Coverage Results" MODIFIED="1715608474958" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
   </component>
 </project>
