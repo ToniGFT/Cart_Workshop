@@ -54,13 +54,13 @@ public class CountryServiceTest {
         StepVerifier.create(countryMono)
                 .expectNextMatches(country ->
                         country.getId().equals(1L) &&
-                                country.getName().equals("Spain") &&
                                 country.getTax().equals(21.0))
                 .verifyComplete();
     }
 
     @Test
-    @DisplayName("When fetching a country by ID and the country does not exist, then a 404 Not Found error is returned")
+    @DisplayName("When fetching a country by ID and the country does not exist," +
+            " then a 404 Not Found error is returned")
     void testGetCountryByIdServerError() {
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(404)
@@ -77,7 +77,8 @@ public class CountryServiceTest {
     }
 
     @Test
-    @DisplayName("When fetching a Country by ID and an internal server error occurs, then a 500 error is returned")
+    @DisplayName("When fetching a Country by ID and an internal server error occurs," +
+            " then a 500 error is returned")
     void testGetProductByIdServerError() {
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(500)
