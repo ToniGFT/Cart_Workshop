@@ -178,5 +178,22 @@ public class CartServiceImplTest {
         verify(cartRepository).save(any(Cart.class));
     }
 
+    @Test
+    @DisplayName("Given a cartId, " +
+            "when getting the cart, " +
+            "then return the corresponding cart")
+    void getCartTest() {
+        Long cartId = 123L;
+
+        Cart cart = mock(Cart.class);
+
+        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+
+        Cart retrievedCart = cartServiceImpl.getCart(cartId);
+
+        assertEquals(cart, retrievedCart);
+        verify(cartRepository).findById(cartId);
+    }
+
 
 }
