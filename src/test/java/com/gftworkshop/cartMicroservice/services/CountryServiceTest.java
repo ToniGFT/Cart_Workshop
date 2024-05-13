@@ -1,11 +1,14 @@
 package com.gftworkshop.cartMicroservice.services;
 
 import com.gftworkshop.cartMicroservice.api.dto.Country;
+import com.gftworkshop.cartMicroservice.api.dto.Product;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import okhttp3.mockwebserver.MockWebServer;
@@ -29,7 +32,8 @@ public class CountryServiceTest {
     }
 
     @Test
-    @DisplayName("When fetching a country by ID, then the correct country details are returned")
+    @DisplayName("When fetching a country by ID, " +
+            "then the correct country details are returned")
     void testGetCountryById() {
         String countryJson = """
                 {
@@ -54,6 +58,41 @@ public class CountryServiceTest {
                                 country.getTax().equals(21.0))
                 .verifyComplete();
     }
+
+    @Test
+    @DisplayName("When fetching a country by ID and the country does not exist, then a 404 Not Found error is returned")
+    void testGetCountryByIdServerError() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(404)
+                .setBody("Not found error")
+                .addHeader("Content-Type", "text/plain"));
+
+        Mono<Country> countryMono = countryService.getCountryById(1L);
+
+        StepVerifier.create(countryMono)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof WebClientResponseException &&
+                                ((WebClientResponseException) throwable).getStatusCode() == HttpStatus.NOT_FOUND)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("When fetching a Country by ID and an internal server error occurs, then a 500 error is returned")
+    void testGetProductByIdServerError() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(500)
+                .setBody("Internal Server Error")
+                .addHeader("Content-Type", "text/plain"));
+
+        Mono<Country> countryMono = countryService.getCountryById(1L);
+
+        StepVerifier.create(countryMono)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof WebClientResponseException &&
+                                ((WebClientResponseException) throwable).getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR)
+                .verify();
+    }
+
 
     @AfterEach
     void tearDown() throws IOException {

@@ -1,12 +1,15 @@
 package com.gftworkshop.cartMicroservice.services;
 
+import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.api.dto.Country;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 import okhttp3.mockwebserver.MockWebServer;
@@ -30,7 +33,8 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName("When fetching a user by ID, then the correct user details are returned")
+    @DisplayName("When fetching a user by ID, " +
+            "then the correct user details are returned")
     void testGetUserById() {
         String userJson = """
                 {
@@ -44,7 +48,8 @@ public class UserServiceTest {
                     "phoneNumber": "1234567890",
                     "country": {
                         "name": "USA",
-                        "code": "US"
+                        "code": "US",
+                        "tax": "21.0"
                     }
                 }
                 """;
@@ -59,9 +64,48 @@ public class UserServiceTest {
                 .expectNextMatches(user ->
                         user.getId().equals(100L) &&
                                 user.getEmail().equals("john.doe@example.com") &&
-                                user.getName().equals("John"))
+                                user.getName().equals("John")&&
+                                user.getCountry().getTax().equals(21.0))
                 .verifyComplete();
     }
+
+    @Test
+    @DisplayName("When fetching a non-existent user by ID, then a 404 error is returned")
+    void testGetUserByIdNotFound() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(404)
+                .setBody("User not found")
+                .addHeader("Content-Type", "text/plain"));
+
+
+        Mono<User> userMono = userService.getUserById(999L);
+
+
+
+        StepVerifier.create(userMono)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof WebClientResponseException &&
+                                ((WebClientResponseException) throwable).getStatusCode() == HttpStatus.NOT_FOUND)
+                .verify();
+    }
+
+    @Test
+    @DisplayName("When fetching a User by ID and an internal server error occurs, then a 500 error is returned")
+    void testGetProductByIdServerError() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(500)
+                .setBody("Internal Server Error")
+                .addHeader("Content-Type", "text/plain"));
+
+        Mono<User> userMono = userService.getUserById(1L);
+
+        StepVerifier.create(userMono)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof WebClientResponseException &&
+                                ((WebClientResponseException) throwable).getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR)
+                .verify();
+    }
+
 
     @AfterEach
     void tearDown() throws IOException {
