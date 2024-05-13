@@ -21,8 +21,9 @@ public class CartController {
     }
 
     @PostMapping("/carts/{id}")
-    public ResponseEntity<Cart> addCartById(@PathVariable Long id) {
-        return null;
+    public ResponseEntity<Cart> addCartById(@RequestBody Cart cart) {
+        cartService.createCart(cart.getId());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/carts/{id}")

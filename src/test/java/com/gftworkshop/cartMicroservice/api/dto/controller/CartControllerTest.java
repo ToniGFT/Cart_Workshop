@@ -1,6 +1,5 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
@@ -27,7 +26,8 @@ public class CartControllerTest {
     private CartServiceImpl cartService;
     private Long cartId;
     private Long productId;
-    private String requestBody;
+    private String requestBodyCartProduct;
+    private String requestBodyCart;
 
     @BeforeEach
     void setUp() {
@@ -37,7 +37,17 @@ public class CartControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(cartController).build();
         cartId = 1L;
         productId = 1L;
-        requestBody = "{"
+        requestBodyCart = "{"
+                + "\"id\": null,"
+                + "\"user_id\": 123,"
+                + "\"updated_at\": \"2024-05-14T12:00:00\","
+                + "\"cartProducts\": ["
+                + "{\"id\": null, \"productName\": \"Product 1\", \"productCategory\": \"Category 1\", \"productDescription\": \"Description 1\", \"quantity\": 1, \"price\": 10.50},"
+                + "{\"id\": null, \"productName\": \"Product 2\", \"productCategory\": \"Category 2\", \"productDescription\": \"Description 2\", \"quantity\": 2, \"price\": 20.50}"
+                + "]"
+                + "}";
+
+        requestBodyCartProduct = "{"
                 + "\"id\": null,"
                 + "\"cart\": {\"id\": 1},"
                 + "\"productName\": \"product name\","
@@ -56,7 +66,8 @@ public class CartControllerTest {
         @DisplayName("When adding cart by ID, then expect OK status")
         void addCartByIdTest() throws Exception {
             mockMvc.perform(post("/carts/{id}", cartId)
-                            .contentType(MediaType.APPLICATION_JSON))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(requestBodyCart))
                     .andExpect(status().isOk());
         }
 
@@ -86,7 +97,7 @@ public class CartControllerTest {
         void addProductTest() throws Exception {
             mockMvc.perform(patch("/carts/products")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(requestBody))
+                            .content(requestBodyCartProduct))
                     .andExpect(status().isOk());
         }
 
@@ -95,7 +106,7 @@ public class CartControllerTest {
         void updateProductTest() throws Exception {
             mockMvc.perform(patch("/carts/products")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(requestBody))
+                            .content(requestBodyCartProduct))
                     .andExpect(status().isOk());
         }
 
@@ -115,6 +126,15 @@ public class CartControllerTest {
         @Test
         @DisplayName("When adding cart by ID, then expect OK status")
         void addCartByIdTest() {
+            Cart cart = new Cart();
+            cart.setId(cartId);
+
+            when(cartService.createCart(cartId)).thenReturn(cart);
+
+            ResponseEntity<Cart> response = cartController.addCartById(cart);
+
+            verify(cartService, times(1)).createCart(cartId);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 
         @Test
