@@ -1,12 +1,10 @@
 package com.gftworkshop.cartMicroservice.model;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 import java.util.List;
@@ -28,6 +26,7 @@ public class Cart {
     @Column(name = "updated_at")
     private Date updated_at;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<CartProduct> cartProducts;
 }

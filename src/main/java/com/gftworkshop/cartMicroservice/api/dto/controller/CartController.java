@@ -22,14 +22,22 @@ public class CartController {
 
     @PostMapping("/carts/{id}")
     public ResponseEntity<Cart> addCartById(@RequestBody Cart cart) {
-        cartService.createCart(cart.getId());
-        return ResponseEntity.ok().build();
+        Cart savedCart = cartService.createCart(cart.getId());
+        if (savedCart != null) {
+            return ResponseEntity.ok(savedCart);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/carts/{id}")
     public ResponseEntity<Cart> getCartById(@PathVariable Long id) {
-        cartService.getCart(id);
-        return ResponseEntity.ok().build();
+        Cart recievedCart = cartService.getCart(id);
+        if(recievedCart != null){
+            return ResponseEntity.ok(recievedCart);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/carts/{id}")

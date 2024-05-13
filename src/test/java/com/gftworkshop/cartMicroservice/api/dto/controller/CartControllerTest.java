@@ -129,11 +129,11 @@ public class CartControllerTest {
             Cart cart = new Cart();
             cart.setId(cartId);
 
-            when(cartService.createCart(cartId)).thenReturn(cart);
+            when(cartService.createCart(1L)).thenReturn(cart);
 
             ResponseEntity<Cart> response = cartController.addCartById(cart);
 
-            verify(cartService, times(1)).createCart(cartId);
+            assertEquals(ResponseEntity.ok(cart), response);
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 
