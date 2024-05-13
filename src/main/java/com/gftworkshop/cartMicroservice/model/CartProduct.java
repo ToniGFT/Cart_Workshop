@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +19,8 @@ public class CartProduct {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    @JoinColumn(name = "cart_id")
+    @JsonBackReference
     private Cart cart;
 
     @Column(name = "product_name")
