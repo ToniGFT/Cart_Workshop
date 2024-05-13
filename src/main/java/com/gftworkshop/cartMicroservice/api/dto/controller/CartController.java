@@ -32,14 +32,15 @@ public class CartController {
 
     @DeleteMapping("/carts/{id}")
     public ResponseEntity<Cart> removeCartById(@PathVariable Long id) {
-        return null;
+        cartService.clearCart(id);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/carts/products")
     public ResponseEntity<Cart> addProduct(@RequestBody CartProduct cartProduct) {
         cartProductService.save(cartProduct);
-        //cartService.addProductToCart(cartProduct.getCart().getId(), cartProduct);
-        return null;
+        cartService.addProductToCart(cartProduct);
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/carts/products")

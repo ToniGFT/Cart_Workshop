@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
@@ -10,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -24,6 +27,7 @@ public class CartControllerTest {
     private CartServiceImpl cartService;
     private Long cartId;
     private Long productId;
+    private String requestBody;
 
     @BeforeEach
     void setUp() {
@@ -33,6 +37,15 @@ public class CartControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(cartController).build();
         cartId = 1L;
         productId = 1L;
+        requestBody = "{"
+                + "\"id\": null,"
+                + "\"cart\": {\"id\": 1},"
+                + "\"productName\": \"product name\","
+                + "\"productCategory\": \"product category\","
+                + "\"productDescription\": \"product description\","
+                + "\"quantity\": 5,"
+                + "\"price\": 10.50"
+                + "}";
     }
 
     @Nested
@@ -71,16 +84,6 @@ public class CartControllerTest {
         @Test
         @DisplayName("When adding product, then expect OK status")
         void addProductTest() throws Exception {
-            String requestBody = "{"
-                    + "\"id\": null,"
-                    + "\"cart\": {\"id\": 1},"
-                    + "\"productName\": \"product name\","
-                    + "\"productCategory\": \"product category\","
-                    + "\"productDescription\": \"product description\","
-                    + "\"quantity\": 5,"
-                    + "\"price\": 10.50"
-                    + "}";
-
             mockMvc.perform(patch("/carts/products")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
@@ -90,17 +93,6 @@ public class CartControllerTest {
         @Test
         @DisplayName("When updating product, then expect OK status")
         void updateProductTest() throws Exception {
-
-            String requestBody = "{"
-                    + "\"id\": null,"
-                    + "\"cart\": {\"id\": 1},"
-                    + "\"productName\": \"product name\","
-                    + "\"productCategory\": \"product category\","
-                    + "\"productDescription\": \"product description\","
-                    + "\"quantity\": 5,"
-                    + "\"price\": 10.50"
-                    + "}";
-
             mockMvc.perform(patch("/carts/products")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestBody))
@@ -117,13 +109,64 @@ public class CartControllerTest {
     }
 
     @Nested
+    @DisplayName("Tests for Cart operations")
+    class CartOperationsTests {
+
+        @Test
+        @DisplayName("When adding cart by ID, then expect OK status")
+        void addCartByIdTest() {
+        }
+
+        @Test
+        @DisplayName("When getting cart by ID, then expect OK status")
+        void getCartByIdTest() {
+        }
+
+        @Test
+        @DisplayName("When removing cart by ID, then expect OK status")
+        void removeCartByIdTest(){;
+            doNothing().when(cartService).clearCart(cartId);
+
+            ResponseEntity<Cart> response = cartController.removeCartById(cartId);
+
+            verify(cartService, times(1)).clearCart(cartId);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
+    }
+
+    @Nested
+    @DisplayName("Tests for Cart and CartProducts operations")
+    class CartAndCartProductOperationsTests {
+        @Test
+        @DisplayName("When adding product, then expect OK status")
+        void addProductTest() {
+            CartProduct cartProduct = new CartProduct();
+            cartProduct.setId(1L);
+            cartProduct.setProductName("Product Name");
+            cartProduct.setProductCategory("Product Category");
+            cartProduct.setProductDescription("Product Description");
+            cartProduct.setQuantity(1);
+            cartProduct.setPrice(BigDecimal.TEN);
+
+            when(cartProductService.save(cartProduct)).thenReturn(cartProduct);
+            doNothing().when(cartService).addProductToCart(cartProduct);
+
+            ResponseEntity<Cart> response = cartController.addProduct(cartProduct);
+
+            verify(cartProductService, times(1)).save(cartProduct);
+            verify(cartService, times(1)).addProductToCart(cartProduct);
+
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
+    }
+
+    @Nested
     @DisplayName("Tests for CartProducts operations")
     class CartProductOperationsTests {
 
         @Test
         @DisplayName("When updating a product, then expect OK status")
         void testUpdateProduct() {
-            Long productId = 123L;
             int newQuantity = 5;
             CartProduct cartProduct = new CartProduct();
             cartProduct.setId(productId);
@@ -140,8 +183,6 @@ public class CartControllerTest {
         @Test
         @DisplayName("When removing a product, then expect OK status")
         void removeProductByIdTest() throws Exception {
-            Long productId = 123L;
-
             ResponseEntity<Cart> response = cartController.removeProductById(productId);
 
             verify(cartProductService, times(1)).removeProduct(productId);
