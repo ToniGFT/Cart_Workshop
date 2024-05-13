@@ -195,5 +195,24 @@ public class CartServiceImplTest {
         verify(cartRepository).findById(cartId);
     }
 
+    @Test
+    @DisplayName("Given existing carts, " +
+            "when retrieving all carts, " +
+            "then return the list of all carts")
+    void getAllCartsTest() {
+        Cart cart1 = mock(Cart.class);
+        Cart cart2 = mock(Cart.class);
+        List<Cart> expectedCarts = Arrays.asList(cart1, cart2);
+
+        when(cartRepository.findAll()).thenReturn(expectedCarts);
+
+        List<Cart> actualCarts = cartServiceImpl.getAllCarts();
+
+        assertEquals(expectedCarts.size(), actualCarts.size());
+        assertTrue(actualCarts.contains(cart1));
+        assertTrue(actualCarts.contains(cart2));
+        verify(cartRepository).findAll();
+    }
+
 
 }
