@@ -10,13 +10,6 @@ import lombok.NoArgsConstructor;
 
 public class User {
     private Long id;
-    private String email;
-    private String name;
-    private String lastName;
-    private String password;
-    private Integer fidelityPoints;
-    private String birthDate;
-    private String phoneNumber;
     private Country country;
 
 }

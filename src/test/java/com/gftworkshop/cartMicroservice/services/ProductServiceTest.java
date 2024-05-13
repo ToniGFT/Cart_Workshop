@@ -63,7 +63,8 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("When fetching a product by ID and the product does not exist, then a 404 Not Found error is returned")
+    @DisplayName("When fetching a product by ID and the product does not exist," +
+            " then a 404 Not Found error is returned")
     void testGetProductByIdNotFound() {
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(404)
@@ -80,7 +81,8 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("When fetching a product by ID and an internal server error occurs, then a 500 error is returned")
+    @DisplayName("When fetching a product by ID and an internal server error occurs," +
+            " then a 500 error is returned")
     void testGetProductByIdServerError() {
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(500)
