@@ -4,24 +4,21 @@ import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
-import com.gftworkshop.cartMicroservice.services.CartService;
-import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class CartServiceImplTest {
 
     @Mock
@@ -31,24 +28,21 @@ public class CartServiceImplTest {
     private CartProductRepository cartProductRepository;
 
     @InjectMocks
-    private CartServiceImpl cartService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
+    private CartServiceImpl cartServiceImpl;
 
     @Test
     @DisplayName("Given a cart and a product, " +
             "when adding the product to the cart, " +
             "then the product should be added successfully")
     void addProductToCartTest() {
-        Cart cart = mock(Cart.class);
         CartProduct cartProduct = mock(CartProduct.class);
+        Cart cart = mock(Cart.class);
 
+        when(cartProduct.getId()).thenReturn(1L);
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
 
-        cartService.addProductToCart(cart, cartProduct);
+        cartServiceImpl.addProductToCart(cartProduct);
 
         verify(cartProductRepository).save(cartProduct);
         verify(cartRepository).save(cart);
@@ -59,24 +53,28 @@ public class CartServiceImplTest {
             "when removing the product from the cart, " +
             "then the product should be removed successfully")
     void removeProductFromCartTest() {
-        Cart cart = mock(Cart.class);
+
         CartProduct cartProduct = mock(CartProduct.class);
+        Cart cart = mock(Cart.class);
 
-        when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
+        when(cartProduct.getId()).thenReturn(1L);
 
-        cartService.addProductToCart(cart, cartProduct);
-        cartService.removeProductFromCart(cart, cartProduct);
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+
+        cartServiceImpl.removeProductFromCart(cartProduct);
 
         verify(cartProductRepository).delete(cartProduct);
-        verify(cartRepository).save(cart);
     }
+
 
     @Test
     @DisplayName("Given a cart with multiple products, " +
             "when calculating the cart total, " +
             "then the total should be calculated correctly")
     void getCartTotalTest() {
+
         Cart cart = mock(Cart.class);
+
         CartProduct cartProduct1 = mock(CartProduct.class);
         when(cartProduct1.getPrice()).thenReturn(new BigDecimal("10"));
         when(cartProduct1.getQuantity()).thenReturn(2);
@@ -90,68 +88,74 @@ public class CartServiceImplTest {
         cartProducts.add(cartProduct2);
         when(cart.getCartProducts()).thenReturn(cartProducts);
 
-        BigDecimal product1Total = cartProduct1.getPrice().multiply(BigDecimal.valueOf(cartProduct1.getQuantity()));
-        BigDecimal product2Total = cartProduct2.getPrice().multiply(BigDecimal.valueOf(cartProduct2.getQuantity()));
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
         BigDecimal expectedTotal = new BigDecimal("65");
-        BigDecimal actualTotal = cartService.getCartTotal(cart);
+        BigDecimal actualTotal = cartServiceImpl.getCartTotal(1L);
 
         assertEquals(expectedTotal, actualTotal);
     }
 
+
     @Test
-    @DisplayName("Given a cart with products, " +
+    @DisplayName("Given an existing cart, " +
             "when clearing the cart, " +
-            "then the cart should be cleared successfully")
+            "then the cart products should be cleared successfully")
     void clearCartTest() {
+
+        Long cartId = 1L;
         Cart cart = mock(Cart.class);
-        CartProduct cartProduct1 = mock(CartProduct.class);
-        CartProduct cartProduct2 = mock(CartProduct.class);
+        cart.setId(cartId);
 
-        List<CartProduct> cartProducts = new ArrayList<>();
-        cartProducts.add(cartProduct1);
-        cartProducts.add(cartProduct2);
-        when(cart.getCartProducts()).thenReturn(cartProducts);
+        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
 
-        cartService.clearCart(cart);
+        cartServiceImpl.clearCart(cartId);
 
-        assertEquals(0, cart.getCartProducts().size());
+        assertTrue(cart.getCartProducts().isEmpty());
         verify(cartRepository).save(cart);
     }
 
 
     @Test
-    @DisplayName("Identify Abandoned Carts - Given Current Date " +
+    @DisplayName("Identify Abandoned Carts - Given No Abandoned Carts " +
+            "When Identifying " +
+            "Then Return Empty List")
+    void identifyAbandonedCarts_NoAbandonedCartsTest() {
+
+        Date thresholdDate = new Date(System.currentTimeMillis() - 86400000);
+
+        when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(new ArrayList<>());
+
+        List<Cart> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
+
+        assertEquals(0, result.size());
+
+        verify(cartRepository).identifyAbandonedCarts(thresholdDate);
+    }
+
+
+    @Test
+    @DisplayName("Identify Abandoned Carts - Given Abandoned Carts " +
             "When Identifying " +
             "Then Return List of Abandoned Carts")
-    public void testIdentifyAbandonedCarts() {
-        Date currentDate = new Date();
+    void identifyAbandonedCarts_AbandonedCartsExistTest() {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(currentDate);
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
-        Date thresholdDate = calendar.getTime();
+        Date thresholdDate = new Date(System.currentTimeMillis() - 86400000);
 
-        CartRepository cartRepository = mock(CartRepository.class);
+        Cart cart1 = mock(Cart.class);
+        Cart cart2 = mock(Cart.class);
 
-        Cart cart = new Cart();
-        cart.setId(1L);
-        cart.setUpdated_at(currentDate);
-
-        List<Cart> abandonedCarts = new ArrayList<>();
-        abandonedCarts.add(cart);
+        List<Cart> abandonedCarts = Arrays.asList(cart1, cart2);
 
         when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(abandonedCarts);
 
-        CartService cartService = mock(CartService.class);
+        List<Cart> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
 
-        when(cartService.identifyAbandonedCarts()).thenReturn(abandonedCarts);
+        assertEquals(abandonedCarts.size(), result.size());
+        assertTrue(result.contains(cart1));
+        assertTrue(result.contains(cart2));
 
-        List<Cart> result = cartService.identifyAbandonedCarts();
-
-        verify(cartService, times(1)).identifyAbandonedCarts();
-
-        assertEquals(abandonedCarts, result);
+        verify(cartRepository).identifyAbandonedCarts(thresholdDate);
     }
 
 
