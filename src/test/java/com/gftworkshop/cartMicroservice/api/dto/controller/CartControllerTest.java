@@ -140,6 +140,15 @@ public class CartControllerTest {
         @Test
         @DisplayName("When getting cart by ID, then expect OK status")
         void getCartByIdTest() {
+            Cart cart = new Cart();
+            cart.setId(cartId);
+
+            when(cartService.getCart(cartId)).thenReturn(cart);
+
+            ResponseEntity<Cart> response = cartController.getCartById(cart.getId());
+
+            verify(cartService, times(1)).getCart(cartId);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 
         @Test

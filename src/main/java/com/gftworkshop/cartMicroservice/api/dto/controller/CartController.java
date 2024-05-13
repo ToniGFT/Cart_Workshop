@@ -28,7 +28,8 @@ public class CartController {
 
     @GetMapping("/carts/{id}")
     public ResponseEntity<Cart> getCartById(@PathVariable Long id) {
-        return null;
+        cartService.getCart(id);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/carts/{id}")
