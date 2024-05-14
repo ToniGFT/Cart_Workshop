@@ -6,6 +6,7 @@ import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.CartService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,7 +27,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addProductToCart(CartProduct cartProduct) {
-        Long cartId = cartProduct.getId();
+        Long cartId = cartProduct.getCart().getId();
         Optional<Cart> optionalCart = cartRepository.findById(cartId);
         if (optionalCart.isPresent()) {
             Cart cart = optionalCart.get();
@@ -72,11 +73,12 @@ public class CartServiceImpl implements CartService {
     }
 
 
-    @Override
+    @Transactional
     public void clearCart(Long cartId) {
         Optional<Cart> optionalCart = cartRepository.findById(cartId);
         if (optionalCart.isPresent()) {
             Cart cart = optionalCart.get();
+            cartProductRepository.removeAllByCartId(cartId);
             cart.getCartProducts().clear();
             updateCartModifiedDateTime(cart);
             cartRepository.save(cart);
@@ -101,7 +103,6 @@ public class CartServiceImpl implements CartService {
     public Cart createCart(Long userId) {
         Cart cart = new Cart();
         cart.setUser_id(userId);
-        cart.setId(userId);
         return cartRepository.save(cart);
     }
 

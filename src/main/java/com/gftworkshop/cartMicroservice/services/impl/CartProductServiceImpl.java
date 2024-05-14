@@ -9,9 +9,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class CartProductServiceImpl implements CartProductService {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private final CartProductRepository cartProductRepository;
 
@@ -29,7 +34,10 @@ public class CartProductServiceImpl implements CartProductService {
         if (quantity <= 0) {
             throw new CartProductSaveException("The quantity must be higher than 0");
         }
-        return cartProductRepository.updateProductQuantity(id, quantity);
+        return entityManager.createQuery("UPDATE CartProduct cp SET cp.quantity = :quantity WHERE cp.id = :id")
+                .setParameter("quantity", quantity)
+                .setParameter("id", id)
+                .executeUpdate();
     }
 
     @Override
