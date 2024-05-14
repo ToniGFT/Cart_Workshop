@@ -61,7 +61,6 @@ public class CartController {
 
     @PostMapping("/carts/products")
     public ResponseEntity<Cart> addProduct(@RequestBody CartProduct cartProduct) {
-
         cartService.addProductToCart(cartProduct);
         return ResponseEntity.ok().build();
     }
