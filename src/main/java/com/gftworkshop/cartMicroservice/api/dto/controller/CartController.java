@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
+
 @RestController
 public class CartController {
 
@@ -20,8 +23,18 @@ public class CartController {
         this.cartProductService = cartProductService;
     }
 
+    @GetMapping("/carts")
+    public ResponseEntity<List<Cart>> getAllCarts() {
+        List<Cart> savedCart = cartService.getAllCarts();
+        if (savedCart != null) {
+            return ResponseEntity.ok(savedCart);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PostMapping("/carts/{id}")
-    public ResponseEntity<Cart> addCartById(@PathVariable Long id) {
+    public ResponseEntity<Cart> addCartById(@PathVariable("id") Long id) {
         Cart savedCart = cartService.createCart(id);
         if (savedCart != null) {
             return ResponseEntity.ok(savedCart);
@@ -31,7 +44,7 @@ public class CartController {
     }
 
     @GetMapping("/carts/{id}")
-    public ResponseEntity<Cart> getCartById(@PathVariable Long id) {
+    public ResponseEntity<Cart> getCartById(@PathVariable("id") Long id) {
         Cart recievedCart = cartService.getCart(id);
         if(recievedCart != null){
             return ResponseEntity.ok(recievedCart);
@@ -41,14 +54,14 @@ public class CartController {
     }
 
     @DeleteMapping("/carts/{id}")
-    public ResponseEntity<Cart> removeCartById(@PathVariable Long id) {
+    public ResponseEntity<Cart> removeCartById(@PathVariable("id") Long id) {
         cartService.clearCart(id);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/carts/products")
     public ResponseEntity<Cart> addProduct(@RequestBody CartProduct cartProduct) {
-        cartProductService.save(cartProduct);
+
         cartService.addProductToCart(cartProduct);
         return ResponseEntity.ok().build();
     }
@@ -61,7 +74,7 @@ public class CartController {
     }
 
     @DeleteMapping("/carts/products/{id}")
-    public ResponseEntity<CartProduct> removeProductById(@PathVariable Long id) {
+    public ResponseEntity<CartProduct> removeProductById(@PathVariable("id") Long id) {
         CartProduct deletedCartProduct = cartProductService.removeProduct(id);
         if(deletedCartProduct != null){
             return ResponseEntity.ok(deletedCartProduct);
