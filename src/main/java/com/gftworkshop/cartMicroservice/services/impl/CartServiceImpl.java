@@ -102,6 +102,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public Cart createCart(Long userId) {
         Cart cart = new Cart();
+        cart.setUpdated_at(new Date());
         cart.setUser_id(userId);
         return cartRepository.save(cart);
     }

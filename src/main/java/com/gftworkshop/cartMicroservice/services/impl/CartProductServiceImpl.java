@@ -5,6 +5,7 @@ import com.gftworkshop.cartMicroservice.exceptions.CartProductSaveException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.services.CartProductService;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,7 +30,7 @@ public class CartProductServiceImpl implements CartProductService {
         return cartProductRepository.save(cartProduct);
     }
 
-    @Override
+    @Transactional
     public int updateQuantity(Long id, int quantity) {
         if (quantity <= 0) {
             throw new CartProductSaveException("The quantity must be higher than 0");
