@@ -9,6 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -126,10 +128,15 @@ public class CartProductServiceImplTest {
             "Then Verify Deletion")
     void removeProductTest() {
 
-        doNothing().when(cartProductRepository).deleteById(id);
+        CartProduct cartProductToRemove = new CartProduct();
 
-        cartProductService.removeProduct(id);
+        when(cartProductRepository.findById(id)).thenReturn(Optional.of(cartProductToRemove));
+
+        CartProduct removedProduct = cartProductService.removeProduct(id);
 
         verify(cartProductRepository, times(1)).deleteById(id);
+
+        assertEquals(cartProductToRemove, removedProduct);
     }
+
 }

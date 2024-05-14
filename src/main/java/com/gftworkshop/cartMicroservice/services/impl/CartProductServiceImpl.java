@@ -35,8 +35,6 @@ public class CartProductServiceImpl implements CartProductService {
     @Override
     public CartProduct removeProduct(Long id) {
 
-//        return cartProductRepository.deleteById(id);
-
         Optional<CartProduct> optionalCartProduct = cartProductRepository.findById(id);
 
         if (optionalCartProduct.isPresent()) {
