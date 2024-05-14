@@ -39,9 +39,9 @@ public class CartProductRepositoryTest {
         long productId = 1L;
         int newQuantity = 5;
 
-        when(cartProductRepository.updateProductQuantity(productId, newQuantity)).thenReturn(1);
-        int updatedRows = cartProductRepository.updateProductQuantity(productId, newQuantity);
-        verify(cartProductRepository, times(1)).updateProductQuantity(productId, newQuantity);
+        when(cartProductRepository.updateQuantity(productId, newQuantity)).thenReturn(1);
+        int updatedRows = cartProductRepository.updateQuantity(productId, newQuantity);
+        verify(cartProductRepository, times(1)).updateQuantity(productId, newQuantity);
         assertEquals(1, updatedRows);
     }
 
