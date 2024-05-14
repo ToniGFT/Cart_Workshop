@@ -186,7 +186,6 @@ public class CartServiceImplTest {
         Long cartId = 123L;
 
         Cart cart = mock(Cart.class);
-
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
 
         Cart retrievedCart = cartServiceImpl.getCart(cartId);
