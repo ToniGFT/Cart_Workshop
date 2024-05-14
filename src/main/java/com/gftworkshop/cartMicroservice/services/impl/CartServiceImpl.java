@@ -110,5 +110,8 @@ public class CartServiceImpl implements CartService {
         return cartRepository.findById(cartId).orElseThrow();
     }
 
+    public List<Cart> getAllCarts() {
+        return cartRepository.findAll();
+    }
 
 }
