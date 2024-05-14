@@ -21,8 +21,8 @@ public class CartController {
     }
 
     @PostMapping("/carts/{id}")
-    public ResponseEntity<Cart> addCartById(@RequestBody Cart cart) {
-        Cart savedCart = cartService.createCart(cart.getId());
+    public ResponseEntity<Cart> addCartById(@PathVariable Long id) {
+        Cart savedCart = cartService.createCart(id);
         if (savedCart != null) {
             return ResponseEntity.ok(savedCart);
         } else {
@@ -61,8 +61,12 @@ public class CartController {
     }
 
     @DeleteMapping("/carts/products/{id}")
-    public ResponseEntity<Cart> removeProductById(@PathVariable Long id) {
-        cartProductService.removeProduct(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CartProduct> removeProductById(@PathVariable Long id) {
+        CartProduct deletedCartProduct = cartProductService.removeProduct(id);
+        if(deletedCartProduct != null){
+            return ResponseEntity.ok(deletedCartProduct);
+        }else{
+            return ResponseEntity.notFound().build();
+        }
     }
 }
