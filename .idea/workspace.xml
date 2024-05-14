@@ -65,8 +65,8 @@
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
-  <component name="RunManager" selected="JUnit.All in cartMicroservice (4)">
-    <configuration name="All in cartMicroservice (2)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.All in cartMicroservice (1)">
+    <configuration name="All in cartMicroservice (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="cartMicroservice" />
       <option name="PACKAGE_NAME" value="" />
       <option name="TEST_OBJECT" value="package" />
@@ -115,11 +115,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.All in cartMicroservice (1)" />
         <item itemvalue="JUnit.All in cartMicroservice (4)" />
         <item itemvalue="JUnit.All in cartMicroservice (3)" />
         <item itemvalue="JUnit.CartRepositoryTest" />
         <item itemvalue="JUnit.All in cartMicroservice" />
-        <item itemvalue="JUnit.All in cartMicroservice (2)" />
       </list>
     </recent_temporary>
   </component>
