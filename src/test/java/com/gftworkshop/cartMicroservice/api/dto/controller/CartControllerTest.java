@@ -12,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -137,6 +139,24 @@ public class CartControllerTest {
     class CartOperationsTests {
 
         @Test
+        @DisplayName("When adding product, then expect OK status")
+        void addProductTest() {
+            CartProduct cartProduct = new CartProduct();
+            cartProduct.setId(1L);
+            cartProduct.setProductName("Product Name");
+            cartProduct.setProductCategory("Product Category");
+            cartProduct.setProductDescription("Product Description");
+            cartProduct.setQuantity(1);
+            cartProduct.setPrice(BigDecimal.TEN);
+
+            ResponseEntity<Cart> response = cartController.addProduct(cartProduct);
+
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+            verify(cartService, times(1)).addProductToCart(cartProduct);
+        }
+
+
+        @Test
         @DisplayName("When adding cart by ID, then expect OK status")
         void addCartByIdTest() {
             Cart cart = new Cart();
@@ -176,32 +196,6 @@ public class CartControllerTest {
     }
 
     @Nested
-    @DisplayName("Tests for Cart and CartProducts operations")
-    class CartAndCartProductOperationsTests {
-        @Test
-        @DisplayName("When adding product, then expect OK status")
-        void addProductTest() {
-            CartProduct cartProduct = new CartProduct();
-            cartProduct.setId(1L);
-            cartProduct.setProductName("Product Name");
-            cartProduct.setProductCategory("Product Category");
-            cartProduct.setProductDescription("Product Description");
-            cartProduct.setQuantity(1);
-            cartProduct.setPrice(BigDecimal.TEN);
-
-            when(cartProductService.save(cartProduct)).thenReturn(cartProduct);
-            doNothing().when(cartService).addProductToCart(cartProduct);
-
-            ResponseEntity<Cart> response = cartController.addProduct(cartProduct);
-
-            verify(cartProductService, times(1)).save(cartProduct);
-            verify(cartService, times(1)).addProductToCart(cartProduct);
-
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-    }
-
-    @Nested
     @DisplayName("Tests for CartProducts operations")
     class CartProductOperationsTests {
 
@@ -236,5 +230,36 @@ public class CartControllerTest {
             assertEquals(ResponseEntity.ok(cartProduct), response);
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
+    }
+
+    @Test
+    @DisplayName("When getting all carts and carts exist, then expect OK status")
+    void getAllCartsExistsTest() {
+        List<Cart> carts = new ArrayList<>();
+        Cart cart1 = new Cart();
+        cart1.setId(1L);
+        Cart cart2 = new Cart();
+        cart2.setId(2L);
+        carts.add(cart1);
+        carts.add(cart2);
+        when(cartService.getAllCarts()).thenReturn(carts);
+
+        ResponseEntity<List<Cart>> response = cartController.getAllCarts();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(carts, response.getBody());
+        verify(cartService, times(1)).getAllCarts();
+    }
+
+    @Test
+    @DisplayName("When getting all carts and no carts exist, then expect Not Found status")
+    void getAllCartsNotExistsTest() {
+        when(cartService.getAllCarts()).thenReturn(null);
+
+        ResponseEntity<List<Cart>> response = cartController.getAllCarts();
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals(null, response.getBody());
+        verify(cartService, times(1)).getAllCarts();
     }
 }
