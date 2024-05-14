@@ -18,7 +18,6 @@ public class Product {
     private BigDecimal price;
     private Integer stock;
     private String category;
-    private Double discount;
     private Double weight;
 
 

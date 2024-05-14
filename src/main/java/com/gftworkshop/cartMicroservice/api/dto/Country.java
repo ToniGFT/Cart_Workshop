@@ -11,10 +11,6 @@ import lombok.NoArgsConstructor;
 
 public class Country {
     private Long id;
-    private String name;
     private Double tax;
-    private String prefix;
-    private String timeZone;
-
 
 }

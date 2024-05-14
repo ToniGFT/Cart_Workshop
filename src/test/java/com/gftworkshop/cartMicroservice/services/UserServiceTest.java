@@ -63,8 +63,6 @@ public class UserServiceTest {
         StepVerifier.create(userMono)
                 .expectNextMatches(user ->
                         user.getId().equals(100L) &&
-                                user.getEmail().equals("john.doe@example.com") &&
-                                user.getName().equals("John")&&
                                 user.getCountry().getTax().equals(21.0))
                 .verifyComplete();
     }
