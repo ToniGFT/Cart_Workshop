@@ -5,28 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="da14c95a-c91e-452c-9b90-0e3a2329ae49" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.mvn/wrapper/maven-wrapper.properties" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/exceptions/CartProductNotFoundException.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/api/dto/Country.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/api/dto/Country.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/api/dto/Product.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/api/dto/Product.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/api/dto/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/api/dto/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/api/dto/controller/CartController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/api/dto/controller/CartController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/model/Cart.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/model/Cart.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/model/CartProduct.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/model/CartProduct.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/services/CartProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/services/CartProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/services/impl/CartProductServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/services/impl/CartProductServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/services/impl/CartServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/gftworkshop/cartMicroservice/services/impl/CartServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/api/dto/controller/CartControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/api/dto/controller/CartControllerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/CountryServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/CountryServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/ProductServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/ProductServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/UserServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/UserServiceTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/impl/CartProductServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/impl/CartProductServiceImplTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/impl/CartServiceImplTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/gftworkshop/cartMicroservice/services/impl/CartServiceImplTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,6 +48,7 @@
     "JUnit.All in cartMicroservice (1).executor": "Coverage",
     "JUnit.All in cartMicroservice (2).executor": "Coverage",
     "JUnit.All in cartMicroservice (3).executor": "Coverage",
+    "JUnit.All in cartMicroservice (4).executor": "Coverage",
     "JUnit.All in cartMicroservice.executor": "Coverage",
     "JUnit.CartControllerTest.executor": "Run",
     "JUnit.CartMicroserviceApplicationTests.executor": "Coverage",
@@ -75,7 +57,7 @@
     "JUnit.CartServiceImplTest.executor": "Run",
     "JUnit.com.gftworkshop.cartMicroservice.api.dto.controller in cartMicroservice.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Merging develop",
+    "git-widget-placeholder": "develop",
     "kotlin-language-version-configured": "true",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
@@ -83,15 +65,7 @@
     "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
-  <component name="RunManager" selected="JUnit.All in cartMicroservice">
-    <configuration name="All in cartMicroservice (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="cartMicroservice" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="TEST_OBJECT" value="package" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager" selected="JUnit.All in cartMicroservice (4)">
     <configuration name="All in cartMicroservice (2)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="cartMicroservice" />
       <option name="PACKAGE_NAME" value="" />
@@ -101,6 +75,14 @@
       </method>
     </configuration>
     <configuration name="All in cartMicroservice (3)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="cartMicroservice" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in cartMicroservice (4)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="cartMicroservice" />
       <option name="PACKAGE_NAME" value="" />
       <option name="TEST_OBJECT" value="package" />
@@ -133,11 +115,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.All in cartMicroservice (4)" />
         <item itemvalue="JUnit.All in cartMicroservice (3)" />
         <item itemvalue="JUnit.CartRepositoryTest" />
         <item itemvalue="JUnit.All in cartMicroservice" />
         <item itemvalue="JUnit.All in cartMicroservice (2)" />
-        <item itemvalue="JUnit.All in cartMicroservice (1)" />
       </list>
     </recent_temporary>
   </component>
