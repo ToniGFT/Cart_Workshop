@@ -195,7 +195,6 @@ public class CartServiceImplTest {
         verify(cartRepository).findById(cartId);
     }
 
-<<<<<<< HEAD
     @Test
     @DisplayName("Given existing carts, " +
             "when retrieving all carts, " +
@@ -214,8 +213,5 @@ public class CartServiceImplTest {
         assertTrue(actualCarts.contains(cart2));
         verify(cartRepository).findAll();
     }
-
-=======
->>>>>>> main
 
 }
