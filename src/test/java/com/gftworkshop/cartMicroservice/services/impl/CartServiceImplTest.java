@@ -1,18 +1,25 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
+import com.gftworkshop.cartMicroservice.api.dto.Country;
+import com.gftworkshop.cartMicroservice.api.dto.Product;
+import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
+import com.gftworkshop.cartMicroservice.services.ProductService;
+import com.gftworkshop.cartMicroservice.services.UserService;
 import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,12 +31,16 @@ public class CartServiceImplTest {
     private CartRepository cartRepository;
     private CartProductRepository cartProductRepository;
     private CartServiceImpl cartServiceImpl;
+    private UserService userService;
+    private ProductService productService;
 
     @BeforeEach
     void setUp() {
         cartRepository = mock(CartRepository.class);
         cartProductRepository = mock(CartProductRepository.class);
-        cartServiceImpl = new CartServiceImpl(cartRepository, cartProductRepository);
+        userService = mock(UserService.class);
+        productService = mock(ProductService.class);
+        cartServiceImpl = new CartServiceImpl(cartRepository, cartProductRepository,productService,userService);
     }
 
     @Test
@@ -75,35 +86,56 @@ public class CartServiceImplTest {
         verify(cartProductRepository).delete(cartProduct);
     }
 
-
     @Test
-    @DisplayName("Given a cart with multiple products, " +
-            "when calculating the cart total, " +
+    @DisplayName("Given a cart with multiple products and a user, " +
+            "when calculating the cart total including tax and weight costs, " +
             "then the total should be calculated correctly")
     void getCartTotalTest() {
+        User user = new User();
+        user.setCountry(new Country(1L, 0.07));
 
-        Cart cart = mock(Cart.class);
+        Product product1 = new Product();
+        product1.setWeight(2.0);
+        Product product2 = new Product();
+        product2.setWeight(3.5);
 
-        CartProduct cartProduct1 = mock(CartProduct.class);
-        when(cartProduct1.getPrice()).thenReturn(new BigDecimal("10"));
-        when(cartProduct1.getQuantity()).thenReturn(2);
+        Cart cart = new Cart();
+        CartProduct cartProduct1 = new CartProduct();
+        cartProduct1.setProductId(1L);
+        cartProduct1.setPrice(new BigDecimal("10"));
+        cartProduct1.setQuantity(2);
+        cartProduct1.setCart(cart);
 
-        CartProduct cartProduct2 = mock(CartProduct.class);
-        when(cartProduct2.getPrice()).thenReturn(new BigDecimal("15"));
-        when(cartProduct2.getQuantity()).thenReturn(3);
+        CartProduct cartProduct2 = new CartProduct();
+        cartProduct2.setProductId(2L);
+        cartProduct2.setPrice(new BigDecimal("15"));
+        cartProduct2.setQuantity(3);
+        cartProduct2.setCart(cart);
 
-        List<CartProduct> cartProducts = new ArrayList<>();
-        cartProducts.add(cartProduct1);
-        cartProducts.add(cartProduct2);
-        when(cart.getCartProducts()).thenReturn(cartProducts);
+        List<CartProduct> cartProducts = Arrays.asList(cartProduct1, cartProduct2);
+        cart.setCartProducts(cartProducts);
+
+        when(userService.getUserById(1L)).thenReturn(Mono.just(user));
+        when(productService.getProductById(1L)).thenReturn(Mono.just(product1));
+        when(productService.getProductById(2L)).thenReturn(Mono.just(product2));
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
         BigDecimal expectedTotal = new BigDecimal("65");
-        BigDecimal actualTotal = cartServiceImpl.getCartTotal(1L,1L);
+        BigDecimal weightCost = new BigDecimal("10");
+        BigDecimal tax = expectedTotal.multiply(new BigDecimal("0.07"));
+        expectedTotal = expectedTotal.add(tax).add(weightCost);
 
+        BigDecimal actualTotal = cartServiceImpl.getCartTotal(1L, 1L);
+        actualTotal = actualTotal.setScale(2, RoundingMode.HALF_UP);
         assertEquals(expectedTotal, actualTotal);
+
+        verify(userService).getUserById(1L);
+        verify(productService, times(2)).getProductById(anyLong());
+        verify(cartRepository).findById(1L);
     }
+
+
 
 
     @Test
