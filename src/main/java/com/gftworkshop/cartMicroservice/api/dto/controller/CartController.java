@@ -43,15 +43,16 @@ public class CartController {
         }
     }
 
-    @GetMapping("/carts/{id}")
-    public ResponseEntity<Cart> getCartById(@PathVariable("id") Long id) {
-        Cart recievedCart = cartService.getCart(id);
-        if(recievedCart != null){
-            return ResponseEntity.ok(recievedCart);
-        }else{
-            return ResponseEntity.notFound().build();
-        }
-    }
+
+//    @GetMapping("/carts/{id}")
+//    public ResponseEntity<Cart> getCartById(@PathVariable("id") Long id) {
+//        Cart recievedCart = cartService.getCart(id);
+//        if(recievedCart != null){
+//            return ResponseEntity.ok(recievedCart);
+//        }else{
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     @DeleteMapping("/carts/{id}")
     public ResponseEntity<Cart> removeCartById(@PathVariable("id") Long id) {

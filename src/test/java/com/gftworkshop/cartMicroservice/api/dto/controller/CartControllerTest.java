@@ -77,18 +77,18 @@ public class CartControllerTest {
                     .andExpect(status().isOk());
         }
 
-        @Test
-        @DisplayName("When getting cart by ID, then expect OK status")
-        void getCartByIdTest() throws Exception {
-            Cart cart = new Cart();
-            cart.setId(cartId);
-
-            when(cartService.getCart(cartId)).thenReturn(cart);
-
-            mockMvc.perform(get("/carts/{id}", cartId)
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
-        }
+//        @Test
+//        @DisplayName("When getting cart by ID, then expect OK status")
+//        void getCartByIdTest() throws Exception {
+//            Cart cart = new Cart();
+//            cart.setId(cartId);
+//
+//            when(cartService.getCart(cartId)).thenReturn(cart);
+//
+//            mockMvc.perform(get("/carts/{id}", cartId)
+//                            .contentType(MediaType.APPLICATION_JSON))
+//                    .andExpect(status().isOk());
+//        }
 
         @Test
         @DisplayName("When removing cart by ID, then expect OK status")
@@ -169,19 +169,19 @@ public class CartControllerTest {
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 
-        @Test
-        @DisplayName("When getting cart by ID, then expect OK status")
-        void getCartByIdTest() {
-            Cart cart = new Cart();
-            cart.setId(cartId);
-
-            when(cartService.getCart(cartId)).thenReturn(cart);
-
-            ResponseEntity<Cart> response = cartController.getCartById(cart.getId());
-
-            verify(cartService, times(1)).getCart(cartId);
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
+//        @Test
+//        @DisplayName("When getting cart by ID, then expect OK status")
+//        void getCartByIdTest() {
+//            Cart cart = new Cart();
+//            cart.setId(cartId);
+//
+//            when(cartService.getCart(cartId)).thenReturn(cart);
+//
+//            ResponseEntity<Cart> response = cartController.getCartById(cart.getId());
+//
+//            verify(cartService, times(1)).getCart(cartId);
+//            assertEquals(HttpStatus.OK, response.getStatusCode());
+//        }
 
         @Test
         @DisplayName("When removing cart by ID, then expect OK status")
