@@ -1,16 +1,15 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
+import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
-import com.gftworkshop.cartMicroservice.services.CartService;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
 import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class CartController {
@@ -26,29 +25,22 @@ public class CartController {
     @GetMapping("/carts")
     public ResponseEntity<List<Cart>> getAllCarts() {
         List<Cart> savedCart = cartService.getAllCarts();
-        if (savedCart != null) {
-            return ResponseEntity.ok(savedCart);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(savedCart);
     }
 
     @PostMapping("/carts/{id}")
-    public ResponseEntity<Cart> addCartById(@PathVariable("id") Long id) {
-        Cart savedCart = cartService.createCart(id);
-        if (savedCart != null) {
-            return ResponseEntity.ok(savedCart);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Cart> addCartByUserId(@PathVariable("id") Long id) {
+        Optional<Cart> optionalCart = Optional.ofNullable(cartService.createCart(id));
+        return optionalCart.map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/carts/{id}")
     public ResponseEntity<Cart> getCartById(@PathVariable("id") Long id) {
-        Cart recievedCart = cartService.getCart(id);
-        if(recievedCart != null){
-            return ResponseEntity.ok(recievedCart);
-        }else{
+        try {
+            Cart receivedCart = cartService.getCart(id);
+            return ResponseEntity.ok(receivedCart);
+        } catch (CartNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -74,10 +66,10 @@ public class CartController {
 
     @DeleteMapping("/carts/products/{id}")
     public ResponseEntity<CartProduct> removeProductById(@PathVariable("id") Long id) {
-        CartProduct deletedCartProduct = cartProductService.removeProduct(id);
-        if(deletedCartProduct != null){
+        try{
+            CartProduct deletedCartProduct = cartProductService.removeProduct(id);
             return ResponseEntity.ok(deletedCartProduct);
-        }else{
+        } catch(CartNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
