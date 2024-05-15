@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
-import com.gftworkshop.cartMicroservice.exceptions.CartProductSaveException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class CartProductServiceImplTest {
+class CartProductServiceImplTest {
 
     @Mock
     private CartProductRepository cartProductRepository;
@@ -56,11 +57,11 @@ public class CartProductServiceImplTest {
         @Test
         @DisplayName("Given Invalid Quantity " +
                 "Then Throws Exception")
-        public void testUpdateQuantityWithInvalidQuantity() {
+        void testUpdateQuantityWithInvalidQuantity() {
             Long id = 1L;
             int quantity = -5;
 
-            CartProductSaveException exception = assertThrows(CartProductSaveException.class, () -> {
+            CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
                 cartProductService.updateQuantity(id, quantity);
             });
 
@@ -99,8 +100,15 @@ public class CartProductServiceImplTest {
         CartProduct removedProduct = cartProductService.removeProduct(id);
 
         verify(cartProductRepository, times(1)).deleteById(id);
-
         assertEquals(cartProductToRemove, removedProduct);
+
+        when(cartProductRepository.findById(id)).thenReturn(Optional.empty());
+
+        CartProductNotFoundException exception = assertThrows(CartProductNotFoundException.class, () -> {
+            cartProductService.removeProduct(id);
+        });
+
+        assertEquals("No se encontró el CartProduct con ID: " + id, exception.getMessage());
     }
 
 }
