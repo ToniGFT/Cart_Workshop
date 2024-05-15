@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
+import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
@@ -9,6 +10,7 @@ import com.gftworkshop.cartMicroservice.services.CartService;
 import jakarta.transaction.Transactional;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -122,12 +124,19 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart getCart(Long cartId) {
-        return cartRepository.findById(cartId).orElseThrow();
+    public CartDto getCart(Long cartId) {
+        Cart cart = cartRepository.findById(cartId).orElseThrow();
+        return entityToDto(cart);
     }
 
     public List<Cart> getAllCarts() {
         return cartRepository.findAll();
+    }
+
+    private CartDto entityToDto(Cart cart) {
+        CartDto cartDto = new CartDto();
+        BeanUtils.copyProperties(cart, cartDto);
+        return cartDto;
     }
 
 }

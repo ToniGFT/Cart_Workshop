@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
+import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
@@ -8,15 +9,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -221,6 +219,65 @@ public class CartServiceImplTest {
         assertTrue(actualCarts.contains(cart1));
         assertTrue(actualCarts.contains(cart2));
         verify(cartRepository).findAll();
+    }
+
+    @Test
+    @DisplayName("Given a non-existent cart, " +
+            "when adding a product to the cart, " +
+            "then a CartNotFoundException should be thrown")
+    void addProductToCart_CartNotFoundExceptionTest() {
+
+        CartProduct cartProduct = mock(CartProduct.class);
+        when(cartProduct.getCart()).thenReturn(mock(Cart.class));
+        when(cartProduct.getCart().getId()).thenReturn(1L);
+
+        when(cartRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(CartNotFoundException.class, () -> {
+            cartServiceImpl.addProductToCart(cartProduct);
+        });
+    }
+
+    @Test
+    @DisplayName("Given a non-existent cart, " +
+            "when removing a product from the cart, " +
+            "then a CartNotFoundException should be thrown")
+    void removeProductFromCart_CartNotFoundExceptionTest() {
+
+        CartProduct cartProduct = mock(CartProduct.class);
+        when(cartProduct.getId()).thenReturn(1L);
+
+        when(cartRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(CartNotFoundException.class, () -> {
+            cartServiceImpl.removeProductFromCart(cartProduct);
+        });
+    }
+
+    @Test
+    @DisplayName("Given a non-existent cart, " +
+            "when calculating the cart total, " +
+            "then a CartNotFoundException should be thrown")
+    void getCartTotal_CartNotFoundExceptionTest() {
+
+        when(cartRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(CartNotFoundException.class, () -> {
+            cartServiceImpl.getCartTotal(1L);
+        });
+    }
+
+    @Test
+    @DisplayName("Given a non-existent cart, " +
+            "when clearing the cart, " +
+            "then a CartNotFoundException should be thrown")
+    void clearCart_CartNotFoundExceptionTest() {
+
+        when(cartRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(CartNotFoundException.class, () -> {
+            cartServiceImpl.clearCart(1L);
+        });
     }
 
 }
