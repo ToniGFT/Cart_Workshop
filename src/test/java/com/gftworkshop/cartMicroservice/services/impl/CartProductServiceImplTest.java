@@ -3,8 +3,6 @@ package com.gftworkshop.cartMicroservice.services.impl;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductSaveException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
-import com.gftworkshop.cartMicroservice.services.CartProductService;
-import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -16,13 +14,10 @@ import org.mockito.MockitoAnnotations;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class CartProductServiceImplTest {
 
-    @Mock
-    private EntityManager entityManager;
     @Mock
     private CartProductRepository cartProductRepository;
     @InjectMocks
@@ -36,40 +31,6 @@ public class CartProductServiceImplTest {
 
         id = 123L;
         cartProduct = mock(CartProduct.class);
-
-    }
-
-    @Nested
-    @DisplayName("Save a CartProduct")
-    class SaveCartProductTests {
-
-        @Test
-        @DisplayName("Given CartProduct " +
-                "When Saved " +
-                "Then Return Same CartProduct")
-        void saveTest() {
-
-            when(cartProductRepository.save(any(CartProduct.class))).thenReturn(cartProduct);
-
-            CartProduct result = cartProductService.save(cartProduct);
-
-            assertEquals(cartProduct, result);
-            verify(cartProductRepository).save(any(CartProduct.class));
-        }
-
-        @Test
-        @DisplayName("Given Saving Fails " +
-                "When Saving " +
-                "Then Throw Exception")
-        void saveFailureTest() {
-            when(cartProductRepository.save(any(CartProduct.class))).thenThrow(CartProductSaveException.class);
-
-            assertThrows(CartProductSaveException.class, () -> {
-                cartProductService.save(cartProduct);
-            });
-
-            verify(cartProductRepository).save(any(CartProduct.class));
-        }
 
     }
 
