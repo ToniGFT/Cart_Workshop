@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
+import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
@@ -57,7 +58,7 @@ public class CartController {
     public ResponseEntity<?> getCartById(@PathVariable("id") String id) {
         try {
             Long idCart = Long.parseLong(id);
-            Cart receivedCart = cartService.getCart(idCart);
+            CartDto receivedCart = cartService.getCart(idCart);
             return ResponseEntity.ok(receivedCart);
         } catch (NumberFormatException e) {
             ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());

@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
+import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
@@ -86,7 +87,7 @@ class CartControllerTest {
         @Test
         @DisplayName("When getting cart by ID, then expect OK status")
         void getCartByIdTest() throws Exception {
-            Cart cart = new Cart();
+            CartDto cart = new CartDto();
             cart.setId(cartId);
 
             when(cartService.getCart(cartId)).thenReturn(cart);
@@ -198,7 +199,7 @@ class CartControllerTest {
         @Test
         @DisplayName("When getting cart by ID, then expect OK status")
         void getCartByIdTest() {
-            Cart cart = new Cart();
+            CartDto cart = new CartDto();
             cart.setId(cartId);
 
             when(cartService.getCart(cartId)).thenReturn(cart);

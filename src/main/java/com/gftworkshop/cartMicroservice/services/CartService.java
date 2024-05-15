@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.services;
 
+import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 
@@ -12,7 +13,7 @@ public interface CartService {
 
     void removeProductFromCart(CartProduct cartProduct);
 
-    BigDecimal getCartTotal(Long cartId);
+    BigDecimal getCartTotal(Long cartId, Long userId);
 
     void clearCart(Long cartId);
 
@@ -20,5 +21,5 @@ public interface CartService {
 
     Cart createCart(Long userId);
 
-    Cart getCart(Long cartId);
+    CartDto getCart(Long cartId);
 }
