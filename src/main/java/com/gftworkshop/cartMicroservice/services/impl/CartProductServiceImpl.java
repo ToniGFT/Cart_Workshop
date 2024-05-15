@@ -5,29 +5,18 @@ import com.gftworkshop.cartMicroservice.exceptions.CartProductSaveException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.services.CartProductService;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 
 @Service
 public class CartProductServiceImpl implements CartProductService {
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     private final CartProductRepository cartProductRepository;
 
     public CartProductServiceImpl(CartProductRepository cartProductRepository) {
         this.cartProductRepository = cartProductRepository;
-    }
-
-    @Override
-    public CartProduct save(CartProduct cartProduct) throws CartProductSaveException {
-        return cartProductRepository.save(cartProduct);
     }
 
     @Override
