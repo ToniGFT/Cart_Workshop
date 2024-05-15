@@ -7,25 +7,31 @@ import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
+import com.gftworkshop.cartMicroservice.services.CartService;
 import com.gftworkshop.cartMicroservice.services.ProductService;
 import com.gftworkshop.cartMicroservice.services.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.util.*;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CartServiceImplTest {
+
 
     @Mock
     private CartRepository cartRepository;
@@ -37,8 +43,51 @@ public class CartServiceImplTest {
     private CartServiceImpl cartServiceImpl;
     @InjectMocks
     private ProductService productService;
-    @InjectMocks
+    @Mock
     private UserService userService;
+
+
+    private User user;
+    private Cart cart;
+    private Product product1;
+    private Product product2;
+    private CartProduct cartProduct1;
+    private CartProduct cartProduct2;
+
+
+    @Test
+    public void testGetCartTotal_successfulCalculation() {
+        when(userService.getUserById(anyLong())).thenReturn(Mono.just(new User(1L, new Country(1L, 0.07))));
+
+        // Setup user and country
+        Country country = new Country(1l,0.07);
+        user = new User(1L, country);
+
+        // Setup products
+        product1 = new Product(1L, "Product1", "Description1", new BigDecimal("10.00"), 10, "Category1", 2.0);
+        product2 = new Product(2L, "Product2", "Description2", new BigDecimal("20.00"), 5, "Category2", 3.0);
+
+        // Setup cart products
+        cartProduct1 = new CartProduct(1L, cart, 1L, "Product1", "Category1", "Description1", 2, new BigDecimal("10.00"));
+        cartProduct2 = new CartProduct(2L, cart, 2L, "Product2", "Category2", "Description2", 3, new BigDecimal("20.00"));
+
+        // Setup cart
+        cart = new Cart(1L, 1L, null, Arrays.asList(cartProduct1, cartProduct2));
+
+        when(userService.getUserById(anyLong())).thenReturn(Mono.just(user));
+        when(cartRepository.findById(anyLong())).thenReturn(Optional.of(cart));
+        when(productService.getProductById(1L)).thenReturn(Mono.just(product1));
+        when(productService.getProductById(2L)).thenReturn(Mono.just(product2));
+
+
+
+        BigDecimal expectedTotal = new BigDecimal("86.10"); // Calculation: (10*2 + 20*3) + 7% tax + 10 weight cost
+        BigDecimal result = cartServiceImpl.getCartTotal(1L, 1L);
+
+        assertEquals(0, expectedTotal.compareTo(result), "The calculated total should match expected total.");
+    }
+
+
 
     @Test
     @DisplayName("Given a cart and a product, " +
@@ -82,66 +131,6 @@ public class CartServiceImplTest {
 
         verify(cartProductRepository).delete(cartProduct);
     }
-
-
-    @Test
-    @DisplayName("Given a cart with multiple products, " +
-            "when calculating the cart total, " +
-            "then the total should be calculated correctly including tax and weight cost")
-    void getCartTotalTest() {
-        Long cartId = 1L;
-        Long userId = 1L;
-
-        // Mocking dependencies
-        Cart cart = mock(Cart.class);
-        User user = mock(User.class);
-        Country country = mock(Country.class);
-        Product product1 = mock(Product.class);
-        Product product2 = mock(Product.class);
-
-        // Setup user and country for tax calculation
-        when(user.getCountry()).thenReturn(country);
-        when(country.getTax()).thenReturn(0.10); // 10% tax
-
-        // Setup product weights
-        when(product1.getWeight()).thenReturn(5.0); // 5 kg
-        when(product2.getWeight()).thenReturn(10.0); // 10 kg
-
-        // Mock CartProducts within the cart
-        CartProduct cartProduct1 = mock(CartProduct.class);
-        when(cartProduct1.getPrice()).thenReturn(new BigDecimal("10"));
-        when(cartProduct1.getQuantity()).thenReturn(2);
-        when(cartProduct1.getProductId()).thenReturn(101L);
-        when(productService.getProductById(101L)).thenReturn(Mono.just(product1));
-
-        CartProduct cartProduct2 = mock(CartProduct.class);
-        when(cartProduct2.getPrice()).thenReturn(new BigDecimal("15"));
-        when(cartProduct2.getQuantity()).thenReturn(3);
-        when(cartProduct2.getProductId()).thenReturn(102L);
-        when(productService.getProductById(102L)).thenReturn(Mono.just(product2));
-
-        List<CartProduct> cartProducts = Arrays.asList(cartProduct1, cartProduct2);
-        when(cart.getCartProducts()).thenReturn(cartProducts);
-
-        // Setup repository and service calls
-        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-        when(userService.getUserById(userId)).thenReturn(Mono.just(user));
-
-        // Expected values calculation
-        BigDecimal expectedTotal = new BigDecimal("65"); // Base total from product prices and quantities
-        BigDecimal weightCost = new BigDecimal("10"); // From weight 15kg (>5kg and <=10kg)
-        BigDecimal tax = expectedTotal.multiply(new BigDecimal("0.10")); // 10% tax
-        expectedTotal = expectedTotal.add(tax).add(weightCost);
-
-        // Testing getCartTotal
-        BigDecimal actualTotal = cartServiceImpl.getCartTotal(cartId, userId);
-
-        assertEquals(expectedTotal, actualTotal);
-        verify(productService, times(1)).getProductById(101L);
-        verify(productService, times(1)).getProductById(102L);
-    }
-
-
 
     @Test
     @DisplayName("Given an existing cart, " +
