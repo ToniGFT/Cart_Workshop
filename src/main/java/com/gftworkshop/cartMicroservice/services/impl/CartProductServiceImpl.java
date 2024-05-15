@@ -1,13 +1,11 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
-import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.services.CartProductService;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 
 @Service
