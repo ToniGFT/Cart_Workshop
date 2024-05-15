@@ -2,6 +2,7 @@ package com.gftworkshop.cartMicroservice.services.impl;
 
 import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.ForbiddenAccessException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,7 +59,6 @@ class CartProductServiceImplTest {
         @DisplayName("Given Invalid Quantity " +
                 "Then Throws Exception")
         void testUpdateQuantityWithInvalidQuantity() {
-            Long id = 1L;
             int quantity = -5;
 
             CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
@@ -75,7 +75,6 @@ class CartProductServiceImplTest {
                 "When Updated " +
                 "Then Return 0 Rows Affected")
         void updateQuantityNoChangesTest() {
-            Long id = 1L;
             int currentQuantity = 5;
 
             when(cartProductRepository.updateQuantity(id, currentQuantity)).thenReturn(0);
@@ -88,27 +87,36 @@ class CartProductServiceImplTest {
     }
 
 
-    @Test
-    @DisplayName("Remove CartProduct - Given Product ID " +
-            "When Removed " +
-            "Then Verify Deletion")
-    void removeProductTest() {
-        CartProduct cartProductToRemove = new CartProduct();
+    @Nested
+    @DisplayName("Remove CartProduct")
+    class RemoveCartProductTests {
+        @Test
+        @DisplayName("When removing existing " +
+                "Then verify deletion")
+        void removeProductTest() {
+            CartProduct cartProductToRemove = new CartProduct();
 
-        when(cartProductRepository.findById(id)).thenReturn(Optional.of(cartProductToRemove));
+            when(cartProductRepository.findById(id)).thenReturn(Optional.of(cartProductToRemove));
 
-        CartProduct removedProduct = cartProductService.removeProduct(id);
+            CartProduct removedProduct = cartProductService.removeProduct(id);
 
-        verify(cartProductRepository, times(1)).deleteById(id);
-        assertEquals(cartProductToRemove, removedProduct);
+            verify(cartProductRepository, times(1)).deleteById(id);
+            assertEquals(cartProductToRemove, removedProduct);
+        }
 
-        when(cartProductRepository.findById(id)).thenReturn(Optional.empty());
+        @Test
+        @DisplayName("When removing non-existent CartProduct - Then verify exception")
+        void removeNonExistentProductTest() {
 
-        CartProductNotFoundException exception = assertThrows(CartProductNotFoundException.class, () -> {
-            cartProductService.removeProduct(id);
-        });
+            when(cartProductRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertEquals("No se encontró el CartProduct con ID: " + id, exception.getMessage());
+            CartProductNotFoundException exception = assertThrows(CartProductNotFoundException.class, () -> {
+                cartProductService.removeProduct(id);
+            });
+
+            assertEquals("No se encontró el CartProduct con ID: " + id, exception.getMessage());
+        }
     }
+
 
 }
