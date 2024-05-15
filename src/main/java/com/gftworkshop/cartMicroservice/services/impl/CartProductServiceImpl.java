@@ -1,7 +1,7 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.CartProductSaveException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.services.CartProductService;
@@ -22,7 +22,7 @@ public class CartProductServiceImpl implements CartProductService {
     @Override
     public int updateQuantity(Long id, int quantity) {
         if (quantity <= 0) {
-            throw new CartProductSaveException("The quantity must be higher than 0");
+            throw new CartProductInvalidQuantityException("The quantity must be higher than 0");
         }
         return cartProductRepository.updateQuantity(id, quantity);
     }
