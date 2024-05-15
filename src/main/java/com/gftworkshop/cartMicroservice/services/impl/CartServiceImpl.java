@@ -4,6 +4,8 @@ import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.UserNotFoundException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
@@ -12,7 +14,6 @@ import com.gftworkshop.cartMicroservice.services.CartService;
 import com.gftworkshop.cartMicroservice.services.ProductService;
 import com.gftworkshop.cartMicroservice.services.UserService;
 import jakarta.transaction.Transactional;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -70,29 +71,28 @@ public class CartServiceImpl implements CartService {
     }
 
 
-
     @Override
     public BigDecimal getCartTotal(Long cartId, Long userId) {
-        User user = userService.getUserById(userId).block();
+        User user = userService.getUserById(userId)
+                .blockOptional().orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
 
-        Optional<Cart> optionalCart = cartRepository.findById(cartId);
-        if (!optionalCart.isPresent()) {
-            throw new CartNotFoundException("Cart with ID " + cartId + " not found");
-        }
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
 
-        Cart cart = optionalCart.get();
         BigDecimal total = BigDecimal.ZERO;
         double totalWeight = 0.0;
 
         for (CartProduct cartProduct : cart.getCartProducts()) {
-            Product product = productService.getProductById(cartProduct.getProductId()).block();
+            Product product = productService.getProductById(cartProduct.getProductId())
+                    .blockOptional().orElseThrow(() -> new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
+
             totalWeight += product.getWeight();
             BigDecimal productTotal = cartProduct.getPrice().multiply(BigDecimal.valueOf(cartProduct.getQuantity()));
             total = total.add(productTotal);
         }
 
         BigDecimal weightCost = calculateWeightCost(totalWeight);
-        BigDecimal tax = total.multiply(new BigDecimal(user.getCountry().getTax()));
+        BigDecimal tax = total.multiply(BigDecimal.valueOf(user.getCountry().getTax()));
         total = total.add(tax).add(weightCost);
 
         return total;
@@ -108,7 +108,6 @@ public class CartServiceImpl implements CartService {
         }
         return new BigDecimal("5");
     }
-
 
 
     @Transactional

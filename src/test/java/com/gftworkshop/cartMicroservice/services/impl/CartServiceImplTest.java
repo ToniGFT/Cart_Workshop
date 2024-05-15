@@ -1,9 +1,12 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
+import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.Country;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.UserNotFoundException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
@@ -40,7 +43,7 @@ public class CartServiceImplTest {
         cartProductRepository = mock(CartProductRepository.class);
         userService = mock(UserService.class);
         productService = mock(ProductService.class);
-        cartServiceImpl = new CartServiceImpl(cartRepository, cartProductRepository,productService,userService);
+        cartServiceImpl = new CartServiceImpl(cartRepository, cartProductRepository, productService, userService);
     }
 
     @Test
@@ -136,8 +139,6 @@ public class CartServiceImplTest {
     }
 
 
-
-
     @Test
     @DisplayName("Given an existing cart, " +
             "when clearing the cart, " +
@@ -220,19 +221,18 @@ public class CartServiceImplTest {
     }
 
     @Test
-    @Ignore
     @DisplayName("Given a cartId, " +
             "when getting the cart, " +
             "then return the corresponding cart")
     void getCartTest() {
         Long cartId = 123L;
 
-        Cart cart = mock(Cart.class);
+        Cart cart = new Cart();
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
 
-        //Cart retrievedCart = cartServiceImpl.getCart(cartId);
+        CartDto retrievedCartDto = cartServiceImpl.getCart(cartId);
 
-        //assertEquals(cart, retrievedCart);
+        assertEquals(cart.getId(), retrievedCartDto.getId());
         verify(cartRepository).findById(cartId);
     }
 
@@ -288,18 +288,6 @@ public class CartServiceImplTest {
         });
     }
 
-    @Test
-    @DisplayName("Given a non-existent cart, " +
-            "when calculating the cart total, " +
-            "then a CartNotFoundException should be thrown")
-    void getCartTotal_CartNotFoundExceptionTest() {
-
-        when(cartRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(CartNotFoundException.class, () -> {
-            cartServiceImpl.getCartTotal(1L,1L);
-        });
-    }
 
     @Test
     @DisplayName("Given a non-existent cart, " +
@@ -311,6 +299,62 @@ public class CartServiceImplTest {
 
         assertThrows(CartNotFoundException.class, () -> {
             cartServiceImpl.clearCart(1L);
+        });
+    }
+
+    @Test
+    @DisplayName("Given a non-existent user, " +
+            "when calculating the cart total, " +
+            "then a UserNotFoundException should be thrown")
+    void getCartTotal_UserNotFoundExceptionTest() {
+        Long cartId = 1L;
+        Long userId = 1L;
+
+        when(userService.getUserById(userId)).thenThrow(new UserNotFoundException("User with ID " + userId + " not found"));
+
+        assertThrows(UserNotFoundException.class, () -> {
+            cartServiceImpl.getCartTotal(cartId, userId);
+        });
+    }
+
+    @Test
+    @DisplayName("Given a non-existent cart, " +
+            "when calculating the cart total, " +
+            "then a CartNotFoundException should be thrown")
+    void getCartTotal_CartNotFoundExceptionTest() {
+        Long cartId = 1L;
+        Long userId = 1L;
+
+        // Especificamos que se debe devolver un Optional vacío cuando se llama a findById(cartId)
+        when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
+
+        // Probamos el método getCartTotal y esperamos que lance una CartNotFoundException
+        assertThrows(CartNotFoundException.class, () -> {
+            cartServiceImpl.getCartTotal(cartId, userId);
+        });
+    }
+
+    @Test
+    @DisplayName("Given a non-existent product in the cart, " +
+            "when calculating the cart total, " +
+            "then a CartProductNotFoundException should be thrown")
+    void getCartTotal_CartProductNotFoundExceptionTest() {
+        Long cartId = 1L;
+        Long userId = 1L;
+
+        Cart cart = new Cart();
+        CartProduct cartProduct = new CartProduct();
+        cartProduct.setProductId(999L);
+        cart.setCartProducts(Collections.singletonList(cartProduct));
+
+        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+
+        when(userService.getUserById(userId)).thenReturn(Mono.just(new User()));
+
+        when(productService.getProductById(cartProduct.getProductId())).thenThrow(new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
+
+        assertThrows(CartProductNotFoundException.class, () -> {
+            cartServiceImpl.getCartTotal(cartId, userId);
         });
     }
 
