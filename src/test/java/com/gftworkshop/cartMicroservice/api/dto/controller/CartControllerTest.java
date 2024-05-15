@@ -264,11 +264,14 @@ class CartControllerTest {
         @DisplayName("When removing a product, then expect Not Found status")
         void removeProductByIdTest_NotFound() {
 
-            when(cartProductService.removeProduct(productId)).thenThrow(new CartProductNotFoundException("CartProduct Not Found"));
+            when(cartProductService.removeProduct(cartId)).thenThrow(CartProductNotFoundException.class);
 
             ResponseEntity<CartProduct> response = cartController.removeProductById(productId);
 
             assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+            assertNull(response.getBody());
+
+            verify(cartProductService, times(1)).removeProduct(cartId);
         }
 
 

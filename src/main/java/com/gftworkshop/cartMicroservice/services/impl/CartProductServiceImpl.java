@@ -29,17 +29,11 @@ public class CartProductServiceImpl implements CartProductService {
 
     @Override
     public CartProduct removeProduct(Long id) {
-
-        Optional<CartProduct> optionalCartProduct = cartProductRepository.findById(id);
-
-        if (optionalCartProduct.isPresent()) {
-            CartProduct cartProduct = optionalCartProduct.get();
-
-            cartProductRepository.deleteById(id);
-
-            return cartProduct;
-        } else {
-            throw new CartProductNotFoundException("No se encontró el CartProduct con ID: " + id);
-        }
+        return cartProductRepository.findById(id)
+                .map(cartProduct -> {
+                    cartProductRepository.deleteById(id);
+                    return cartProduct;
+                })
+                .orElseThrow(() -> new CartProductNotFoundException("No se encontró el CartProduct con ID: " + id));
     }
 }

@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
@@ -69,7 +70,7 @@ public class CartController {
         try{
             CartProduct deletedCartProduct = cartProductService.removeProduct(id);
             return ResponseEntity.ok(deletedCartProduct);
-        } catch(CartNotFoundException e) {
+        } catch(CartProductNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
