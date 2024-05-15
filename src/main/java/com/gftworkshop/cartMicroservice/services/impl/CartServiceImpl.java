@@ -7,6 +7,8 @@ import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.CartService;
 import jakarta.transaction.Transactional;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
@@ -95,7 +98,18 @@ public class CartServiceImpl implements CartService {
     @Override
     public List<Cart> identifyAbandonedCarts(Date thresholdDate) {
 
-        return cartRepository.identifyAbandonedCarts(thresholdDate);
+        List<Cart> abandonedCarts = cartRepository.identifyAbandonedCarts(thresholdDate);
+
+        if (abandonedCarts.isEmpty()) {
+            log.info("No abandoned carts found before {}", thresholdDate);
+        } else {
+            log.info("Found {} abandoned carts before {}", abandonedCarts.size(), thresholdDate);
+            for (Cart cart : abandonedCarts) {
+                log.debug("Abandoned cart: {}, at {}", cart.getId(), cart.getUpdated_at());
+            }
+        }
+
+        return abandonedCarts;
 
     }
 

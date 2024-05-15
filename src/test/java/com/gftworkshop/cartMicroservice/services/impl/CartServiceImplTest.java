@@ -35,25 +35,21 @@ public class CartServiceImplTest {
             "when adding the product to the cart, " +
             "then the product should be added successfully")
     void addProductToCartTest() {
-        // Crear un mock de Cart
+
         Cart cart = mock(Cart.class);
         when(cart.getId()).thenReturn(1L);
         when(cart.getCartProducts()).thenReturn(new ArrayList<>());
 
-        // Crear un mock de CartProduct
         CartProduct cartProduct = mock(CartProduct.class);
         lenient().when(cartProduct.getId()).thenReturn(1L);
 
         when(cartProduct.getCart()).thenReturn(cart);
 
-        // Configurar los mocks de los repositorios
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
 
-        // Ejecutar el método
         cartServiceImpl.addProductToCart(cartProduct);
 
-        // Verificar que los métodos save fueron llamados
         verify(cartProductRepository).save(cartProduct);
         verify(cartRepository).save(cart);
     }
