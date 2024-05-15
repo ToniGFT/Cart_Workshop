@@ -4,6 +4,7 @@ import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,14 +22,16 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class CartServiceImplTest {
 
-    @Mock
     private CartRepository cartRepository;
-
-    @Mock
     private CartProductRepository cartProductRepository;
-
-    @InjectMocks
     private CartServiceImpl cartServiceImpl;
+
+    @BeforeEach
+    void setUp() {
+        cartRepository = mock(CartRepository.class);
+        cartProductRepository = mock(CartProductRepository.class);
+        cartServiceImpl = new CartServiceImpl(cartRepository, cartProductRepository);
+    }
 
     @Test
     @DisplayName("Given a cart and a product, " +
