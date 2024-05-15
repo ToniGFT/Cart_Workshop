@@ -12,7 +12,7 @@ public interface CartService {
 
     void removeProductFromCart(CartProduct cartProduct);
 
-    BigDecimal getCartTotal(Long cartId);
+    BigDecimal getCartTotal(Long cartId, Long userId);
 
     void clearCart(Long cartId);
 

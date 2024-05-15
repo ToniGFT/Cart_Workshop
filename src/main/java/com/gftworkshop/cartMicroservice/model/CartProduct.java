@@ -23,6 +23,9 @@ public class CartProduct {
     @JsonBackReference
     private Cart cart;
 
+    @Column(name ="product_id")
+    private Long productId;
+
     @Column(name = "product_name")
     private String productName;
 
