@@ -2,11 +2,13 @@ package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.CartProductService;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
 import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,12 +20,12 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 class CartControllerTest {
 
     private MockMvc mockMvc;
@@ -78,7 +80,7 @@ class CartControllerTest {
 
             mockMvc.perform(post("/carts/{id}", cartId)
                             .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk());
+                    .andExpect(status().is2xxSuccessful());
         }
 
         @Test
@@ -161,28 +163,36 @@ class CartControllerTest {
 
 
         @Test
-        @DisplayName("When adding cart by ID, then expect OK status")
+        @DisplayName("When adding cart by ID, then expect CREATED status")
         void addCartByIdTest() {
             Cart cart = new Cart();
             cart.setId(cartId);
             when(cartService.createCart(1L)).thenReturn(cart);
 
-            ResponseEntity<Cart> response = cartController.addCartByUserId(cartId);
+            ResponseEntity<?> response = cartController.addCartByUserId(cartId);
 
-            assertEquals(ResponseEntity.ok(cart), response);
-            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+            assertTrue(response.getHeaders().containsKey("Location"));
+            assertEquals("/carts/" + cartId, response.getHeaders().getFirst("Location"));
+
+            assertEquals(cart, response.getBody());
         }
 
         @Test
-        @DisplayName("When adding cart by ID, then expect NotFound status")
-        void addCartByIdTest_NotFound() {
-            when(cartService.createCart(cartId)).thenReturn(null);
+        @DisplayName("When adding cart by ID, then expect Error status")
+        void addCartByIdTest_Error() {
+            Long userId = 1L;
+            String response = "Internal Server Error";
+            when(cartService.createCart(userId)).thenThrow(new RuntimeException(response));
 
-            ResponseEntity<Cart> response = cartController.addCartByUserId(cartId);
+            ResponseEntity<?> responseEntity = cartController.addCartByUserId(userId);
 
-            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-            assertEquals(null, response.getBody());
-            verify(cartService, times(1)).createCart(cartId);
+            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+            ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+            assertEquals(500, errorResponse.getCode());
+            assertEquals(response, errorResponse.getMessage());
+            verify(cartService, times(1)).createCart(userId);
         }
 
         @Test
@@ -193,7 +203,7 @@ class CartControllerTest {
 
             when(cartService.getCart(cartId)).thenReturn(cart);
 
-            ResponseEntity<Cart> response = cartController.getCartById(cart.getId());
+            ResponseEntity<?> response = cartController.getCartById(String.valueOf(cart.getId()));
 
             verify(cartService, times(1)).getCart(cartId);
             assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -202,13 +212,15 @@ class CartControllerTest {
         @Test
         @DisplayName("When adding cart by ID, then expect NotFound status")
         void getCartByIdTest_NotFound() {
-            when(cartService.getCart(cartId)).thenThrow(CartNotFoundException.class);
+            String response = "Cart with ID not found";
+            when(cartService.getCart(cartId)).thenThrow(new CartNotFoundException(response));
 
-            ResponseEntity<Cart> response = cartController.getCartById(cartId);
+            ResponseEntity<?> responseEntity = cartController.getCartById(String.valueOf(cartId));
 
-            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-            assertNull(response.getBody());
-
+            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+            ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+            assertEquals(404, errorResponse.getCode());
+            assertEquals(response, errorResponse.getMessage());
             verify(cartService, times(1)).getCart(cartId);
         }
 
@@ -254,7 +266,7 @@ class CartControllerTest {
 
             when(cartProductService.removeProduct(anyLong())).thenReturn(cartProduct);
 
-            ResponseEntity<CartProduct> response = cartController.removeProductById(productId);
+            ResponseEntity<?> response = cartController.removeProductById(productId);
 
             assertEquals(ResponseEntity.ok(cartProduct), response);
             assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -263,19 +275,17 @@ class CartControllerTest {
         @Test
         @DisplayName("When removing a product, then expect Not Found status")
         void removeProductByIdTest_NotFound() {
+            String errorMessage = "Cart product not found";
+            when(cartProductService.removeProduct(productId)).thenThrow(new CartProductNotFoundException(errorMessage));
 
-            when(cartProductService.removeProduct(cartId)).thenThrow(CartProductNotFoundException.class);
+            ResponseEntity<?> responseEntity = cartController.removeProductById(productId);
 
-            ResponseEntity<CartProduct> response = cartController.removeProductById(productId);
-
-            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-            assertNull(response.getBody());
-
-            verify(cartProductService, times(1)).removeProduct(cartId);
+            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+            ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
+            assertEquals(404, errorResponse.getCode());
+            assertEquals(errorMessage, errorResponse.getMessage());
+            verify(cartProductService, times(1)).removeProduct(productId);
         }
-
-
-
     }
 
     @Test

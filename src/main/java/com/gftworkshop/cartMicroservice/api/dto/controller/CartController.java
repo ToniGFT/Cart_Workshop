@@ -2,13 +2,17 @@ package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
 import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,19 +34,36 @@ public class CartController {
     }
 
     @PostMapping("/carts/{id}")
-    public ResponseEntity<Cart> addCartByUserId(@PathVariable("id") Long id) {
-        Optional<Cart> optionalCart = Optional.ofNullable(cartService.createCart(id));
-        return optionalCart.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<?> addCartByUserId(@PathVariable("id") Long id) {
+        try {
+            Cart createdCart = cartService.createCart(id);
+
+            if (createdCart != null) {
+                return ResponseEntity.created(URI.create("/carts/" + createdCart.getId())).body(createdCart);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
     }
 
     @GetMapping("/carts/{id}")
-    public ResponseEntity<Cart> getCartById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> getCartById(@PathVariable("id") String id) {
         try {
-            Cart receivedCart = cartService.getCart(id);
+            Long idCart = Long.parseLong(id);
+            Cart receivedCart = cartService.getCart(idCart);
             return ResponseEntity.ok(receivedCart);
+        } catch (NumberFormatException e) {
+            ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         } catch (CartNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e){
+            ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 
@@ -66,12 +87,16 @@ public class CartController {
     }
 
     @DeleteMapping("/carts/products/{id}")
-    public ResponseEntity<CartProduct> removeProductById(@PathVariable("id") Long id) {
+    public ResponseEntity<?> removeProductById(@PathVariable("id") Long id) {
         try{
             CartProduct deletedCartProduct = cartProductService.removeProduct(id);
             return ResponseEntity.ok(deletedCartProduct);
         } catch(CartProductNotFoundException e) {
-            return ResponseEntity.notFound().build();
+            ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+        } catch (Exception e){
+            ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
 }
