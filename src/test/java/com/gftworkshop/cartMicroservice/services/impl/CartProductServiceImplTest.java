@@ -4,10 +4,14 @@ import com.gftworkshop.cartMicroservice.exceptions.CartProductSaveException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.services.CartProductService;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
@@ -17,20 +21,20 @@ import static org.mockito.Mockito.*;
 
 public class CartProductServiceImplTest {
 
+    @Mock
+    private EntityManager entityManager;
+    @Mock
     private CartProductRepository cartProductRepository;
-    private CartProductService cartProductService;
+    @InjectMocks
+    private CartProductServiceImpl cartProductService;
     private CartProduct cartProduct;
     private Long id;
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
 
         id = 123L;
-
-        cartProductRepository = mock(CartProductRepository.class);
-
-        cartProductService = new CartProductServiceImpl(cartProductRepository);
-
         cartProduct = mock(CartProduct.class);
 
     }
@@ -79,12 +83,12 @@ public class CartProductServiceImplTest {
         void updateQuantityTest() {
             int newQuantity = 5;
 
-            when(cartProductRepository.updateProductQuantity(id, newQuantity)).thenReturn(1);
+            when(cartProductRepository.updateQuantity(id, newQuantity)).thenReturn(1);
 
             int rowsAffected = cartProductService.updateQuantity(id, newQuantity);
 
             assertEquals(1, rowsAffected);
-            verify(cartProductRepository).updateProductQuantity(id, newQuantity);
+            verify(cartProductRepository).updateQuantity(id, newQuantity);
 
         }
 
@@ -112,12 +116,12 @@ public class CartProductServiceImplTest {
             Long id = 1L;
             int currentQuantity = 5;
 
-            when(cartProductRepository.updateProductQuantity(id, currentQuantity)).thenReturn(0);
+            when(cartProductRepository.updateQuantity(id, currentQuantity)).thenReturn(0);
 
             int rowsAffected = cartProductService.updateQuantity(id, currentQuantity);
 
             assertEquals(0, rowsAffected);
-            verify(cartProductRepository).updateProductQuantity(id, currentQuantity);
+            verify(cartProductRepository).updateQuantity(id, currentQuantity);
         }
     }
 

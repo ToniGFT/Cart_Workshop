@@ -30,15 +30,12 @@ public class CartProductServiceImpl implements CartProductService {
         return cartProductRepository.save(cartProduct);
     }
 
-    @Transactional
+    @Override
     public int updateQuantity(Long id, int quantity) {
         if (quantity <= 0) {
             throw new CartProductSaveException("The quantity must be higher than 0");
         }
-        return entityManager.createQuery("UPDATE CartProduct cp SET cp.quantity = :quantity WHERE cp.id = :id")
-                .setParameter("quantity", quantity)
-                .setParameter("id", id)
-                .executeUpdate();
+        return cartProductRepository.updateQuantity(id, quantity);
     }
 
     @Override
