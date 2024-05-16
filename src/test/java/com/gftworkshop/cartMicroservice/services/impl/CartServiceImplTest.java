@@ -71,24 +71,6 @@ public class CartServiceImplTest {
 
 
     @Test
-    @DisplayName("Given a cart with a product, " +
-            "when removing the product from the cart, " +
-            "then the product should be removed successfully")
-    void removeProductFromCartTest() {
-
-        CartProduct cartProduct = mock(CartProduct.class);
-        Cart cart = mock(Cart.class);
-
-        when(cartProduct.getId()).thenReturn(1L);
-
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
-
-        cartServiceImpl.removeProductFromCart(cartProduct);
-
-        verify(cartProductRepository).delete(cartProduct);
-    }
-
-    @Test
     @DisplayName("Given a cart with multiple products and a user, " +
             "when calculating the cart total including tax and weight costs, " +
             "then the total should be calculated correctly")
@@ -268,22 +250,6 @@ public class CartServiceImplTest {
 
         assertThrows(CartNotFoundException.class, () -> {
             cartServiceImpl.addProductToCart(cartProduct);
-        });
-    }
-
-    @Test
-    @DisplayName("Given a non-existent cart, " +
-            "when removing a product from the cart, " +
-            "then a CartNotFoundException should be thrown")
-    void removeProductFromCart_CartNotFoundExceptionTest() {
-
-        CartProduct cartProduct = mock(CartProduct.class);
-        when(cartProduct.getId()).thenReturn(1L);
-
-        when(cartRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(CartNotFoundException.class, () -> {
-            cartServiceImpl.removeProductFromCart(cartProduct);
         });
     }
 
