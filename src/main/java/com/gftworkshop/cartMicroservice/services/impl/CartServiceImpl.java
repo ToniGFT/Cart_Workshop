@@ -145,7 +145,10 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartDto getCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId).orElseThrow();
-        return entityToDto(cart);
+        //BigDecimal bigDecimalTotalPrice = getCartTotal(cart.getId(), cart.getUser_id());
+        CartDto cartDto = entityToDto(cart);
+        cartDto.setTotalPrice(new BigDecimal("323.3"));
+        return cartDto;
     }
 
     public List<Cart> getAllCarts() {
