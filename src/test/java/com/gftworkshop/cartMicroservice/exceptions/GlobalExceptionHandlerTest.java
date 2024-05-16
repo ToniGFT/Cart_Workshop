@@ -1,4 +1,4 @@
-package com.gftworkshop.cartMicroservice.api.dto.exceptions;
+package com.gftworkshop.cartMicroservice.exceptions;
 
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
