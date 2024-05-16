@@ -55,21 +55,6 @@ public class CartServiceImpl implements CartService {
         }
     }
 
-    @Override
-    public void removeProductFromCart(CartProduct cartProduct) {
-        Long cartId = cartProduct.getId();
-        Optional<Cart> optionalCart = cartRepository.findById(cartId);
-        if (optionalCart.isPresent()) {
-            Cart cart = optionalCart.get();
-            cart.getCartProducts().remove(cartProduct);
-            cartProduct.setCart(null);
-            cartProductRepository.delete(cartProduct);
-            cartRepository.save(cart);
-        } else {
-            throw new CartNotFoundException("Cart with ID " + cartId + " not found");
-        }
-    }
-
 
     @Override
     public BigDecimal getCartTotal(Long cartId, Long userId) {
@@ -149,11 +134,17 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart createCart(Long userId) {
-        Cart cart = new Cart();
-        cart.setUpdated_at(new Date());
-        cart.setUser_id(userId);
-        return cartRepository.save(cart);
+        Optional<Cart> existingCart = cartRepository.findByUserId(userId);
+        if (existingCart.isEmpty()) {
+            Cart cart = new Cart();
+            cart.setUpdated_at(new Date());
+            cart.setUser_id(userId);
+            return cartRepository.save(cart);
+        } else {
+            throw new IllegalArgumentException("User with ID " + userId + " already has a cart.");
+        }
     }
+
 
     @Override
     public CartDto getCart(Long cartId) {

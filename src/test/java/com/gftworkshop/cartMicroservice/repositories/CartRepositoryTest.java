@@ -1,85 +1,66 @@
 package com.gftworkshop.cartMicroservice.repositories;
 
-import com.gftworkshop.cartMicroservice.model.Cart;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Before;
+import org.junit.Test;
 
-@DataJpaTest
+import com.gftworkshop.cartMicroservice.model.Cart;
+
 public class CartRepositoryTest {
 
     private CartRepository cartRepository;
-    private Cart cart;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         cartRepository = mock(CartRepository.class);
-        cart = mock(Cart.class);
     }
 
     @Test
-    @DisplayName("When getting a specified id, " +
-            "then I get a cart")
-    void findCartByIdTest() {
-        Long cartId = 1L;
+    public void testIdentifyAbandonedCarts() {
 
-        when(cart.getId()).thenReturn(cartId);
-        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-
-        Optional<Cart> retrievedCartOptional = cartRepository.findById(cartId);
-        assertTrue(retrievedCartOptional.isPresent());
-        assertEquals(cartId, retrievedCartOptional.get().getId());
-    }
-
-    @Test
-    @DisplayName("When getting a specified id, " +
-            "then I delete a cart")
-    void removeCartByIdTest() {
-        Long cartIdToDelete = 1L;
-
-        when(cart.getId()).thenReturn(cartIdToDelete);
-        when(cartRepository.findById(cartIdToDelete)).thenReturn(Optional.of(cart));
-
-        cartRepository.deleteById(cartIdToDelete);
-        assertFalse(cartRepository.existsById(cartIdToDelete));
-    }
-
-    @Test
-    @DisplayName("When getting a specified id, " +
-            "then I add a cart")
-    void addCartByIdTest() {
-        Long cartId = 1L;
-
-        when(cart.getId()).thenReturn(cartId);
-        when(cartRepository.save(cart)).thenReturn(cart);
-
-        Cart savedCart = cartRepository.save(cart);
-
-        assertNotNull(savedCart);
-        assertEquals(cartId, savedCart.getId());
-    }
-
-    @Test
-    @DisplayName("When identifying abandoned carts, " +
-            "then return the correct list")
-    void identifyAbandonedCartsTest() {
         Date thresholdDate = new Date();
-        List<Cart> expectedAbandonedCarts = List.of(mock(Cart.class), mock(Cart.class));
+        List<Cart> expectedCarts = List.of(new Cart(), new Cart());
 
-        when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(expectedAbandonedCarts);
+        when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(expectedCarts);
 
-        List<Cart> actualAbandonedCarts = cartRepository.identifyAbandonedCarts(thresholdDate);
+        List<Cart> actualCarts = cartRepository.identifyAbandonedCarts(thresholdDate);
 
-        assertEquals(expectedAbandonedCarts, actualAbandonedCarts);
+        assertEquals(expectedCarts, actualCarts);
+        verify(cartRepository, times(1)).identifyAbandonedCarts(thresholdDate);
+    }
+
+    @Test
+    public void testFindByUserId() {
+
+        Long userId = 123L;
+        Cart expectedCart = new Cart();
+
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(expectedCart));
+
+        Optional<Cart> actualCartOptional = cartRepository.findByUserId(userId);
+
+        assertTrue(actualCartOptional.isPresent());
+        assertEquals(expectedCart, actualCartOptional.get());
+        verify(cartRepository, times(1)).findByUserId(userId);
+    }
+
+    @Test
+    public void testFindByUserIdNotFound() {
+
+        Long userId = 123L;
+
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.empty());
+
+        Optional<Cart> actualCartOptional = cartRepository.findByUserId(userId);
+
+        assertTrue(actualCartOptional.isEmpty());
+        verify(cartRepository, times(1)).findByUserId(userId);
     }
 }
