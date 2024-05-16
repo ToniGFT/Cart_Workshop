@@ -156,7 +156,7 @@ class CartControllerTest {
             cartProduct.setQuantity(1);
             cartProduct.setPrice(BigDecimal.TEN);
 
-            ResponseEntity<Cart> response = cartController.addProduct(cartProduct);
+            ResponseEntity<?> response = cartController.addProduct(cartProduct);
 
             assertEquals(HttpStatus.OK, response.getStatusCode());
             verify(cartService, times(1)).addProductToCart(cartProduct);
@@ -170,7 +170,7 @@ class CartControllerTest {
             cart.setId(cartId);
             when(cartService.createCart(1L)).thenReturn(cart);
 
-            ResponseEntity<?> response = cartController.addCartByUserId(cartId);
+            ResponseEntity<?> response = cartController.addCartByUserId(String.valueOf(cartId));
 
             assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
@@ -187,7 +187,7 @@ class CartControllerTest {
             String response = "Internal Server Error";
             when(cartService.createCart(userId)).thenThrow(new RuntimeException(response));
 
-            ResponseEntity<?> responseEntity = cartController.addCartByUserId(userId);
+            ResponseEntity<?> responseEntity = cartController.addCartByUserId(String.valueOf(userId));
 
             assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
             ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
@@ -230,7 +230,7 @@ class CartControllerTest {
         void removeCartByIdTest(){;
             doNothing().when(cartService).clearCart(cartId);
 
-            ResponseEntity<Cart> response = cartController.removeCartById(cartId);
+            ResponseEntity<?> response = cartController.removeCartById(String.valueOf(cartId));
 
             verify(cartService, times(1)).clearCart(cartId);
             assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -251,7 +251,7 @@ class CartControllerTest {
 
             when(cartProductService.updateQuantity(productId, newQuantity)).thenReturn(ResponseEntity.ok().build().getStatusCode().value());
 
-            ResponseEntity<Cart> response = cartController.updateProduct(cartProduct);
+            ResponseEntity<?> response = cartController.updateProduct(cartProduct);
 
             verify(cartProductService, times(1)).updateQuantity(productId, newQuantity);
             assertEquals(HttpStatus.OK, response.getStatusCode());
