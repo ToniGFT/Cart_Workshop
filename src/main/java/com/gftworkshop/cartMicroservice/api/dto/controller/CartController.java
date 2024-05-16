@@ -36,92 +36,51 @@ public class CartController {
     public ResponseEntity<?> addCartByUserId(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
         Cart createdCart = cartService.createCart(idCart);
-        if (createdCart != null) {
+        if (createdCart != null)
             return ResponseEntity.created(URI.create("/carts/" + createdCart.getId())).body(createdCart);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+
+        return ResponseEntity.notFound().build();
     }
 
     @GetMapping("/carts/{id}")
     public ResponseEntity<?> getCartById(@PathVariable("id") String id) {
-        try {
-            Long idCart = Long.parseLong(id);
-            CartDto receivedCart = cartService.getCart(idCart);
+        Long idCart = Long.parseLong(id);
+        CartDto receivedCart = cartService.getCart(idCart);
+        if (receivedCart != null)
             return ResponseEntity.ok(receivedCart);
-        } catch (NumberFormatException e) {
-            ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        } catch (CartNotFoundException e) {
-            ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+
+        return ResponseEntity.notFound().build();
+
     }
 
     @DeleteMapping("/carts/{id}")
     public ResponseEntity<?> removeCartById(@PathVariable("id") String id) {
-        try {
-            Long idCart = Long.parseLong(id);
-            cartService.clearCart(idCart);
-            return ResponseEntity.ok().build();
-        } catch (NumberFormatException e) {
-            ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        } catch (CartNotFoundException e) {
-            ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+        Long idCart = Long.parseLong(id);
+        cartService.clearCart(idCart);
+
+        return ResponseEntity.ok().build();
+
     }
 
     @PostMapping("/carts/products")
     public ResponseEntity<?> addProduct(@RequestBody CartProduct cartProduct) {
-        try {
-            cartService.addProductToCart(cartProduct);
-            return ResponseEntity.ok().build();
-        } catch (NumberFormatException e) {
-            ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
+        cartService.addProductToCart(cartProduct);
+        return ResponseEntity.ok().build();
+
     }
 
     @PatchMapping("/carts/products")
     public ResponseEntity<?> updateProduct(@RequestBody CartProduct cartProduct) {
-        try {
-            cartProductService.updateQuantity(cartProduct.getId(), cartProduct.getQuantity());
-            return ResponseEntity.ok().build();
-        } catch (NumberFormatException e) {
-            ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
-        }
-
+        cartProductService.updateQuantity(cartProduct.getId(), cartProduct.getQuantity());
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/carts/products/{id}")
     public ResponseEntity<?> removeProductById(@PathVariable("id") Long id) {
-        try {
-            CartProduct deletedCartProduct = cartProductService.removeProduct(id);
+        CartProduct deletedCartProduct = cartProductService.removeProduct(id);
+        if (deletedCartProduct != null) {
             return ResponseEntity.ok(deletedCartProduct);
-        } catch (NumberFormatException e) {
-            ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-        } catch (CartProductNotFoundException e) {
-            ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
-        } catch (Exception e) {
-            ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
+        return ResponseEntity.notFound().build();
     }
 }
