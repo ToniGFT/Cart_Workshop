@@ -5,9 +5,10 @@ import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.services.CartProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-
+@Slf4j
 @Service
 public class CartProductServiceImpl implements CartProductService {
 
@@ -22,7 +23,10 @@ public class CartProductServiceImpl implements CartProductService {
         if (quantity <= 0) {
             throw new CartProductInvalidQuantityException("The quantity must be higher than 0");
         }
-        return cartProductRepository.updateQuantity(id, quantity);
+        log.info("Updating quantity for CartProduct with ID {} to {}", id, quantity);
+        int updatedQuantity = cartProductRepository.updateQuantity(id, quantity);
+        log.info("Quantity updated successfully for CartProduct with ID {} to {}", id, quantity);
+        return updatedQuantity;
     }
 
     @Override
