@@ -2,7 +2,6 @@ package com.gftworkshop.cartMicroservice.services.impl;
 
 import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.ForbiddenAccessException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import org.junit.jupiter.api.BeforeEach;
