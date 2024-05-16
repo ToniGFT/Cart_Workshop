@@ -6,15 +6,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+
+import static org.junit.Assert.*;
 
 public class ProductServiceTest {
 
@@ -25,15 +25,14 @@ public class ProductServiceTest {
     void setUp() throws IOException {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
-        WebClient webClient = WebClient.builder()
+        RestClient restClient = RestClient.builder()
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
-        productService = new ProductService(webClient);
+        productService = new ProductService(restClient);
     }
 
     @Test
-    @DisplayName("When fetching a product by ID, " +
-            "then the correct product details are returned")
+    @DisplayName("When fetching a product by ID, then the correct product details are returned")
     void testGetProductById() {
         String productJson = """
                 {
@@ -52,53 +51,42 @@ public class ProductServiceTest {
                 .setBody(productJson)
                 .addHeader("Content-Type", "application/json"));
 
-        Mono<Product> productMono = productService.getProductById(1L);
+        Product product = productService.getProductById(1L);
 
-        StepVerifier.create(productMono)
-                .expectNextMatches(product ->
-                        product.getId().equals(1L) &&
-                                product.getName().equals("Laptop") &&
-                                product.getPrice().compareTo(new BigDecimal("1200.00")) == 0)
-                .verifyComplete();
+        assertNotNull(product);
+        assertEquals(1L, (long) product.getId());
+        assertEquals(0, new BigDecimal("1200.00").compareTo(product.getPrice()));
     }
 
     @Test
-    @DisplayName("When fetching a product by ID and the product does not exist," +
-            " then a 404 Not Found error is returned")
+    @DisplayName("When fetching a product by ID and the product does not exist, then a 404 Not Found error is returned")
     void testGetProductByIdNotFound() {
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(404)
                 .setBody("Product not found")
                 .addHeader("Content-Type", "text/plain"));
 
-        Mono<Product> productMono = productService.getProductById(999L);
+        RestClientResponseException exception = assertThrows(RestClientResponseException.class, () -> {
+            productService.getProductById(999L);
+        });
 
-        StepVerifier.create(productMono)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof WebClientResponseException &&
-                                ((WebClientResponseException) throwable).getStatusCode() == HttpStatus.NOT_FOUND)
-                .verify();
+        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 
     @Test
-    @DisplayName("When fetching a product by ID and an internal server error occurs," +
-            " then a 500 error is returned")
+    @DisplayName("When fetching a product by ID and an internal server error occurs, then a 500 error is returned")
     void testGetProductByIdServerError() {
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(500)
                 .setBody("Internal Server Error")
                 .addHeader("Content-Type", "text/plain"));
 
-        Mono<Product> productMono = productService.getProductById(1L);
+        RestClientResponseException exception = assertThrows(RestClientResponseException.class, () -> {
+            productService.getProductById(1L);
+        });
 
-        StepVerifier.create(productMono)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof WebClientResponseException &&
-                                ((WebClientResponseException) throwable).getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR)
-                .verify();
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
     }
-
-
 
     @AfterEach
     void tearDown() throws IOException {

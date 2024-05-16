@@ -1,25 +1,24 @@
 package com.gftworkshop.cartMicroservice.services;
 
-
 import com.gftworkshop.cartMicroservice.api.dto.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
 @Service
 public class UserService {
 
-    private final WebClient webClient;
+    private final RestClient restClient;
 
-    public UserService(WebClient webClient) {
-        this.webClient = webClient;
+    @Autowired
+    public UserService(RestClient restClient) {
+        this.restClient = restClient;
     }
 
-    public Mono<User> getUserById(Long userId) {
-        return webClient.get()
+    public User getUserById(Long userId) {
+        return restClient.get()
                 .uri("/users/{id}", userId)
                 .retrieve()
-                .bodyToMono(User.class);
+                .body(User.class);
     }
 }
-
