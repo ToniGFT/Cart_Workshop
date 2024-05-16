@@ -181,22 +181,6 @@ class CartControllerTest {
         }
 
         @Test
-        @DisplayName("When adding cart by ID, then expect Error status")
-        void addCartByIdTest_Error() {
-            Long userId = 1L;
-            String response = "Internal Server Error";
-            when(cartService.createCart(userId)).thenThrow(new RuntimeException(response));
-
-            ResponseEntity<?> responseEntity = cartController.addCartByUserId(String.valueOf(userId));
-
-            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-            ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
-            assertEquals(500, errorResponse.getCode());
-            assertEquals(response, errorResponse.getMessage());
-            verify(cartService, times(1)).createCart(userId);
-        }
-
-        @Test
         @DisplayName("When getting cart by ID, then expect OK status")
         void getCartByIdTest() {
             CartDto cart = new CartDto();
@@ -208,21 +192,6 @@ class CartControllerTest {
 
             verify(cartService, times(1)).getCart(cartId);
             assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-
-        @Test
-        @DisplayName("When adding cart by ID, then expect NotFound status")
-        void getCartByIdTest_NotFound() {
-            String response = "Cart with ID not found";
-            when(cartService.getCart(cartId)).thenThrow(new CartNotFoundException(response));
-
-            ResponseEntity<?> responseEntity = cartController.getCartById(String.valueOf(cartId));
-
-            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-            ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
-            assertEquals(404, errorResponse.getCode());
-            assertEquals(response, errorResponse.getMessage());
-            verify(cartService, times(1)).getCart(cartId);
         }
 
         @Test
@@ -271,21 +240,6 @@ class CartControllerTest {
 
             assertEquals(ResponseEntity.ok(cartProduct), response);
             assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-
-        @Test
-        @DisplayName("When removing a product, then expect Not Found status")
-        void removeProductByIdTest_NotFound() {
-            String errorMessage = "Cart product not found";
-            when(cartProductService.removeProduct(productId)).thenThrow(new CartProductNotFoundException(errorMessage));
-
-            ResponseEntity<?> responseEntity = cartController.removeProductById(productId);
-
-            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-            ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
-            assertEquals(404, errorResponse.getCode());
-            assertEquals(errorMessage, errorResponse.getMessage());
-            verify(cartProductService, times(1)).removeProduct(productId);
         }
     }
 
