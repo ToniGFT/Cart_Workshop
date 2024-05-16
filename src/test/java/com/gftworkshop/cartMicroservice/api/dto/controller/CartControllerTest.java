@@ -164,7 +164,7 @@ class CartControllerTest {
 
 
         @Test
-        @DisplayName("When adding cart by ID, then expect CREATED status")
+        @DisplayName("When adding cart by user ID, then expect CREATED status")
         void addCartByIdTest() {
             Cart cart = new Cart();
             cart.setId(cartId);
@@ -181,20 +181,15 @@ class CartControllerTest {
         }
 
         @Test
-        @DisplayName("When adding cart by ID, then expect Error status")
-        void addCartByIdTest_Error() {
-            Long userId = 1L;
-            String response = "Internal Server Error";
-            when(cartService.createCart(userId)).thenThrow(new RuntimeException(response));
+        @DisplayName("When adding cart by user ID, then expect Not Found status")
+        void testAddCartByUserIdTest_NotFound() throws Exception {
+            when(cartService.createCart(anyLong())).thenReturn(null);
 
-            ResponseEntity<?> responseEntity = cartController.addCartByUserId(String.valueOf(userId));
-
-            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-            ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
-            assertEquals(500, errorResponse.getCode());
-            assertEquals(response, errorResponse.getMessage());
-            verify(cartService, times(1)).createCart(userId);
+            mockMvc.perform(post("/carts/{id}", "1")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
         }
+
 
         @Test
         @DisplayName("When getting cart by ID, then expect OK status")
@@ -211,18 +206,12 @@ class CartControllerTest {
         }
 
         @Test
-        @DisplayName("When adding cart by ID, then expect NotFound status")
-        void getCartByIdTest_NotFound() {
-            String response = "Cart with ID not found";
-            when(cartService.getCart(cartId)).thenThrow(new CartNotFoundException(response));
+        void getCartByIdTest_NotFound() throws Exception {
+            when(cartService.getCart(anyLong())).thenReturn(null);
 
-            ResponseEntity<?> responseEntity = cartController.getCartById(String.valueOf(cartId));
-
-            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-            ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
-            assertEquals(404, errorResponse.getCode());
-            assertEquals(response, errorResponse.getMessage());
-            verify(cartService, times(1)).getCart(cartId);
+            mockMvc.perform(get("/carts/{id}", "1")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
         }
 
         @Test
@@ -267,25 +256,19 @@ class CartControllerTest {
 
             when(cartProductService.removeProduct(anyLong())).thenReturn(cartProduct);
 
-            ResponseEntity<?> response = cartController.removeProductById(productId);
+            ResponseEntity<?> response = cartController.removeProductById(String.valueOf(productId));
 
             assertEquals(ResponseEntity.ok(cartProduct), response);
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 
         @Test
-        @DisplayName("When removing a product, then expect Not Found status")
-        void removeProductByIdTest_NotFound() {
-            String errorMessage = "Cart product not found";
-            when(cartProductService.removeProduct(productId)).thenThrow(new CartProductNotFoundException(errorMessage));
+        void removeProductByIdTest_NotFound() throws Exception{
+            when(cartProductService.removeProduct(anyLong())).thenReturn(null);
 
-            ResponseEntity<?> responseEntity = cartController.removeProductById(productId);
-
-            assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-            ErrorResponse errorResponse = (ErrorResponse) responseEntity.getBody();
-            assertEquals(404, errorResponse.getCode());
-            assertEquals(errorMessage, errorResponse.getMessage());
-            verify(cartProductService, times(1)).removeProduct(productId);
+            mockMvc.perform(delete("/carts/products/{id}", "1")
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
         }
     }
 
