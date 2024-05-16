@@ -1,21 +1,20 @@
 package com.gftworkshop.cartMicroservice.services;
 
-import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
-import com.gftworkshop.cartMicroservice.api.dto.Country;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.MockResponse;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 public class UserServiceTest {
 
@@ -26,10 +25,10 @@ public class UserServiceTest {
     void setUp() throws IOException {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
-        WebClient webClient = WebClient.builder()
+        RestClient restClient = RestClient.builder()
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
-        userService = new UserService(webClient);
+        userService = new UserService(restClient);
     }
 
     @Test
@@ -58,51 +57,44 @@ public class UserServiceTest {
                 .setBody(userJson)
                 .addHeader("Content-Type", "application/json"));
 
-        Mono<User> userMono = userService.getUserById(100L);
+        User user = userService.getUserById(100L);
 
-        StepVerifier.create(userMono)
-                .expectNextMatches(user ->
-                        user.getId().equals(100L) &&
-                                user.getCountry().getTax().equals(21.0))
-                .verifyComplete();
+        assertEquals(100L,(long) user.getId());
+        assertEquals(21.0,user.getCountry().getTax(), 0.001);
+
     }
 
     @Test
     @DisplayName("When fetching a non-existent user by ID, then a 404 error is returned")
     void testGetUserByIdNotFound() {
         mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(404)
-                .setBody("User not found")
-                .addHeader("Content-Type", "text/plain"));
+                .setResponseCode(HttpStatus.NOT_FOUND.value())
+                .setBody("Not found")
+                .addHeader("Content-Type", "application/json"));
 
+        Exception exception = assertThrows(RestClientResponseException.class, () -> {
+            userService.getUserById(1L);
+        });
 
-        Mono<User> userMono = userService.getUserById(999L);
-
-
-
-        StepVerifier.create(userMono)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof WebClientResponseException &&
-                                ((WebClientResponseException) throwable).getStatusCode() == HttpStatus.NOT_FOUND)
-                .verify();
+        assertEquals(HttpStatus.NOT_FOUND, ((RestClientResponseException) exception).getStatusCode());
     }
+
 
     @Test
     @DisplayName("When fetching a User by ID and an internal server error occurs, then a 500 error is returned")
-    void testGetProductByIdServerError() {
+    void testGetUserByIdServerError() {
         mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(500)
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .setBody("Internal Server Error")
-                .addHeader("Content-Type", "text/plain"));
+                .addHeader("Content-Type", "application/json"));
 
-        Mono<User> userMono = userService.getUserById(1L);
+        Exception exception = assertThrows(RestClientResponseException.class, () -> {
+            userService.getUserById(1L);
+        });
 
-        StepVerifier.create(userMono)
-                .expectErrorMatches(throwable ->
-                        throwable instanceof WebClientResponseException &&
-                                ((WebClientResponseException) throwable).getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR)
-                .verify();
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ((RestClientResponseException) exception).getStatusCode());
     }
+
 
 
     @AfterEach
