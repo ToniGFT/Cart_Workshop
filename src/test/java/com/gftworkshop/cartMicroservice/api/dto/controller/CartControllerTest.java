@@ -236,7 +236,7 @@ class CartControllerTest {
 
             when(cartProductService.removeProduct(anyLong())).thenReturn(cartProduct);
 
-            ResponseEntity<?> response = cartController.removeProductById(productId);
+            ResponseEntity<?> response = cartController.removeProductById(String.valueOf(productId));
 
             assertEquals(ResponseEntity.ok(cartProduct), response);
             assertEquals(HttpStatus.OK, response.getStatusCode());
