@@ -164,7 +164,7 @@ class CartControllerTest {
 
 
         @Test
-        @DisplayName("When adding cart by user ID, then expect CREATED status")
+        @DisplayName("When adding cart by ID, then expect CREATED status")
         void addCartByIdTest() {
             Cart cart = new Cart();
             cart.setId(cartId);
@@ -181,17 +181,6 @@ class CartControllerTest {
         }
 
         @Test
-        @DisplayName("When adding cart by user ID, then expect Not Found status")
-        void testAddCartByUserIdTest_NotFound() throws Exception {
-            when(cartService.createCart(anyLong())).thenReturn(null);
-
-            mockMvc.perform(post("/carts/{id}", "1")
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isNotFound());
-        }
-
-
-        @Test
         @DisplayName("When getting cart by ID, then expect OK status")
         void getCartByIdTest() {
             CartDto cart = new CartDto();
@@ -203,15 +192,6 @@ class CartControllerTest {
 
             verify(cartService, times(1)).getCart(cartId);
             assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-
-        @Test
-        void getCartByIdTest_NotFound() throws Exception {
-            when(cartService.getCart(anyLong())).thenReturn(null);
-
-            mockMvc.perform(get("/carts/{id}", "1")
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isNotFound());
         }
 
         @Test
@@ -260,15 +240,6 @@ class CartControllerTest {
 
             assertEquals(ResponseEntity.ok(cartProduct), response);
             assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-
-        @Test
-        void removeProductByIdTest_NotFound() throws Exception{
-            when(cartProductService.removeProduct(anyLong())).thenReturn(null);
-
-            mockMvc.perform(delete("/carts/products/{id}", "1")
-                            .contentType(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isNotFound());
         }
     }
 

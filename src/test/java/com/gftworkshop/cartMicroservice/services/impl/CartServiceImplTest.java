@@ -18,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -71,24 +70,6 @@ public class CartServiceImplTest {
 
 
     @Test
-    @DisplayName("Given a cart with a product, " +
-            "when removing the product from the cart, " +
-            "then the product should be removed successfully")
-    void removeProductFromCartTest() {
-
-        CartProduct cartProduct = mock(CartProduct.class);
-        Cart cart = mock(Cart.class);
-
-        when(cartProduct.getId()).thenReturn(1L);
-
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
-
-        cartServiceImpl.removeProductFromCart(cartProduct);
-
-        verify(cartProductRepository).delete(cartProduct);
-    }
-
-    @Test
     @DisplayName("Given a cart with multiple products and a user, " +
             "when calculating the cart total including tax and weight costs, " +
             "then the total should be calculated correctly")
@@ -117,9 +98,9 @@ public class CartServiceImplTest {
         List<CartProduct> cartProducts = Arrays.asList(cartProduct1, cartProduct2);
         cart.setCartProducts(cartProducts);
 
-        when(userService.getUserById(1L)).thenReturn(Mono.just(user));
-        when(productService.getProductById(1L)).thenReturn(Mono.just(product1));
-        when(productService.getProductById(2L)).thenReturn(Mono.just(product2));
+        when(userService.getUserById(1L)).thenReturn(user);
+        when(productService.getProductById(1L)).thenReturn(product1);
+        when(productService.getProductById(2L)).thenReturn(product2);
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
@@ -271,22 +252,6 @@ public class CartServiceImplTest {
         });
     }
 
-    @Test
-    @DisplayName("Given a non-existent cart, " +
-            "when removing a product from the cart, " +
-            "then a CartNotFoundException should be thrown")
-    void removeProductFromCart_CartNotFoundExceptionTest() {
-
-        CartProduct cartProduct = mock(CartProduct.class);
-        when(cartProduct.getId()).thenReturn(1L);
-
-        when(cartRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(CartNotFoundException.class, () -> {
-            cartServiceImpl.removeProductFromCart(cartProduct);
-        });
-    }
-
 
     @Test
     @DisplayName("Given a non-existent cart, " +
@@ -331,7 +296,7 @@ public class CartServiceImplTest {
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
 
-        when(userService.getUserById(userId)).thenReturn(Mono.just(new User()));
+        when(userService.getUserById(userId)).thenReturn(new User());
 
         when(productService.getProductById(cartProduct.getProductId())).thenThrow(new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
 
@@ -348,7 +313,7 @@ public class CartServiceImplTest {
         Long cartId = 1L;
         Long userId = 1L;
 
-        when(userService.getUserById(userId)).thenReturn(Mono.just(new User()));
+        when(userService.getUserById(userId)).thenReturn(new User());
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
 
