@@ -144,8 +144,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto getCart(Long cartId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow();
-        //BigDecimal bigDecimalTotalPrice = getCartTotal(cart.getId(), cart.getUser_id());
+        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
         CartDto cartDto = entityToDto(cart);
         cartDto.setTotalPrice(new BigDecimal("323.3"));
         return cartDto;

@@ -322,4 +322,25 @@ public class CartServiceImplTest {
         });
     }
 
+    @Test
+    @DisplayName("Given a user ID with an existing cart, " +
+            "when creating a cart, " +
+            "then an IllegalArgumentException should be thrown")
+    void createCart_UserAlreadyHasCartTest() {
+        Long userId = 123L;
+
+        Cart existingCart = new Cart();
+        existingCart.setUser_id(userId);
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            cartServiceImpl.createCart(userId);
+        });
+
+        assertEquals("User with ID " + userId + " already has a cart.", thrown.getMessage());
+
+        verify(cartRepository, never()).save(any(Cart.class));
+    }
+
+
 }
