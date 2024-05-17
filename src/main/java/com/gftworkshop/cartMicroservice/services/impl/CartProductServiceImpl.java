@@ -1,15 +1,14 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
+import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.CartProductSaveException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.services.CartProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
-
+@Slf4j
 @Service
 public class CartProductServiceImpl implements CartProductService {
 
@@ -20,31 +19,23 @@ public class CartProductServiceImpl implements CartProductService {
     }
 
     @Override
-    public CartProduct save(CartProduct cartProduct) throws CartProductSaveException {
-        return cartProductRepository.save(cartProduct);
-    }
-
-    @Override
     public int updateQuantity(Long id, int quantity) {
         if (quantity <= 0) {
-            throw new CartProductSaveException("The quantity must be higher than 0");
+            throw new CartProductInvalidQuantityException("The quantity must be higher than 0");
         }
-        return cartProductRepository.updateProductQuantity(id, quantity);
+        log.info("Updating quantity for CartProduct with ID {} to {}", id, quantity);
+        int updatedQuantity = cartProductRepository.updateQuantity(id, quantity);
+        log.info("Quantity updated successfully for CartProduct with ID {} to {}", id, quantity);
+        return updatedQuantity;
     }
 
     @Override
     public CartProduct removeProduct(Long id) {
-
-        Optional<CartProduct> optionalCartProduct = cartProductRepository.findById(id);
-
-        if (optionalCartProduct.isPresent()) {
-            CartProduct cartProduct = optionalCartProduct.get();
-
-            cartProductRepository.deleteById(id);
-
-            return cartProduct;
-        } else {
-            throw new CartProductNotFoundException("No se encontró el CartProduct con ID: " + id);
-        }
+        return cartProductRepository.findById(id)
+                .map(cartProduct -> {
+                    cartProductRepository.deleteById(id);
+                    return cartProduct;
+                })
+                .orElseThrow(() -> new CartProductNotFoundException("No se encontró el CartProduct con ID: " + id));
     }
 }

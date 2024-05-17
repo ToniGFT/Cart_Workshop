@@ -1,71 +1,37 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
-import com.gftworkshop.cartMicroservice.exceptions.CartProductSaveException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
-import com.gftworkshop.cartMicroservice.services.CartProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class CartProductServiceImplTest {
+class CartProductServiceImplTest {
 
+    @Mock
     private CartProductRepository cartProductRepository;
-    private CartProductService cartProductService;
+    @InjectMocks
+    private CartProductServiceImpl cartProductService;
     private CartProduct cartProduct;
     private Long id;
 
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
 
         id = 123L;
-
-        cartProductRepository = mock(CartProductRepository.class);
-
-        cartProductService = new CartProductServiceImpl(cartProductRepository);
-
         cartProduct = mock(CartProduct.class);
-
-    }
-
-    @Nested
-    @DisplayName("Save a CartProduct")
-    class SaveCartProductTests {
-
-        @Test
-        @DisplayName("Given CartProduct " +
-                "When Saved " +
-                "Then Return Same CartProduct")
-        void saveTest() {
-
-            when(cartProductRepository.save(any(CartProduct.class))).thenReturn(cartProduct);
-
-            CartProduct result = cartProductService.save(cartProduct);
-
-            assertEquals(cartProduct, result);
-            verify(cartProductRepository).save(any(CartProduct.class));
-        }
-
-        @Test
-        @DisplayName("Given Saving Fails " +
-                "When Saving " +
-                "Then Throw Exception")
-        void saveFailureTest() {
-            when(cartProductRepository.save(any(CartProduct.class))).thenThrow(CartProductSaveException.class);
-
-            assertThrows(CartProductSaveException.class, () -> {
-                cartProductService.save(cartProduct);
-            });
-
-            verify(cartProductRepository).save(any(CartProduct.class));
-        }
 
     }
 
@@ -79,23 +45,22 @@ public class CartProductServiceImplTest {
         void updateQuantityTest() {
             int newQuantity = 5;
 
-            when(cartProductRepository.updateProductQuantity(id, newQuantity)).thenReturn(1);
+            when(cartProductRepository.updateQuantity(id, newQuantity)).thenReturn(1);
 
             int rowsAffected = cartProductService.updateQuantity(id, newQuantity);
 
             assertEquals(1, rowsAffected);
-            verify(cartProductRepository).updateProductQuantity(id, newQuantity);
+            verify(cartProductRepository).updateQuantity(id, newQuantity);
 
         }
 
         @Test
         @DisplayName("Given Invalid Quantity " +
                 "Then Throws Exception")
-        public void testUpdateQuantityWithInvalidQuantity() {
-            Long id = 1L;
+        void testUpdateQuantityWithInvalidQuantity() {
             int quantity = -5;
 
-            CartProductSaveException exception = assertThrows(CartProductSaveException.class, () -> {
+            CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
                 cartProductService.updateQuantity(id, quantity);
             });
 
@@ -109,33 +74,48 @@ public class CartProductServiceImplTest {
                 "When Updated " +
                 "Then Return 0 Rows Affected")
         void updateQuantityNoChangesTest() {
-            Long id = 1L;
             int currentQuantity = 5;
 
-            when(cartProductRepository.updateProductQuantity(id, currentQuantity)).thenReturn(0);
+            when(cartProductRepository.updateQuantity(id, currentQuantity)).thenReturn(0);
 
             int rowsAffected = cartProductService.updateQuantity(id, currentQuantity);
 
             assertEquals(0, rowsAffected);
-            verify(cartProductRepository).updateProductQuantity(id, currentQuantity);
+            verify(cartProductRepository).updateQuantity(id, currentQuantity);
         }
     }
 
 
-    @Test
-    @DisplayName("Remove CartProduct - Given Product ID " +
-            "When Removed " +
-            "Then Verify Deletion")
-    void removeProductTest() {
-        CartProduct cartProductToRemove = new CartProduct();
+    @Nested
+    @DisplayName("Remove CartProduct")
+    class RemoveCartProductTests {
+        @Test
+        @DisplayName("When removing existing " +
+                "Then verify deletion")
+        void removeProductTest() {
+            CartProduct cartProductToRemove = new CartProduct();
 
-        when(cartProductRepository.findById(id)).thenReturn(Optional.of(cartProductToRemove));
+            when(cartProductRepository.findById(id)).thenReturn(Optional.of(cartProductToRemove));
 
-        CartProduct removedProduct = cartProductService.removeProduct(id);
+            CartProduct removedProduct = cartProductService.removeProduct(id);
 
-        verify(cartProductRepository, times(1)).deleteById(id);
+            verify(cartProductRepository, times(1)).deleteById(id);
+            assertEquals(cartProductToRemove, removedProduct);
+        }
 
-        assertEquals(cartProductToRemove, removedProduct);
+        @Test
+        @DisplayName("When removing non-existent CartProduct - Then verify exception")
+        void removeNonExistentProductTest() {
+
+            when(cartProductRepository.findById(id)).thenReturn(Optional.empty());
+
+            CartProductNotFoundException exception = assertThrows(CartProductNotFoundException.class, () -> {
+                cartProductService.removeProduct(id);
+            });
+
+            assertEquals("No se encontró el CartProduct con ID: " + id, exception.getMessage());
+        }
     }
+
 
 }

@@ -1,9 +1,15 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
+import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
+import com.gftworkshop.cartMicroservice.services.CartProductService;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
 import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,13 +18,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class CartControllerTest {
+@Slf4j
+class CartControllerTest {
 
     private MockMvc mockMvc;
     private CartController cartController;
@@ -65,25 +74,20 @@ public class CartControllerTest {
         @Test
         @DisplayName("When adding cart by ID, then expect OK status")
         void addCartByIdTest() throws Exception {
-            Long cartId = 1L;
-            Cart cart = new Cart();
-            cart.setId(cartId);
+            Cart savedCart = new Cart();
+            savedCart.setId(cartId);
 
-            when(cartService.createCart(cartId)).thenReturn(cart);
-
-            String requestBodyCart = "{ \"id\": 1 }";
+            when(cartService.createCart(cartId)).thenReturn(savedCart);
 
             mockMvc.perform(post("/carts/{id}", cartId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(requestBodyCart))
-                    .andExpect(status().isOk());
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().is2xxSuccessful());
         }
 
         @Test
         @DisplayName("When getting cart by ID, then expect OK status")
         void getCartByIdTest() throws Exception {
-            Long cartId = 1L;
-            Cart cart = new Cart();
+            CartDto cart = new CartDto();
             cart.setId(cartId);
 
             when(cartService.getCart(cartId)).thenReturn(cart);
@@ -127,6 +131,10 @@ public class CartControllerTest {
         @Test
         @DisplayName("When removing product by ID, then expect OK status")
         void removeProductByIdTest() throws Exception {
+            CartProduct cartProduct = new CartProduct();
+            cartProduct.setId(productId);
+
+            when(cartProductService.removeProduct(anyLong())).thenReturn(cartProduct);
             mockMvc.perform(delete("/carts/products/{id}", productId)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk());
@@ -138,49 +146,6 @@ public class CartControllerTest {
     class CartOperationsTests {
 
         @Test
-        @DisplayName("When adding cart by ID, then expect OK status")
-        void addCartByIdTest() {
-            Cart cart = new Cart();
-            cart.setId(cartId);
-
-            when(cartService.createCart(1L)).thenReturn(cart);
-
-            ResponseEntity<Cart> response = cartController.addCartById(cart);
-
-            assertEquals(ResponseEntity.ok(cart), response);
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-
-        @Test
-        @DisplayName("When getting cart by ID, then expect OK status")
-        void getCartByIdTest() {
-            Cart cart = new Cart();
-            cart.setId(cartId);
-
-            when(cartService.getCart(cartId)).thenReturn(cart);
-
-            ResponseEntity<Cart> response = cartController.getCartById(cart.getId());
-
-            verify(cartService, times(1)).getCart(cartId);
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-
-        @Test
-        @DisplayName("When removing cart by ID, then expect OK status")
-        void removeCartByIdTest(){;
-            doNothing().when(cartService).clearCart(cartId);
-
-            ResponseEntity<Cart> response = cartController.removeCartById(cartId);
-
-            verify(cartService, times(1)).clearCart(cartId);
-            assertEquals(HttpStatus.OK, response.getStatusCode());
-        }
-    }
-
-    @Nested
-    @DisplayName("Tests for Cart and CartProducts operations")
-    class CartAndCartProductOperationsTests {
-        @Test
         @DisplayName("When adding product, then expect OK status")
         void addProductTest() {
             CartProduct cartProduct = new CartProduct();
@@ -191,14 +156,52 @@ public class CartControllerTest {
             cartProduct.setQuantity(1);
             cartProduct.setPrice(BigDecimal.TEN);
 
-            when(cartProductService.save(cartProduct)).thenReturn(cartProduct);
-            doNothing().when(cartService).addProductToCart(cartProduct);
+            ResponseEntity<?> response = cartController.addProduct(cartProduct);
 
-            ResponseEntity<Cart> response = cartController.addProduct(cartProduct);
-
-            verify(cartProductService, times(1)).save(cartProduct);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
             verify(cartService, times(1)).addProductToCart(cartProduct);
+        }
 
+
+        @Test
+        @DisplayName("When adding cart by ID, then expect CREATED status")
+        void addCartByIdTest() {
+            Cart cart = new Cart();
+            cart.setId(cartId);
+            when(cartService.createCart(1L)).thenReturn(cart);
+
+            ResponseEntity<?> response = cartController.addCartByUserId(String.valueOf(cartId));
+
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
+
+            assertTrue(response.getHeaders().containsKey("Location"));
+            assertEquals("/carts/" + cartId, response.getHeaders().getFirst("Location"));
+
+            assertEquals(cart, response.getBody());
+        }
+
+        @Test
+        @DisplayName("When getting cart by ID, then expect OK status")
+        void getCartByIdTest() {
+            CartDto cart = new CartDto();
+            cart.setId(cartId);
+
+            when(cartService.getCart(cartId)).thenReturn(cart);
+
+            ResponseEntity<?> response = cartController.getCartById(String.valueOf(cart.getId()));
+
+            verify(cartService, times(1)).getCart(cartId);
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
+
+        @Test
+        @DisplayName("When removing cart by ID, then expect OK status")
+        void removeCartByIdTest(){;
+            doNothing().when(cartService).clearCart(cartId);
+
+            ResponseEntity<?> response = cartController.removeCartById(String.valueOf(cartId));
+
+            verify(cartService, times(1)).clearCart(cartId);
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
     }
@@ -217,7 +220,7 @@ public class CartControllerTest {
 
             when(cartProductService.updateQuantity(productId, newQuantity)).thenReturn(ResponseEntity.ok().build().getStatusCode().value());
 
-            ResponseEntity<Cart> response = cartController.updateProduct(cartProduct);
+            ResponseEntity<?> response = cartController.updateProduct(cartProduct);
 
             verify(cartProductService, times(1)).updateQuantity(productId, newQuantity);
             assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -226,11 +229,36 @@ public class CartControllerTest {
         @Test
         @DisplayName("When removing a product, then expect OK status")
         void removeProductByIdTest() throws Exception {
-            ResponseEntity<Cart> response = cartController.removeProductById(productId);
+            CartProduct cartProduct = new CartProduct();
+            Cart cart = new Cart();
+            cart.setId(cartId);
+            cartProduct.setCart(cart);
 
-            verify(cartProductService, times(1)).removeProduct(productId);
+            when(cartProductService.removeProduct(anyLong())).thenReturn(cartProduct);
 
+            ResponseEntity<?> response = cartController.removeProductById(String.valueOf(productId));
+
+            assertEquals(ResponseEntity.ok(cartProduct), response);
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
+    }
+
+    @Test
+    @DisplayName("When getting all carts and carts exist, then expect OK status")
+    void getAllCartsExistsTest() {
+        List<Cart> carts = new ArrayList<>();
+        Cart cart1 = new Cart();
+        cart1.setId(1L);
+        Cart cart2 = new Cart();
+        cart2.setId(2L);
+        carts.add(cart1);
+        carts.add(cart2);
+        when(cartService.getAllCarts()).thenReturn(carts);
+
+        ResponseEntity<List<Cart>> response = cartController.getAllCarts();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(carts, response.getBody());
+        verify(cartService, times(1)).getAllCarts();
     }
 }
