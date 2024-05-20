@@ -4,8 +4,6 @@ import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.UserNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.UserWithCartException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
@@ -21,9 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -106,7 +103,7 @@ public class CartServiceImpl implements CartService {
 
 
     @Override
-    public List<Cart> identifyAbandonedCarts(LocalDate thresholdDate) {
+    public List<CartDto> identifyAbandonedCarts(LocalDate thresholdDate) {
         List<Cart> abandonedCarts = cartRepository.identifyAbandonedCarts(thresholdDate);
 
         if (abandonedCarts.isEmpty()) {
@@ -116,20 +113,26 @@ public class CartServiceImpl implements CartService {
             abandonedCarts.forEach(cart -> log.debug("Abandoned cart: {}, at {}", cart.getId(), cart.getUpdated_at()));
         }
 
-        return abandonedCarts;
+        return abandonedCarts.stream()
+                .map(this::entityToDto)
+                .collect(Collectors.toList());
     }
 
+
     @Override
-    public Cart createCart(Long userId) {
+    public CartDto createCart(Long userId) {
         cartRepository.findByUserId(userId).ifPresent(cart -> {
             throw new UserWithCartException("User with ID " + userId + " already has a cart.");
         });
 
-        Cart cart = new Cart();
-        cart.setUpdated_at(LocalDate.now());
-        cart.setUser_id(userId);
-        return cartRepository.save(cart);
+        Cart cart = Cart.builder()
+                .updated_at(LocalDate.now())
+                .user_id(userId)
+                .build();
+        cart = cartRepository.save(cart);
+        return entityToDto(cart);
     }
+
 
     @Override
     public CartDto getCart(Long cartId) {
@@ -143,7 +146,7 @@ public class CartServiceImpl implements CartService {
     }
 
     private CartDto entityToDto(Cart cart) {
-        CartDto cartDto = new CartDto();
+        CartDto cartDto = CartDto.builder().build();
         BeanUtils.copyProperties(cart, cartDto);
         return cartDto;
     }

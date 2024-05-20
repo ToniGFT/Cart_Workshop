@@ -74,7 +74,7 @@ class CartControllerTest {
         @Test
         @DisplayName("When adding cart by ID, then expect OK status")
         void addCartByIdTest() throws Exception {
-            Cart savedCart = new Cart();
+            CartDto savedCart = new CartDto();
             savedCart.setId(cartId);
 
             when(cartService.createCart(cartId)).thenReturn(savedCart);
@@ -166,7 +166,7 @@ class CartControllerTest {
         @Test
         @DisplayName("When adding cart by ID, then expect CREATED status")
         void addCartByIdTest() {
-            Cart cart = new Cart();
+            CartDto cart = new CartDto();
             cart.setId(cartId);
             when(cartService.createCart(1L)).thenReturn(cart);
 
@@ -196,7 +196,8 @@ class CartControllerTest {
 
         @Test
         @DisplayName("When removing cart by ID, then expect OK status")
-        void removeCartByIdTest(){;
+        void removeCartByIdTest() {
+            ;
             doNothing().when(cartService).clearCart(cartId);
 
             ResponseEntity<?> response = cartController.removeCartById(String.valueOf(cartId));
