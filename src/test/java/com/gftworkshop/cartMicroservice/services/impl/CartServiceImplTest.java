@@ -114,6 +114,29 @@ public class CartServiceImplTest {
         verify(cartRepository).findById(1L);
     }
 
+    @Test
+    @DisplayName("Given a total weight, " +
+            "when calculating the weight cost, " +
+            "then the cost should be calculated correctly")
+    void calculateWeightCostTest() {
+
+        BigDecimal expectedCost1 = new BigDecimal("50");
+        BigDecimal actualCost1 = cartServiceImpl.calculateWeightCost(25);
+        assertEquals(expectedCost1, actualCost1);
+
+        BigDecimal expectedCost2 = new BigDecimal("20");
+        BigDecimal actualCost2 = cartServiceImpl.calculateWeightCost(15);
+        assertEquals(expectedCost2, actualCost2);
+
+        BigDecimal expectedCost3 = new BigDecimal("10");
+        BigDecimal actualCost3 = cartServiceImpl.calculateWeightCost(7);
+        assertEquals(expectedCost3, actualCost3);
+
+        BigDecimal expectedCost4 = new BigDecimal("5");
+        BigDecimal actualCost4 = cartServiceImpl.calculateWeightCost(3);
+        assertEquals(expectedCost4, actualCost4);
+    }
+
 
     @Test
     @DisplayName("Given an existing cart, " +
