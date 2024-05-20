@@ -7,6 +7,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.validation.BindingResult;
@@ -124,5 +125,14 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
         assertEquals("Internal server error", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    void testHandleExternalMicroserviceException() {
+        ExternalMicroserviceException exception = new ExternalMicroserviceException(HttpStatusCode.valueOf(500),"User Microservice Error: Client error occurred. \n");
+        ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleExternalMicroserviceException(exception, webRequest);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("User Microservice Error: Client error occurred. \n", responseEntity.getBody().getMessage());
     }
 }
