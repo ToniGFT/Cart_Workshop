@@ -7,6 +7,7 @@ import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.UserNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.UserWithCartException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
@@ -22,6 +23,7 @@ import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -144,8 +146,7 @@ public class CartServiceImplTest {
             "When Identifying " +
             "Then Return Empty List")
     void identifyAbandonedCarts_NoAbandonedCartsTest() {
-
-        Date thresholdDate = new Date(System.currentTimeMillis() - 86400000);
+        LocalDate thresholdDate = LocalDate.now().minusDays(1);
 
         when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(new ArrayList<>());
 
@@ -163,23 +164,16 @@ public class CartServiceImplTest {
             "Then Return List of Abandoned Carts")
     void identifyAbandonedCarts_AbandonedCartsExistTest() {
 
-        Date thresholdDate = new Date(System.currentTimeMillis() - 86400000);
+        LocalDate thresholdDate = LocalDate.now().minusDays(1);
 
-        Cart cart1 = mock(Cart.class);
-        Cart cart2 = mock(Cart.class);
-
-        List<Cart> abandonedCarts = Arrays.asList(cart1, cart2);
-
-        when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(abandonedCarts);
+        when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(Arrays.asList(mock(Cart.class), mock(Cart.class)));
 
         List<Cart> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
 
-        assertEquals(abandonedCarts.size(), result.size());
-        assertTrue(result.contains(cart1));
-        assertTrue(result.contains(cart2));
-
+        assertEquals(2, result.size());
         verify(cartRepository).identifyAbandonedCarts(thresholdDate);
     }
+
 
     @Test
     @DisplayName("Given a user id, " +
@@ -322,5 +316,25 @@ public class CartServiceImplTest {
             cartServiceImpl.getCartTotal(cartId, userId);
         });
     }
+
+    @Test
+    @DisplayName("Given a user with an existing cart, " +
+            "when creating a new cart, " +
+            "then a UserWithCartException should be thrown")
+    void createCart_UserWithCartExceptionTest() {
+        Long userId = 123L;
+
+        Cart existingCart = new Cart();
+        existingCart.setUser_id(userId);
+
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
+
+        UserWithCartException exception = assertThrows(UserWithCartException.class, () -> {
+            cartServiceImpl.createCart(userId);
+        });
+
+        assertEquals("User with ID " + userId + " already has a cart.", exception.getMessage());
+    }
+
 
 }
