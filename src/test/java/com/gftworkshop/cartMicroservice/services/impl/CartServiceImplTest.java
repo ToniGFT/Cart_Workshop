@@ -7,6 +7,7 @@ import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.UserNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.UserWithCartException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
@@ -18,9 +19,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -49,15 +52,9 @@ public class CartServiceImplTest {
             "when adding the product to the cart, " +
             "then the product should be added successfully")
     void addProductToCartTest() {
+        Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
 
-        Cart cart = mock(Cart.class);
-        when(cart.getId()).thenReturn(1L);
-        when(cart.getCartProducts()).thenReturn(new ArrayList<>());
-
-        CartProduct cartProduct = mock(CartProduct.class);
-        lenient().when(cartProduct.getId()).thenReturn(1L);
-
-        when(cartProduct.getCart()).thenReturn(cart);
+        CartProduct cartProduct = CartProduct.builder().id(1L).cart(cart).build();
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
@@ -68,32 +65,31 @@ public class CartServiceImplTest {
         verify(cartRepository).save(cart);
     }
 
-
     @Test
     @DisplayName("Given a cart with multiple products and a user, " +
             "when calculating the cart total including tax and weight costs, " +
             "then the total should be calculated correctly")
     void getCartTotalTest() {
-        User user = new User();
-        user.setCountry(new Country(1L, 0.07));
+        User user = User.builder().country(new Country(1L, 0.07)).build();
 
-        Product product1 = new Product();
-        product1.setWeight(2.0);
-        Product product2 = new Product();
-        product2.setWeight(3.5);
+        Product product1 = Product.builder().weight(2.0).build();
+        Product product2 = Product.builder().weight(3.5).build();
 
-        Cart cart = new Cart();
-        CartProduct cartProduct1 = new CartProduct();
-        cartProduct1.setProductId(1L);
-        cartProduct1.setPrice(new BigDecimal("10"));
-        cartProduct1.setQuantity(2);
-        cartProduct1.setCart(cart);
+        Cart cart = Cart.builder().build();
 
-        CartProduct cartProduct2 = new CartProduct();
-        cartProduct2.setProductId(2L);
-        cartProduct2.setPrice(new BigDecimal("15"));
-        cartProduct2.setQuantity(3);
-        cartProduct2.setCart(cart);
+        CartProduct cartProduct1 = CartProduct.builder()
+                .productId(1L)
+                .price(new BigDecimal("10"))
+                .quantity(2)
+                .cart(cart)
+                .build();
+
+        CartProduct cartProduct2 = CartProduct.builder()
+                .productId(2L)
+                .price(new BigDecimal("15"))
+                .quantity(3)
+                .cart(cart)
+                .build();
 
         List<CartProduct> cartProducts = Arrays.asList(cartProduct1, cartProduct2);
         cart.setCartProducts(cartProducts);
@@ -119,14 +115,26 @@ public class CartServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a specific weight, " +
-            "when calculating weight cost, " +
-            "then it should return te correct cost")
-    public void testCalculateWeightCost() {
-        assertEquals(new BigDecimal("5"), cartServiceImpl.calculateWeightCost(5));
-        assertEquals(new BigDecimal("10"), cartServiceImpl.calculateWeightCost(6));
-        assertEquals(new BigDecimal("20"), cartServiceImpl.calculateWeightCost(11));
-        assertEquals(new BigDecimal("50"), cartServiceImpl.calculateWeightCost(21));
+    @DisplayName("Given a total weight, " +
+            "when calculating the weight cost, " +
+            "then the cost should be calculated correctly")
+    void calculateWeightCostTest() {
+
+        BigDecimal expectedCost1 = new BigDecimal("50");
+        BigDecimal actualCost1 = cartServiceImpl.calculateWeightCost(25);
+        assertEquals(expectedCost1, actualCost1);
+
+        BigDecimal expectedCost2 = new BigDecimal("20");
+        BigDecimal actualCost2 = cartServiceImpl.calculateWeightCost(15);
+        assertEquals(expectedCost2, actualCost2);
+
+        BigDecimal expectedCost3 = new BigDecimal("10");
+        BigDecimal actualCost3 = cartServiceImpl.calculateWeightCost(7);
+        assertEquals(expectedCost3, actualCost3);
+
+        BigDecimal expectedCost4 = new BigDecimal("5");
+        BigDecimal actualCost4 = cartServiceImpl.calculateWeightCost(3);
+        assertEquals(expectedCost4, actualCost4);
     }
 
 
@@ -135,7 +143,6 @@ public class CartServiceImplTest {
             "when clearing the cart, " +
             "then the cart products should be cleared successfully")
     void clearCartTest() {
-
         Long cartId = 1L;
         Cart cart = mock(Cart.class);
         cart.setId(cartId);
@@ -148,48 +155,37 @@ public class CartServiceImplTest {
         verify(cartRepository).save(cart);
     }
 
-
     @Test
     @DisplayName("Identify Abandoned Carts - Given No Abandoned Carts " +
             "When Identifying " +
             "Then Return Empty List")
     void identifyAbandonedCarts_NoAbandonedCartsTest() {
-
-        Date thresholdDate = new Date(System.currentTimeMillis() - 86400000);
+        LocalDate thresholdDate = LocalDate.now().minusDays(1);
 
         when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(new ArrayList<>());
 
-        List<Cart> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
+        List<CartDto> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
 
         assertEquals(0, result.size());
 
         verify(cartRepository).identifyAbandonedCarts(thresholdDate);
     }
 
-
     @Test
     @DisplayName("Identify Abandoned Carts - Given Abandoned Carts " +
             "When Identifying " +
             "Then Return List of Abandoned Carts")
     void identifyAbandonedCarts_AbandonedCartsExistTest() {
+        LocalDate thresholdDate = LocalDate.now().minusDays(1);
 
-        Date thresholdDate = new Date(System.currentTimeMillis() - 86400000);
+        when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(Arrays.asList(Cart.builder().build(), Cart.builder().build()));
 
-        Cart cart1 = mock(Cart.class);
-        Cart cart2 = mock(Cart.class);
+        List<CartDto> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
 
-        List<Cart> abandonedCarts = Arrays.asList(cart1, cart2);
-
-        when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(abandonedCarts);
-
-        List<Cart> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
-
-        assertEquals(abandonedCarts.size(), result.size());
-        assertTrue(result.contains(cart1));
-        assertTrue(result.contains(cart2));
-
+        assertEquals(2, result.size());
         verify(cartRepository).identifyAbandonedCarts(thresholdDate);
     }
+
 
     @Test
     @DisplayName("Given a user id, " +
@@ -198,13 +194,11 @@ public class CartServiceImplTest {
     void createCartTest() {
         Long userId = 123L;
 
-        Cart cart = mock(Cart.class);
-        when(cart.getId()).thenReturn(userId);
-        when(cart.getUser_id()).thenReturn(userId);
+        Cart cart = Cart.builder().id(userId).user_id(userId).build();
 
         when(cartRepository.save(any(Cart.class))).thenReturn(cart);
 
-        Cart createdCart = cartServiceImpl.createCart(userId);
+        CartDto createdCart = cartServiceImpl.createCart(userId);
 
         assertEquals(userId, createdCart.getUser_id());
         assertEquals(userId, createdCart.getId());
@@ -218,7 +212,7 @@ public class CartServiceImplTest {
     void getCartTest() {
         Long cartId = 123L;
 
-        Cart cart = new Cart();
+        Cart cart = Cart.builder().build();
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
 
         CartDto retrievedCartDto = cartServiceImpl.getCart(cartId);
@@ -232,8 +226,8 @@ public class CartServiceImplTest {
             "when retrieving all carts, " +
             "then return the list of all carts")
     void getAllCartsTest() {
-        Cart cart1 = mock(Cart.class);
-        Cart cart2 = mock(Cart.class);
+        Cart cart1 = Cart.builder().build();
+        Cart cart2 = Cart.builder().build();
         List<Cart> expectedCarts = Arrays.asList(cart1, cart2);
 
         when(cartRepository.findAll()).thenReturn(expectedCarts);
@@ -245,6 +239,7 @@ public class CartServiceImplTest {
         assertTrue(actualCarts.contains(cart2));
         verify(cartRepository).findAll();
     }
+
 
     @Test
     @DisplayName("Given a non-existent cart, " +
@@ -262,7 +257,6 @@ public class CartServiceImplTest {
             cartServiceImpl.addProductToCart(cartProduct);
         });
     }
-
 
     @Test
     @DisplayName("Given a non-existent cart, " +
@@ -292,6 +286,7 @@ public class CartServiceImplTest {
         });
     }
 
+
     @Test
     @DisplayName("Given a non-existent product in the cart, " +
             "when calculating the cart total, " +
@@ -300,15 +295,11 @@ public class CartServiceImplTest {
         Long cartId = 1L;
         Long userId = 1L;
 
-        Cart cart = new Cart();
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setProductId(999L);
-        cart.setCartProducts(Collections.singletonList(cartProduct));
+        CartProduct cartProduct = CartProduct.builder().productId(999L).build();
+        Cart cart = Cart.builder().cartProducts(Collections.singletonList(cartProduct)).build();
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-
-        when(userService.getUserById(userId)).thenReturn(new User());
-
+        when(userService.getUserById(userId)).thenReturn(User.builder().build());
         when(productService.getProductById(cartProduct.getProductId())).thenThrow(new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
 
         assertThrows(CartProductNotFoundException.class, () -> {
@@ -324,8 +315,7 @@ public class CartServiceImplTest {
         Long cartId = 1L;
         Long userId = 1L;
 
-        when(userService.getUserById(userId)).thenReturn(new User());
-
+        when(userService.getUserById(userId)).thenReturn(User.builder().build());
         when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
 
         assertThrows(CartNotFoundException.class, () -> {
@@ -334,23 +324,21 @@ public class CartServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a user ID with an existing cart, " +
-            "when creating a cart, " +
-            "then an IllegalArgumentException should be thrown")
-    void createCart_UserAlreadyHasCartTest() {
+    @DisplayName("Given a user with an existing cart, " +
+            "when creating a new cart, " +
+            "then a UserWithCartException should be thrown")
+    void createCart_UserWithCartExceptionTest() {
         Long userId = 123L;
 
-        Cart existingCart = new Cart();
-        existingCart.setUser_id(userId);
+        Cart existingCart = Cart.builder().user_id(userId).build();
+
         when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
 
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+        UserWithCartException exception = assertThrows(UserWithCartException.class, () -> {
             cartServiceImpl.createCart(userId);
         });
 
-        assertEquals("User with ID " + userId + " already has a cart.", thrown.getMessage());
-
-        verify(cartRepository, never()).save(any(Cart.class));
+        assertEquals("User with ID " + userId + " already has a cart.", exception.getMessage());
     }
 
 

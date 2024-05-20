@@ -1,12 +1,14 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
+import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
+import com.gftworkshop.cartMicroservice.services.CartService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -25,8 +27,13 @@ class CartProductServiceImplTest {
     @Mock
     private CartProductRepository cartProductRepository;
     @Mock private CartRepository cartRepository;
+    @Mock
+    private CartService cartService;
     @InjectMocks
     private CartProductServiceImpl cartProductService;
+
+    @InjectMocks
+    private CartServiceImpl cartServiceImpl;
     private CartProduct cartProduct;
     private Long id;
 
@@ -164,17 +171,16 @@ class CartProductServiceImplTest {
     @DisplayName("Remove CartProduct")
     class RemoveCartProductTests {
         @Test
-        @DisplayName("When removing existing " +
-                "Then verify deletion")
+        @DisplayName("When removing existing CartProduct, then verify deletion and returned value")
         void removeProductTest() {
             CartProduct cartProductToRemove = new CartProduct();
-
+            cartProductToRemove.setId(id); // Asegúrate de establecer el ID u otras propiedades necesarias
             when(cartProductRepository.findById(id)).thenReturn(Optional.of(cartProductToRemove));
 
-            CartProduct removedProduct = cartProductService.removeProduct(id);
+            CartProductDto removedProduct = cartProductService.removeProduct(id);
 
             verify(cartProductRepository, times(1)).deleteById(id);
-            assertEquals(cartProductToRemove, removedProduct);
+            assertEquals(cartProductToRemove.getId(), removedProduct.getId());
         }
 
         @Test
