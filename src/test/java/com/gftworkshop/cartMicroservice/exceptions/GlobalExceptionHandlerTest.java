@@ -1,6 +1,8 @@
 package com.gftworkshop.cartMicroservice.exceptions;
 
+import com.gftworkshop.cartMicroservice.model.CartProduct;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -35,6 +37,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @DisplayName("When handling HttpMessageConversionException, then return BadRequest with message")
     void testHttpMessageConversionException() {
         String exceptionMessage = "Unrecognized token 'twenty-one': was expecting (JSON String, Number, Array, Object or token 'null', 'true' or 'false')";
         HttpMessageConversionException exception = new HttpMessageConversionException(exceptionMessage);
@@ -46,7 +49,8 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void testHandleNumberFormatException() {
+    @DisplayName("When handling NumberFormatException, then return BadRequest with message")
+    void testNumberFormatException() {
         NumberFormatException exception = new NumberFormatException("Invalid input");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleNumberFormatException(exception, webRequest);
 
@@ -55,7 +59,18 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void testHandleCartNotFoundException() {
+    @DisplayName("When handling CartProductNotFoundException, then return NotFound with message")
+    void testCartProductNotFoundException() {
+        CartProductNotFoundException exception = new CartProductNotFoundException("CartProduct not found");
+        ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleCartProductNotFoundException(exception, webRequest);
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("CartProduct not found", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    @DisplayName("When handling CartNotFoundException, then return NotFound with message")
+    void testCartNotFoundException() {
         CartNotFoundException exception = new CartNotFoundException("Cart not found");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleCartNotFoundException(exception, webRequest);
 
@@ -64,6 +79,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @DisplayName("When handling NoSuchElementException, then return NotFound with message")
     void testCartNotSuchElementException() {
         NoSuchElementException exception = new NoSuchElementException("No valid element");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleCartNotSuchElement(exception, webRequest);
@@ -73,6 +89,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @DisplayName("When handling CartProductInvalidQuantityException, then return NotFound with message")
     void testCartProductInvalidQuantityException() {
         CartProductInvalidQuantityException exception = new CartProductInvalidQuantityException("Invalid quantity");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleCartProductInvalidQuantityException(exception, webRequest);
@@ -82,6 +99,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @DisplayName("When handling MethodArgumentNotValidException, then return BadRequest with validation messages")
     void testHandleMethodArgumentNotValid() {
         MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
         BindingResult bindingResult = mock(BindingResult.class);
@@ -100,6 +118,7 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
+    @DisplayName("When handling InternalError, then return InternalServerError with message")
     void testHandleInternalErrorException() {
         InternalError exception = new InternalError("Internal server error");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleGeneralException(exception, webRequest);

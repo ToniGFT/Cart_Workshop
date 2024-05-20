@@ -1,14 +1,8 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-<<<<<<< HEAD
 import com.gftworkshop.cartMicroservice.api.dto.UpdatedCartProductDto;
-import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
-=======
 import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
->>>>>>> develop
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
