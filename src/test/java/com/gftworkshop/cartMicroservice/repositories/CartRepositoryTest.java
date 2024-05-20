@@ -1,17 +1,16 @@
 package com.gftworkshop.cartMicroservice.repositories;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
+import com.gftworkshop.cartMicroservice.model.Cart;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.gftworkshop.cartMicroservice.model.Cart;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class CartRepositoryTest {
 
@@ -24,8 +23,8 @@ public class CartRepositoryTest {
 
     @Test
     public void testIdentifyAbandonedCarts() {
+        LocalDate thresholdDate = LocalDate.now();
 
-        Date thresholdDate = new Date();
         List<Cart> expectedCarts = List.of(new Cart(), new Cart());
 
         when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(expectedCarts);
@@ -35,6 +34,7 @@ public class CartRepositoryTest {
         assertEquals(expectedCarts, actualCarts);
         verify(cartRepository, times(1)).identifyAbandonedCarts(thresholdDate);
     }
+
 
     @Test
     public void testFindByUserId() {
