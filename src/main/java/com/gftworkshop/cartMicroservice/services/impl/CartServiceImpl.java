@@ -79,7 +79,7 @@ public class CartServiceImpl implements CartService {
         return total;
     }
 
-    private BigDecimal calculateWeightCost(double totalWeight) {
+    public BigDecimal calculateWeightCost(double totalWeight) {
         if (totalWeight > 20) {
             return new BigDecimal("50");
         } else if (totalWeight > 10) {
@@ -144,8 +144,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto getCart(Long cartId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow();
-        //BigDecimal bigDecimalTotalPrice = getCartTotal(cart.getId(), cart.getUser_id());
+        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
         CartDto cartDto = entityToDto(cart);
         cartDto.setTotalPrice(new BigDecimal("323.3"));
         return cartDto;
