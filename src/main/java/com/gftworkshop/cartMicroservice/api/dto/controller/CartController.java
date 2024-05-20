@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
@@ -71,7 +72,7 @@ public class CartController {
     @DeleteMapping("/carts/products/{id}")
     public ResponseEntity<?> removeProductById(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
-        CartProduct deletedCartProduct = cartProductService.removeProduct(idCart);
+        CartProductDto deletedCartProduct = cartProductService.removeProduct(idCart);
         if (deletedCartProduct != null)
             return ResponseEntity.ok(deletedCartProduct);
         return ResponseEntity.notFound().build();

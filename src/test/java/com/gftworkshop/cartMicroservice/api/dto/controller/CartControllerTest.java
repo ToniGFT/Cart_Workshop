@@ -1,16 +1,16 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
+import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
-import com.gftworkshop.cartMicroservice.services.CartProductService;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
 import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -131,7 +132,7 @@ class CartControllerTest {
         @Test
         @DisplayName("When removing product by ID, then expect OK status")
         void removeProductByIdTest() throws Exception {
-            CartProduct cartProduct = new CartProduct();
+            CartProductDto cartProduct = new CartProductDto();
             cartProduct.setId(productId);
 
             when(cartProductService.removeProduct(anyLong())).thenReturn(cartProduct);
@@ -230,10 +231,10 @@ class CartControllerTest {
         @Test
         @DisplayName("When removing a product, then expect OK status")
         void removeProductByIdTest() throws Exception {
-            CartProduct cartProduct = new CartProduct();
+
+            CartProductDto cartProduct = new CartProductDto();
             Cart cart = new Cart();
             cart.setId(cartId);
-            cartProduct.setCart(cart);
 
             when(cartProductService.removeProduct(anyLong())).thenReturn(cartProduct);
 

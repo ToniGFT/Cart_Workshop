@@ -2866,3 +2866,155 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-20 11:52:14 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
 2024-05-20 11:52:14 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
 2024-05-20 11:52:14 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 12:08:27 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-20 12:08:27 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-20 12:08:28 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 17.0.2 with PID 15616 (started by inpr in C:\Users\inpr\IdeaProjects\Cart_Workshop)
+2024-05-20 12:08:28 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2024-05-20 12:08:30 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-20 12:08:30 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 364 ms. Found 2 JPA repository interfaces.
+2024-05-20 12:08:31 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-05-20 12:08:32 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-05-20 12:08:32 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-05-20 12:08:32 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-20 12:08:32 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-20 12:08:32 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-05-20 12:08:33 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-20 12:08:33 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-05-20 12:08:35 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-20 12:08:35 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-20 12:08:35 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-20 12:08:37 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-05-20 12:08:37 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2024-05-20 12:08:38 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Started CartMicroserviceApplicationTests in 9.994 seconds (process running for 17.458)
+2024-05-20 12:08:39 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 12:08:39 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 12:08:39 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 12:08:39 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 12:08:39 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 12:08:39 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 12:08:39 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:39 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:39 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 2 ms
+2024-05-20 12:08:39 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:39 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:39 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:08:39 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:39 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:39 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:08:40 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:08:40 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:08:40 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 12:08:41 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 12:08:41 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-20 12:08:41 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-05-20 12:08:41 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-05-20 12:21:37 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 12:21:37 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 12:21:37 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 12:21:37 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 12:21:37 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 12:21:37 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 12:23:20 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 12:23:20 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 12:23:20 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 12:23:20 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 12:23:20 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 12:23:20 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 12:24:02 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-20 12:24:03 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-20 12:24:04 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 17.0.2 with PID 3244 (started by inpr in C:\Users\inpr\IdeaProjects\Cart_Workshop)
+2024-05-20 12:24:04 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2024-05-20 12:24:07 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-20 12:24:07 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 602 ms. Found 2 JPA repository interfaces.
+2024-05-20 12:24:08 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-05-20 12:24:10 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-05-20 12:24:10 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-05-20 12:24:10 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-20 12:24:10 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-20 12:24:10 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-05-20 12:24:11 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-20 12:24:11 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-05-20 12:24:15 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-20 12:24:15 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-20 12:24:16 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-20 12:24:18 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-05-20 12:24:19 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2024-05-20 12:24:20 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Started CartMicroserviceApplicationTests in 16.461 seconds (process running for 25.698)
+2024-05-20 12:24:22 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 12:24:22 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 12:24:22 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 12:24:22 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 12:24:22 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 12:24:22 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 12:24:22 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:22 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:22 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 1 ms
+2024-05-20 12:24:23 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 12:24:23 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 12:24:24 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 12:24:24 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 12:24:24 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-20 12:24:24 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-05-20 12:24:24 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
