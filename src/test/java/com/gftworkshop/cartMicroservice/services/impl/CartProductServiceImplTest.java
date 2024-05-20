@@ -1,9 +1,12 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
+import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
+import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
+import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,6 +24,7 @@ class CartProductServiceImplTest {
 
     @Mock
     private CartProductRepository cartProductRepository;
+    @Mock private CartRepository cartRepository;
     @InjectMocks
     private CartProductServiceImpl cartProductService;
     private CartProduct cartProduct;
@@ -43,7 +47,10 @@ class CartProductServiceImplTest {
                 "When Updated " +
                 "Then Return Rows Affected")
         void updateQuantityTest() {
+            long id = 123L;
             int newQuantity = 5;
+
+            when(cartRepository.findById(id)).thenReturn(Optional.of(new Cart()));
 
             when(cartProductRepository.updateQuantity(id, newQuantity)).thenReturn(1);
 
@@ -51,7 +58,6 @@ class CartProductServiceImplTest {
 
             assertEquals(1, rowsAffected);
             verify(cartProductRepository).updateQuantity(id, newQuantity);
-
         }
 
         @Test
@@ -74,7 +80,10 @@ class CartProductServiceImplTest {
                 "When Updated " +
                 "Then Return 0 Rows Affected")
         void updateQuantityNoChangesTest() {
+            long id = 123L;
             int currentQuantity = 5;
+
+            when(cartRepository.findById(id)).thenReturn(Optional.of(new Cart()));
 
             when(cartProductRepository.updateQuantity(id, currentQuantity)).thenReturn(0);
 
@@ -82,6 +91,71 @@ class CartProductServiceImplTest {
 
             assertEquals(0, rowsAffected);
             verify(cartProductRepository).updateQuantity(id, currentQuantity);
+        }
+
+        @Test
+        @DisplayName("Given Valid Quantity " +
+                "When Updated " +
+                "Then Return Updated Quantity")
+        public void testUpdateQuantity_ValidQuantity_Success() {
+            Long id = 1L;
+            int quantity = 5;
+
+            Cart cart = new Cart();
+            when(cartRepository.findById(id)).thenReturn(Optional.of(cart));
+            when(cartProductRepository.updateQuantity(id, quantity)).thenReturn(quantity);
+
+            int updatedQuantity = cartProductService.updateQuantity(id, quantity);
+
+            assertEquals(quantity, updatedQuantity);
+            verify(cartRepository, times(1)).findById(id);
+            verify(cartProductRepository, times(1)).updateQuantity(id, quantity);
+        }
+
+        @Test
+        @DisplayName("Given Invalid Quantity Zero " +
+                "Then Throws Exception")
+        public void testUpdateQuantity_InvalidQuantity_Zero() {
+            Long id = 1L;
+            int quantity = 0;
+
+            assertThrows(CartProductInvalidQuantityException.class, () -> {
+                cartProductService.updateQuantity(id, quantity);
+            });
+
+            verify(cartRepository, never()).findById(anyLong());
+            verify(cartProductRepository, never()).updateQuantity(anyLong(), anyInt());
+        }
+
+        @Test
+        @DisplayName("Given Invalid Quantity Negative " +
+                "Then Throws Exception")
+        public void testUpdateQuantity_InvalidQuantity_Negative() {
+            Long id = 1L;
+            int quantity = -5;
+
+            assertThrows(CartProductInvalidQuantityException.class, () -> {
+                cartProductService.updateQuantity(id, quantity);
+            });
+
+            verify(cartRepository, never()).findById(anyLong());
+            verify(cartProductRepository, never()).updateQuantity(anyLong(), anyInt());
+        }
+
+        @Test
+        @DisplayName("Given Nonexistent Cart " +
+                "Then Throws Exception")
+        public void testUpdateQuantity_CartNotFound() {
+            Long id = 999L;
+            int quantity = 5;
+
+            when(cartRepository.findById(id)).thenReturn(Optional.empty());
+
+            assertThrows(CartNotFoundException.class, () -> {
+                cartProductService.updateQuantity(id, quantity);
+            });
+
+            verify(cartProductRepository, never()).updateQuantity(anyLong(), anyInt());
         }
     }
 

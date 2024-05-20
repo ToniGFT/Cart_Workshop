@@ -8,12 +8,19 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class GlobalExceptionHandlerTest {
     @Mock
@@ -40,11 +47,11 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void testHandleNumberFormatException() {
-        NumberFormatException exception = new NumberFormatException("Invalid number format");
+        NumberFormatException exception = new NumberFormatException("Invalid input");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleNumberFormatException(exception, webRequest);
 
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("Invalid number format", responseEntity.getBody().getMessage());
+        assertEquals("Invalid input", responseEntity.getBody().getMessage());
     }
 
     @Test
@@ -72,6 +79,24 @@ class GlobalExceptionHandlerTest {
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
         assertEquals("Invalid quantity", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    void testHandleMethodArgumentNotValid() {
+        MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
+        BindingResult bindingResult = mock(BindingResult.class);
+        when(exception.getBindingResult()).thenReturn(bindingResult);
+
+        List<FieldError> fieldErrors = new ArrayList<>();
+        fieldErrors.add(new FieldError("objectName", "fieldName", "Error message 1"));
+        fieldErrors.add(new FieldError("objectName", "fieldName", "Error message 2"));
+
+        when(bindingResult.getFieldErrors()).thenReturn(fieldErrors);
+
+        ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleMethodArgumentNotValid(exception);
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals("Validation failed: Error message 1; Error message 2; ", responseEntity.getBody().getMessage());
     }
 
     @Test
