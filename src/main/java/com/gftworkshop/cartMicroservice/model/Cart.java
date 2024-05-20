@@ -2,11 +2,13 @@ package com.gftworkshop.cartMicroservice.model;
 
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -24,7 +26,7 @@ public class Cart {
     private Long user_id;
 
     @Column(name = "updated_at")
-    private Date updated_at;
+    private LocalDate updated_at;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     @JsonManagedReference

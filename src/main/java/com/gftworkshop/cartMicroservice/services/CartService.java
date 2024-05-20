@@ -5,7 +5,7 @@ import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface CartService {
@@ -15,7 +15,7 @@ public interface CartService {
 
     void clearCart(Long cartId);
 
-    List<Cart> identifyAbandonedCarts(Date thresholdDate);
+    List<Cart> identifyAbandonedCarts(LocalDate thresholdDate);
 
     Cart createCart(Long userId);
 
