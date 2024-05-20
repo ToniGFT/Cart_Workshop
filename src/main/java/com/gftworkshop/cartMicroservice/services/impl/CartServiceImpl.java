@@ -54,8 +54,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public BigDecimal getCartTotal(Long cartId, Long userId) {
-        User user = userService.getUserById(userId)
-                .blockOptional().orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
+        User user = userService.getUserById(userId);
 
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
@@ -64,8 +63,7 @@ public class CartServiceImpl implements CartService {
         double totalWeight = 0.0;
 
         for (CartProduct cartProduct : cart.getCartProducts()) {
-            Product product = productService.getProductById(cartProduct.getProductId())
-                    .blockOptional().orElseThrow(() -> new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
+            Product product = productService.getProductById(cartProduct.getProductId());
 
             totalWeight += product.getWeight();
             BigDecimal productTotal = cartProduct.getPrice().multiply(BigDecimal.valueOf(cartProduct.getQuantity()));
