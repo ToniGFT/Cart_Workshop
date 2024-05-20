@@ -74,7 +74,7 @@ public class CartServiceImpl implements CartService {
         return total;
     }
 
-    private BigDecimal calculateWeightCost(double totalWeight) {
+    BigDecimal calculateWeightCost(double totalWeight) {
         if (totalWeight > 20) {
             return new BigDecimal("50");
         } else if (totalWeight > 10) {
