@@ -31,6 +31,7 @@ public class CartProductServiceImpl implements CartProductService {
 
     @Override
     public CartProduct removeProduct(Long id) {
+        log.info("Removing CartProduct with ID {}", id);
         return cartProductRepository.findById(id)
                 .map(cartProduct -> {
                     cartProductRepository.deleteById(id);
