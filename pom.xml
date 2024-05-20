@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>3.2.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.gftworkshop</groupId>
     <artifactId>cartMicroservice</artifactId>
@@ -78,13 +78,12 @@
             <version>1.5.3</version>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version> <!-- Asegúrate de usar una versión que soporte esta característica -->
+                <version>0.8.7</version>
                 <executions>
                     <execution>
                         <goals>
@@ -119,5 +118,6 @@
             </plugin>
         </plugins>
     </build>
+
 
 </project>

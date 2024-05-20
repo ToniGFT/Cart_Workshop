@@ -1,22 +1,23 @@
 package com.gftworkshop.cartMicroservice.services;
 
 import com.gftworkshop.cartMicroservice.api.dto.Product;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestClient;
 
 @Service
 public class ProductService {
-    private final WebClient webClient;
+    private final RestClient restClient;
 
-    public ProductService(WebClient webClient) {
-        this.webClient = webClient;
+    @Autowired
+    public ProductService(RestClient restClient) {
+        this.restClient = restClient;
     }
 
-    public Mono<Product> getProductById(Long productId) {
-        return webClient.get()
+    public Product getProductById(Long productId) {
+        return restClient.get()
                 .uri("/catalog/products/{id}", productId)
                 .retrieve()
-                .bodyToMono(Product.class);
+                .body(Product.class);
     }
 }

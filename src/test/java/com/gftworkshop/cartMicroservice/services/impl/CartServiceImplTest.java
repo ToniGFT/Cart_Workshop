@@ -18,7 +18,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -99,9 +98,9 @@ public class CartServiceImplTest {
         List<CartProduct> cartProducts = Arrays.asList(cartProduct1, cartProduct2);
         cart.setCartProducts(cartProducts);
 
-        when(userService.getUserById(1L)).thenReturn(Mono.just(user));
-        when(productService.getProductById(1L)).thenReturn(Mono.just(product1));
-        when(productService.getProductById(2L)).thenReturn(Mono.just(product2));
+        when(userService.getUserById(1L)).thenReturn(user);
+        when(productService.getProductById(1L)).thenReturn(product1);
+        when(productService.getProductById(2L)).thenReturn(product2);
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
@@ -117,6 +116,17 @@ public class CartServiceImplTest {
         verify(userService).getUserById(1L);
         verify(productService, times(2)).getProductById(anyLong());
         verify(cartRepository).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Given a specific weight, " +
+            "when calculating weight cost, " +
+            "then it should return te correct cost")
+    public void testCalculateWeightCost() {
+        assertEquals(new BigDecimal("5"), cartServiceImpl.calculateWeightCost(5));
+        assertEquals(new BigDecimal("10"), cartServiceImpl.calculateWeightCost(6));
+        assertEquals(new BigDecimal("20"), cartServiceImpl.calculateWeightCost(11));
+        assertEquals(new BigDecimal("50"), cartServiceImpl.calculateWeightCost(21));
     }
 
 
@@ -297,7 +307,7 @@ public class CartServiceImplTest {
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
 
-        when(userService.getUserById(userId)).thenReturn(Mono.just(new User()));
+        when(userService.getUserById(userId)).thenReturn(new User());
 
         when(productService.getProductById(cartProduct.getProductId())).thenThrow(new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
 
@@ -314,7 +324,7 @@ public class CartServiceImplTest {
         Long cartId = 1L;
         Long userId = 1L;
 
-        when(userService.getUserById(userId)).thenReturn(Mono.just(new User()));
+        when(userService.getUserById(userId)).thenReturn(new User());
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
 
@@ -322,5 +332,26 @@ public class CartServiceImplTest {
             cartServiceImpl.getCartTotal(cartId, userId);
         });
     }
+
+    @Test
+    @DisplayName("Given a user ID with an existing cart, " +
+            "when creating a cart, " +
+            "then an IllegalArgumentException should be thrown")
+    void createCart_UserAlreadyHasCartTest() {
+        Long userId = 123L;
+
+        Cart existingCart = new Cart();
+        existingCart.setUser_id(userId);
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            cartServiceImpl.createCart(userId);
+        });
+
+        assertEquals("User with ID " + userId + " already has a cart.", thrown.getMessage());
+
+        verify(cartRepository, never()).save(any(Cart.class));
+    }
+
 
 }

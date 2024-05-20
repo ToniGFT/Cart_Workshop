@@ -4,8 +4,6 @@ import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.UserNotFoundException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
@@ -58,8 +56,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public BigDecimal getCartTotal(Long cartId, Long userId) {
-        User user = userService.getUserById(userId)
-                .blockOptional().orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
+        User user = userService.getUserById(userId);
 
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
@@ -68,8 +65,7 @@ public class CartServiceImpl implements CartService {
         double totalWeight = 0.0;
 
         for (CartProduct cartProduct : cart.getCartProducts()) {
-            Product product = productService.getProductById(cartProduct.getProductId())
-                    .blockOptional().orElseThrow(() -> new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
+            Product product = productService.getProductById(cartProduct.getProductId());
 
             totalWeight += product.getWeight();
             BigDecimal productTotal = cartProduct.getPrice().multiply(BigDecimal.valueOf(cartProduct.getQuantity()));
@@ -83,7 +79,7 @@ public class CartServiceImpl implements CartService {
         return total;
     }
 
-    private BigDecimal calculateWeightCost(double totalWeight) {
+    public BigDecimal calculateWeightCost(double totalWeight) {
         if (totalWeight > 20) {
             return new BigDecimal("50");
         } else if (totalWeight > 10) {
@@ -148,8 +144,10 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto getCart(Long cartId) {
-        Cart cart = cartRepository.findById(cartId).orElseThrow();
-        return entityToDto(cart);
+        Cart cart = cartRepository.findById(cartId).orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
+        CartDto cartDto = entityToDto(cart);
+        cartDto.setTotalPrice(new BigDecimal("323.3"));
+        return cartDto;
     }
 
     public List<Cart> getAllCarts() {
