@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.gftworkshop.cartMicroservice.api.dto.UpdatedCartProductDto;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
 import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
@@ -181,6 +182,17 @@ class CartControllerTest {
         }
 
         @Test
+        @DisplayName("When adding cart by ID and cart creation fails, then expect Not Found status")
+        void addCartByIdFailureTest() throws Exception {
+            when(cartService.createCart(cartId)).thenReturn(null);
+
+            mockMvc.perform(post("/carts/{id}", cartId)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+
+        @Test
         @DisplayName("When getting cart by ID, then expect OK status")
         void getCartByIdTest() {
             CartDto cart = new CartDto();
@@ -195,6 +207,17 @@ class CartControllerTest {
         }
 
         @Test
+        @DisplayName("When getting cart by ID and cart retrieval fails, then expect Not Found status")
+        void getCartByIdFailureTest() throws Exception {
+            when(cartService.getCart(cartId)).thenReturn(null);
+
+            mockMvc.perform(get("/carts/{id}", cartId)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
+
+        @Test
         @DisplayName("When removing cart by ID, then expect OK status")
         void removeCartByIdTest(){;
             doNothing().when(cartService).clearCart(cartId);
@@ -204,6 +227,17 @@ class CartControllerTest {
             verify(cartService, times(1)).clearCart(cartId);
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
+
+        @Test
+        @DisplayName("When removing product by ID and product deletion fails, then expect Not Found status")
+        void removeProductByIdFailureTest() throws Exception {
+            when(cartProductService.removeProduct(productId)).thenReturn(null);
+
+            mockMvc.perform(delete("/carts/products/{id}", productId)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound());
+        }
+
     }
 
     @Nested
@@ -214,7 +248,7 @@ class CartControllerTest {
         @DisplayName("When updating a product, then expect OK status")
         void testUpdateProduct() {
             int newQuantity = 5;
-            CartProduct cartProduct = new CartProduct();
+            UpdatedCartProductDto cartProduct = new UpdatedCartProductDto();
             cartProduct.setId(productId);
             cartProduct.setQuantity(newQuantity);
 

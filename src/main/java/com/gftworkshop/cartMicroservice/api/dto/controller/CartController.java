@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.gftworkshop.cartMicroservice.api.dto.UpdatedCartProductDto;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
@@ -40,6 +41,7 @@ public class CartController {
         return ResponseEntity.notFound().build();
     }
 
+
     @GetMapping("/carts/{id}")
     public ResponseEntity<?> getCartById(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
@@ -66,7 +68,7 @@ public class CartController {
     }
 
     @PatchMapping("/carts/products")
-    public ResponseEntity<?> updateProduct(@Valid @RequestBody CartProduct cartProduct) {
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody UpdatedCartProductDto cartProduct) {
         cartProductService.updateQuantity(cartProduct.getId(), cartProduct.getQuantity());
         return ResponseEntity.ok().build();
     }

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.context.request.WebRequest;
 
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -56,7 +57,25 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    void testHandleGeneralException() {
+    void testCartNotSuchElementException() {
+        NoSuchElementException exception = new NoSuchElementException("No valid element");
+        ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleCartNotSuchElement(exception, webRequest);
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("No valid element", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    void testCartProductInvalidQuantityException() {
+        CartProductInvalidQuantityException exception = new CartProductInvalidQuantityException("Invalid quantity");
+        ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleCartProductInvalidQuantityException(exception, webRequest);
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("Invalid quantity", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    void testHandleInternalErrorException() {
         InternalError exception = new InternalError("Internal server error");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleGeneralException(exception, webRequest);
 

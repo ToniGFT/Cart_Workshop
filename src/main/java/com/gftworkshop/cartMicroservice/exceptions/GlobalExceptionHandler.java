@@ -32,6 +32,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
+    @ExceptionHandler(CartProductInvalidQuantityException.class)
+    public ResponseEntity<ErrorResponse> handleCartProductInvalidQuantityException( CartProductInvalidQuantityException e, WebRequest request){
+        ErrorResponse errorResponse = new ErrorResponse(400, e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
     @org.springframework.web.bind.annotation.ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ErrorResponse> handleCartNotSuchElement(NoSuchElementException e, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
