@@ -19,7 +19,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -30,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CartServiceImplTest {
+class CartServiceImplTest {
 
     private CartRepository cartRepository;
     private CartProductRepository cartProductRepository;
@@ -194,13 +193,13 @@ public class CartServiceImplTest {
     void createCartTest() {
         Long userId = 123L;
 
-        Cart cart = Cart.builder().id(userId).user_id(userId).build();
+        Cart cart = Cart.builder().id(userId).userId(userId).build();
 
         when(cartRepository.save(any(Cart.class))).thenReturn(cart);
 
         CartDto createdCart = cartServiceImpl.createCart(userId);
 
-        assertEquals(userId, createdCart.getUser_id());
+        assertEquals(userId, createdCart.getUserId());
         assertEquals(userId, createdCart.getId());
         verify(cartRepository).save(any(Cart.class));
     }
@@ -330,7 +329,7 @@ public class CartServiceImplTest {
     void createCart_UserWithCartExceptionTest() {
         Long userId = 123L;
 
-        Cart existingCart = Cart.builder().user_id(userId).build();
+        Cart existingCart = Cart.builder().userId(userId).build();
 
         when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
 

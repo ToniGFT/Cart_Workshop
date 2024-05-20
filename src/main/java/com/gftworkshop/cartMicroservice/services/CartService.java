@@ -1,7 +1,6 @@
 package com.gftworkshop.cartMicroservice.services;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 
 import java.math.BigDecimal;

@@ -13,11 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class CartDto {
 
     private Long id;
-    private Long user_id;
+    private Long userId;
     private List<CartProduct> cartProducts;
     private BigDecimal totalPrice;
 

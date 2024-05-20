@@ -1,6 +1,5 @@
 package com.gftworkshop.cartMicroservice.exceptions;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 
 public class ExternalMicroserviceException extends RuntimeException {

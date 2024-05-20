@@ -20,11 +20,13 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class CartServiceImpl implements CartService {
+
+    private static final String CART_NOT_FOUND = "Cart with ID ";
+    private static final String NOT_FOUND = " not found";
 
     private final CartRepository cartRepository;
     private final CartProductRepository cartProductRepository;
@@ -41,7 +43,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public void addProductToCart(CartProduct cartProduct) {
         Cart cart = cartRepository.findById(cartProduct.getCart().getId())
-                .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartProduct.getCart().getId() + " not found"));
+                .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartProduct.getCart().getId() + NOT_FOUND));
 
         cart.getCartProducts().add(cartProduct);
         cartProduct.setCart(cart);
@@ -54,7 +56,7 @@ public class CartServiceImpl implements CartService {
         User user = userService.getUserById(userId);
 
         Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
+                .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
 
         BigDecimal total = BigDecimal.ZERO;
         double totalWeight = 0.0;
@@ -89,7 +91,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     public void clearCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
+                .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
 
         cartProductRepository.removeAllByCartId(cartId);
         cart.getCartProducts().clear();
@@ -98,9 +100,8 @@ public class CartServiceImpl implements CartService {
     }
 
     private void updateCartModifiedDateTime(Cart cart) {
-        cart.setUpdated_at(LocalDate.now());
+        cart.setUpdatedAt(LocalDate.now());
     }
-
 
     @Override
     public List<CartDto> identifyAbandonedCarts(LocalDate thresholdDate) {
@@ -110,14 +111,13 @@ public class CartServiceImpl implements CartService {
             log.info("No abandoned carts found before {}", thresholdDate);
         } else {
             log.info("Found {} abandoned carts before {}", abandonedCarts.size(), thresholdDate);
-            abandonedCarts.forEach(cart -> log.debug("Abandoned cart: {}, at {}", cart.getId(), cart.getUpdated_at()));
+            abandonedCarts.forEach(cart -> log.debug("Abandoned cart: {}, at {}", cart.getId(), cart.getUpdatedAt()));
         }
 
         return abandonedCarts.stream()
                 .map(this::entityToDto)
-                .collect(Collectors.toList());
+                .toList();
     }
-
 
     @Override
     public CartDto createCart(Long userId) {
@@ -126,18 +126,17 @@ public class CartServiceImpl implements CartService {
         });
 
         Cart cart = Cart.builder()
-                .updated_at(LocalDate.now())
-                .user_id(userId)
+                .updatedAt(LocalDate.now())
+                .userId(userId)
                 .build();
         cart = cartRepository.save(cart);
         return entityToDto(cart);
     }
 
-
     @Override
     public CartDto getCart(Long cartId) {
         Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
+                .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
         return entityToDto(cart);
     }
 
