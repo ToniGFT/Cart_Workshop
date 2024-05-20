@@ -31,7 +31,7 @@ public class CartController {
     @PostMapping("/carts/{id}")
     public ResponseEntity<?> addCartByUserId(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
-        Cart createdCart = cartService.createCart(idCart);
+        CartDto createdCart = cartService.createCart(idCart);
         if (createdCart != null)
             return ResponseEntity.created(URI.create("/carts/" + createdCart.getId())).body(createdCart);
         return ResponseEntity.notFound().build();

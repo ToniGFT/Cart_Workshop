@@ -141,7 +141,7 @@ public class CartServiceImplTest {
 
         when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(new ArrayList<>());
 
-        List<Cart> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
+        List<CartDto> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
 
         assertEquals(0, result.size());
 
@@ -157,7 +157,7 @@ public class CartServiceImplTest {
 
         when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(Arrays.asList(Cart.builder().build(), Cart.builder().build()));
 
-        List<Cart> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
+        List<CartDto> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
 
         assertEquals(2, result.size());
         verify(cartRepository).identifyAbandonedCarts(thresholdDate);
@@ -175,7 +175,7 @@ public class CartServiceImplTest {
 
         when(cartRepository.save(any(Cart.class))).thenReturn(cart);
 
-        Cart createdCart = cartServiceImpl.createCart(userId);
+        CartDto createdCart = cartServiceImpl.createCart(userId);
 
         assertEquals(userId, createdCart.getUser_id());
         assertEquals(userId, createdCart.getId());

@@ -2858,3 +2858,11 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-20 11:19:52 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
 2024-05-20 11:19:52 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
 2024-05-20 11:19:52 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 11:50:08 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 11:50:08 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 11:50:08 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 11:50:08 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 11:52:14 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 11:52:14 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 11:52:14 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 11:52:14 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null

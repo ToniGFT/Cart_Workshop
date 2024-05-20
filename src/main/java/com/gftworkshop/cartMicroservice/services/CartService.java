@@ -15,9 +15,9 @@ public interface CartService {
 
     void clearCart(Long cartId);
 
-    List<Cart> identifyAbandonedCarts(LocalDate thresholdDate);
+    List<CartDto> identifyAbandonedCarts(LocalDate thresholdDate);
 
-    Cart createCart(Long userId);
+    CartDto createCart(Long userId);
 
     CartDto getCart(Long cartId);
 }
