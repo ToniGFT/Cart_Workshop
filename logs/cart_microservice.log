@@ -98,7 +98,7 @@ APPLICATION FAILED TO START
 
 Description:
 
-Parameter 0 of constructor in com.gftworkshop.cartMicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
+Parameter 0 of constructor in com.gftworkshop.cartmicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
 
 
 Action:
@@ -205,7 +205,7 @@ APPLICATION FAILED TO START
 
 Description:
 
-Parameter 0 of constructor in com.gftworkshop.cartMicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
+Parameter 0 of constructor in com.gftworkshop.cartmicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
 
 
 Action:
@@ -312,7 +312,7 @@ APPLICATION FAILED TO START
 
 Description:
 
-Parameter 0 of constructor in com.gftworkshop.cartMicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
+Parameter 0 of constructor in com.gftworkshop.cartmicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
 
 
 Action:
@@ -419,7 +419,7 @@ APPLICATION FAILED TO START
 
 Description:
 
-Parameter 0 of constructor in com.gftworkshop.cartMicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
+Parameter 0 of constructor in com.gftworkshop.cartmicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
 
 
 Action:
@@ -526,7 +526,7 @@ APPLICATION FAILED TO START
 
 Description:
 
-Parameter 0 of constructor in com.gftworkshop.cartMicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
+Parameter 0 of constructor in com.gftworkshop.cartmicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
 
 
 Action:
@@ -633,7 +633,7 @@ APPLICATION FAILED TO START
 
 Description:
 
-Parameter 0 of constructor in com.gftworkshop.cartMicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
+Parameter 0 of constructor in com.gftworkshop.cartmicroservice.services.CountryService required a bean of type 'org.springframework.web.reactive.function.client.WebClient' that could not be found.
 
 
 Action:
@@ -909,8 +909,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 09:14:05 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection conn9: url=jdbc:h2:mem:testdb user=SA: (connection evicted)
 2024-05-17 09:14:05 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
 2024-05-17 09:14:05 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2024-05-17 09:14:43 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 09:14:43 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-17 09:14:43 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 09:14:43 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-17 09:14:45 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 22.0.1 with PID 5628 (started by aipg in C:\Cart_Workshop)
 2024-05-17 09:14:45 [main] DEBUG c.g.c.CartMicroserviceApplicationTests - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 09:14:45 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
@@ -1176,8 +1176,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 09:15:06 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
 2024-05-17 09:15:06 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
 2024-05-17 09:15:06 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
-2024-05-17 09:15:06 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest]: CartProductRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 09:15:06 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest
+2024-05-17 09:15:06 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.repositories.CartProductRepositoryTest]: CartProductRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 09:15:06 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.repositories.CartProductRepositoryTest
 2024-05-17 09:15:06 [main] INFO  c.g.c.r.CartProductRepositoryTest - Starting CartProductRepositoryTest using Java 22.0.1 with PID 5628 (started by aipg in C:\Cart_Workshop)
 2024-05-17 09:15:06 [main] DEBUG c.g.c.r.CartProductRepositoryTest - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 09:15:06 [main] INFO  c.g.c.r.CartProductRepositoryTest - No active profile set, falling back to 1 default profile: "default"
@@ -1338,8 +1338,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 09:24:15 [http-nio-8080-exec-2] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
 2024-05-17 09:24:18 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Pool stats (total=10, active=0, idle=10, waiting=0)
 2024-05-17 09:24:18 [HikariPool-1 housekeeper] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Fill pool skipped, pool has sufficient level or currently being filled (queueDepth=0).
-2024-05-17 09:24:45 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 09:24:46 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-17 09:24:45 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 09:24:46 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-17 09:24:47 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 22.0.1 with PID 6428 (started by aipg in C:\Cart_Workshop)
 2024-05-17 09:24:47 [main] DEBUG c.g.c.CartMicroserviceApplicationTests - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 09:24:47 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
@@ -1607,8 +1607,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 09:25:06 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
 2024-05-17 09:25:06 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
 2024-05-17 09:25:06 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
-2024-05-17 09:25:06 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest]: CartProductRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 09:25:06 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest
+2024-05-17 09:25:06 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.repositories.CartProductRepositoryTest]: CartProductRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 09:25:06 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.repositories.CartProductRepositoryTest
 2024-05-17 09:25:06 [main] INFO  c.g.c.r.CartProductRepositoryTest - Starting CartProductRepositoryTest using Java 22.0.1 with PID 6428 (started by aipg in C:\Cart_Workshop)
 2024-05-17 09:25:06 [main] DEBUG c.g.c.r.CartProductRepositoryTest - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 09:25:06 [main] INFO  c.g.c.r.CartProductRepositoryTest - No active profile set, falling back to 1 default profile: "default"
@@ -1660,8 +1660,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 09:25:37 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection conn9: url=jdbc:h2:mem:testdb user=SA: (connection evicted)
 2024-05-17 09:25:37 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
 2024-05-17 09:25:37 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2024-05-17 09:27:45 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 09:27:45 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-17 09:27:45 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 09:27:45 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-17 09:27:47 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 22.0.1 with PID 3424 (started by aipg in C:\Cart_Workshop)
 2024-05-17 09:27:47 [main] DEBUG c.g.c.CartMicroserviceApplicationTests - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 09:27:47 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
@@ -1927,8 +1927,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 09:28:05 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
 2024-05-17 09:28:05 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
 2024-05-17 09:28:05 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
-2024-05-17 09:28:05 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest]: CartProductRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 09:28:05 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest
+2024-05-17 09:28:05 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.repositories.CartProductRepositoryTest]: CartProductRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 09:28:05 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.repositories.CartProductRepositoryTest
 2024-05-17 09:28:05 [main] INFO  c.g.c.r.CartProductRepositoryTest - Starting CartProductRepositoryTest using Java 22.0.1 with PID 3424 (started by aipg in C:\Cart_Workshop)
 2024-05-17 09:28:05 [main] DEBUG c.g.c.r.CartProductRepositoryTest - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 09:28:05 [main] INFO  c.g.c.r.CartProductRepositoryTest - No active profile set, falling back to 1 default profile: "default"
@@ -1963,8 +1963,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 09:28:07 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
 2024-05-17 09:28:07 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
 2024-05-17 09:28:07 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2024-05-17 09:44:13 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 09:44:13 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-17 09:44:13 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 09:44:13 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-17 09:44:15 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 22.0.1 with PID 17364 (started by aipg in C:\Cart_Workshop)
 2024-05-17 09:44:15 [main] DEBUG c.g.c.CartMicroserviceApplicationTests - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 09:44:15 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
@@ -2230,8 +2230,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 09:44:32 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
 2024-05-17 09:44:32 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
 2024-05-17 09:44:32 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
-2024-05-17 09:44:32 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest]: CartProductRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 09:44:32 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.repositories.CartProductRepositoryTest
+2024-05-17 09:44:32 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.repositories.CartProductRepositoryTest]: CartProductRepositoryTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 09:44:32 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.repositories.CartProductRepositoryTest
 2024-05-17 09:44:32 [main] INFO  c.g.c.r.CartProductRepositoryTest - Starting CartProductRepositoryTest using Java 22.0.1 with PID 17364 (started by aipg in C:\Cart_Workshop)
 2024-05-17 09:44:32 [main] DEBUG c.g.c.r.CartProductRepositoryTest - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 09:44:32 [main] INFO  c.g.c.r.CartProductRepositoryTest - No active profile set, falling back to 1 default profile: "default"
@@ -2266,8 +2266,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 09:44:34 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
 2024-05-17 09:44:34 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
 2024-05-17 09:44:34 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2024-05-17 11:04:06 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 11:04:07 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-17 11:04:06 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 11:04:07 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-17 11:04:10 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 22.0.1 with PID 18396 (started by aipg in C:\Cart_Workshop)
 2024-05-17 11:04:10 [main] DEBUG c.g.c.CartMicroserviceApplicationTests - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 11:04:10 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
@@ -2552,8 +2552,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 11:04:45 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection conn9: url=jdbc:h2:mem:testdb user=SA: (connection evicted)
 2024-05-17 11:04:45 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
 2024-05-17 11:04:45 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2024-05-17 11:30:20 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-17 11:30:21 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-17 11:30:20 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-17 11:30:21 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-17 11:30:24 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 22.0.1 with PID 14056 (started by aipg in C:\Cart_Workshop)
 2024-05-17 11:30:24 [main] DEBUG c.g.c.CartMicroserviceApplicationTests - Running with Spring Boot v3.2.5, Spring v6.1.6
 2024-05-17 11:30:24 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
@@ -2866,8 +2866,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-20 11:52:14 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
 2024-05-20 11:52:14 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
 2024-05-20 11:52:14 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
-2024-05-20 12:08:27 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-20 12:08:27 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-20 12:08:27 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-20 12:08:27 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-20 12:08:28 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 17.0.2 with PID 15616 (started by inpr in C:\Users\inpr\IdeaProjects\Cart_Workshop)
 2024-05-20 12:08:28 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
 2024-05-20 12:08:30 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
@@ -2948,8 +2948,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-20 12:23:20 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
 2024-05-20 12:23:20 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
 2024-05-20 12:23:20 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
-2024-05-20 12:24:02 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-20 12:24:03 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-20 12:24:02 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-20 12:24:03 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-20 12:24:04 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 17.0.2 with PID 3244 (started by inpr in C:\Users\inpr\IdeaProjects\Cart_Workshop)
 2024-05-20 12:24:04 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
 2024-05-20 12:24:07 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
@@ -3018,8 +3018,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-20 12:24:24 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2024-05-20 12:24:24 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2024-05-20 12:24:24 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2024-05-20 12:27:55 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-20 12:27:55 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-20 12:27:55 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-20 12:27:55 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-20 12:27:57 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 22.0.1 with PID 12104 (started by aipg in C:\Cart_Workshop)
 2024-05-20 12:27:57 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
 2024-05-20 12:28:00 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
@@ -3090,8 +3090,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-20 12:28:16 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
 2024-05-20 12:33:25 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
 2024-05-20 12:33:25 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
-2024-05-20 12:34:42 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-20 12:34:42 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-20 12:34:42 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-20 12:34:42 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-20 12:34:44 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 22.0.1 with PID 9928 (started by aipg in C:\Cart_Workshop)
 2024-05-20 12:34:44 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
 2024-05-20 12:34:46 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
@@ -3190,8 +3190,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-20 12:54:22 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2024-05-20 12:54:22 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2024-05-20 12:54:22 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2024-05-20 12:54:57 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-20 12:54:57 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-20 12:54:57 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-20 12:54:57 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-20 12:54:58 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
 2024-05-20 12:54:58 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 17 with PID 16620 (started by nabz in C:\Cart_Workshop)
 2024-05-20 12:54:58 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
@@ -3272,8 +3272,8 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-20 12:55:21 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2024-05-20 12:55:21 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2024-05-20 12:55:21 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
-2024-05-20 13:02:58 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-05-20 13:02:58 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartMicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartMicroservice.CartMicroserviceApplicationTests
+2024-05-20 13:02:58 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-20 13:02:58 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
 2024-05-20 13:02:59 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
 2024-05-20 13:03:00 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 17 with PID 11680 (started by nabz in C:\Cart_Workshop)
 2024-05-20 13:03:00 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
@@ -3354,3 +3354,85 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-20 13:03:21 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2024-05-20 13:03:21 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2024-05-20 13:03:21 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-05-20 15:03:53 [main] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.1.Final
+2024-05-20 15:03:55 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:55 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:55 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 16 ms
+2024-05-20 15:03:56 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:56 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:56 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 25 ms
+2024-05-20 15:03:56 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 2 ms
+2024-05-20 15:03:56 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:56 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:56 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:57 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:57 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:57 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:57 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:57 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:57 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:57 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:57 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:57 [main] INFO  o.s.mock.web.MockServletContext - Initializing Spring TestDispatcherServlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Initializing Servlet ''
+2024-05-20 15:03:57 [main] INFO  o.s.t.w.s.TestDispatcherServlet - Completed initialization in 0 ms
+2024-05-20 15:03:58 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 15:03:58 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Removing CartProduct with ID 123
+2024-05-20 15:03:58 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 15:03:58 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 15:03:58 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 1 to 5
+2024-05-20 15:03:58 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 1 to 5
+2024-05-20 15:03:58 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Updating quantity for CartProduct with ID 123 to 5
+2024-05-20 15:03:58 [main] INFO  c.g.c.s.impl.CartProductServiceImpl - Quantity updated successfully for CartProduct with ID 123 to 5
+2024-05-20 15:03:59 [main] INFO  o.s.t.c.s.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests]: CartMicroserviceApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2024-05-20 15:03:59 [main] INFO  o.s.b.t.c.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.gftworkshop.cartmicroservice.CartMicroserviceApplication for test class com.gftworkshop.cartmicroservice.CartMicroserviceApplicationTests
+2024-05-20 15:04:00 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Starting CartMicroserviceApplicationTests using Java 22.0.1 with PID 10804 (started by aipg in C:\Cart_Workshop)
+2024-05-20 15:04:00 [main] INFO  c.g.c.CartMicroserviceApplicationTests - No active profile set, falling back to 1 default profile: "default"
+2024-05-20 15:04:02 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-05-20 15:04:02 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 158 ms. Found 2 JPA repository interfaces.
+2024-05-20 15:04:04 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2024-05-20 15:04:05 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:testdb user=SA
+2024-05-20 15:04:05 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2024-05-20 15:04:05 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-05-20 15:04:06 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.4.4.Final
+2024-05-20 15:04:06 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2024-05-20 15:04:06 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-05-20 15:04:06 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-05-20 15:04:09 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-05-20 15:04:09 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-05-20 15:04:10 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-05-20 15:04:12 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2024-05-20 15:04:12 [main] INFO  o.s.b.a.h.H2ConsoleAutoConfiguration - H2 console available at '/h2-console'. Database available at 'jdbc:h2:mem:testdb'
+2024-05-20 15:04:13 [main] INFO  c.g.c.CartMicroserviceApplicationTests - Started CartMicroserviceApplicationTests in 13.273 seconds (process running for 34.844)
+2024-05-20 15:04:13 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 15:04:13 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 15:04:13 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2024-05-20 15:04:13 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2024-05-20 15:04:13 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
