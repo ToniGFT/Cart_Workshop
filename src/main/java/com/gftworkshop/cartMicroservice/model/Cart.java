@@ -1,6 +1,5 @@
 package com.gftworkshop.cartMicroservice.model;
 
-
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,10 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-import jakarta.persistence.*;
-import lombok.*;
 
+import jakarta.validation.constraints.*;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +23,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "User ID cannot be null")
     @Column(name = "user_id")
     private Long user_id;
 

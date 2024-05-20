@@ -5,13 +5,16 @@ import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
 import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
 
 @RestController
+@Validated
 public class CartController {
 
     private CartServiceImpl cartService;
@@ -56,14 +59,14 @@ public class CartController {
     }
 
     @PostMapping("/carts/products")
-    public ResponseEntity<?> addProduct(@RequestBody CartProduct cartProduct) {
+    public ResponseEntity<?> addProduct(@Valid @RequestBody CartProduct cartProduct) {
         cartService.addProductToCart(cartProduct);
         return ResponseEntity.ok().build();
 
     }
 
     @PatchMapping("/carts/products")
-    public ResponseEntity<?> updateProduct(@RequestBody CartProduct cartProduct) {
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody CartProduct cartProduct) {
         cartProductService.updateQuantity(cartProduct.getId(), cartProduct.getQuantity());
         return ResponseEntity.ok().build();
     }

@@ -1,9 +1,12 @@
 package com.gftworkshop.cartMicroservice.exceptions;
 
+import jdk.jshell.spi.ExecutionControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -20,8 +23,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneralException(Exception e, WebRequest request) {
+    @org.springframework.web.bind.annotation.ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ErrorResponse> handleCartNotSuchElement(NoSuchElementException e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(ExecutionControl.InternalException.class)
+    public ResponseEntity<ErrorResponse> handleGeneralException(InternalError e, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }

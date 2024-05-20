@@ -47,7 +47,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void testHandleGeneralException() {
-        Exception exception = new Exception("Internal server error");
+        InternalError exception = new InternalError("Internal server error");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleGeneralException(exception, webRequest);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
