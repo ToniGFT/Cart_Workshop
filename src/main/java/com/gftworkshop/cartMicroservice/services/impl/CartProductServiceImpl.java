@@ -33,7 +33,7 @@ public class CartProductServiceImpl implements CartProductService {
             throw new CartProductInvalidQuantityException("The quantity must be higher than 0");
         }
         Optional<Cart> optionalCart = cartRepository.findById(id);
-        if (!optionalCart.isPresent()) {
+        if (optionalCart.isEmpty()) {
             throw new CartNotFoundException("Cart with ID " + id + " not found");
         }
         log.info("Updating quantity for CartProduct with ID {} to {}", id, quantity);
