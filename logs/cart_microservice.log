@@ -2838,3 +2838,23 @@ Consider defining a bean of type 'org.springframework.web.reactive.function.clie
 2024-05-17 11:30:53 [HikariPool-1 connection closer] DEBUG com.zaxxer.hikari.pool.PoolBase - HikariPool-1 - Closing connection conn9: url=jdbc:h2:mem:testdb user=SA: (connection evicted)
 2024-05-17 11:30:53 [SpringApplicationShutdownHook] DEBUG com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - After shutdown stats (total=0, active=0, idle=0, waiting=0)
 2024-05-17 11:30:53 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2024-05-20 11:02:49 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 11:02:49 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 11:02:49 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: 0, at null
+2024-05-20 11:02:49 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: 0, at null
+2024-05-20 11:08:15 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 11:08:15 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 11:08:15 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: 0, at null
+2024-05-20 11:08:15 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: 0, at null
+2024-05-20 11:15:48 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 11:15:48 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 11:15:48 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 11:15:48 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 11:18:52 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 11:18:52 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 11:18:52 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 11:18:52 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 11:19:52 [main] INFO  c.g.c.services.impl.CartServiceImpl - No abandoned carts found before 2024-05-19
+2024-05-20 11:19:52 [main] INFO  c.g.c.services.impl.CartServiceImpl - Found 2 abandoned carts before 2024-05-19
+2024-05-20 11:19:52 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null
+2024-05-20 11:19:52 [main] DEBUG c.g.c.services.impl.CartServiceImpl - Abandoned cart: null, at null

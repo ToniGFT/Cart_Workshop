@@ -52,15 +52,9 @@ public class CartServiceImplTest {
             "when adding the product to the cart, " +
             "then the product should be added successfully")
     void addProductToCartTest() {
+        Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
 
-        Cart cart = mock(Cart.class);
-        when(cart.getId()).thenReturn(1L);
-        when(cart.getCartProducts()).thenReturn(new ArrayList<>());
-
-        CartProduct cartProduct = mock(CartProduct.class);
-        lenient().when(cartProduct.getId()).thenReturn(1L);
-
-        when(cartProduct.getCart()).thenReturn(cart);
+        CartProduct cartProduct = CartProduct.builder().id(1L).cart(cart).build();
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
@@ -71,39 +65,38 @@ public class CartServiceImplTest {
         verify(cartRepository).save(cart);
     }
 
-
     @Test
     @DisplayName("Given a cart with multiple products and a user, " +
             "when calculating the cart total including tax and weight costs, " +
             "then the total should be calculated correctly")
     void getCartTotalTest() {
-        User user = new User();
-        user.setCountry(new Country(1L, 0.07));
+        User user = User.builder().country(new Country(1L, 0.07)).build();
 
-        Product product1 = new Product();
-        product1.setWeight(2.0);
-        Product product2 = new Product();
-        product2.setWeight(3.5);
+        Product product1 = Product.builder().weight(2.0).build();
+        Product product2 = Product.builder().weight(3.5).build();
 
-        Cart cart = new Cart();
-        CartProduct cartProduct1 = new CartProduct();
-        cartProduct1.setProductId(1L);
-        cartProduct1.setPrice(new BigDecimal("10"));
-        cartProduct1.setQuantity(2);
-        cartProduct1.setCart(cart);
+        Cart cart = Cart.builder().build();
 
-        CartProduct cartProduct2 = new CartProduct();
-        cartProduct2.setProductId(2L);
-        cartProduct2.setPrice(new BigDecimal("15"));
-        cartProduct2.setQuantity(3);
-        cartProduct2.setCart(cart);
+        CartProduct cartProduct1 = CartProduct.builder()
+                .productId(1L)
+                .price(new BigDecimal("10"))
+                .quantity(2)
+                .cart(cart)
+                .build();
+
+        CartProduct cartProduct2 = CartProduct.builder()
+                .productId(2L)
+                .price(new BigDecimal("15"))
+                .quantity(3)
+                .cart(cart)
+                .build();
 
         List<CartProduct> cartProducts = Arrays.asList(cartProduct1, cartProduct2);
         cart.setCartProducts(cartProducts);
 
-        when(userService.getUserById(1L)).thenReturn(Mono.just(user));
-        when(productService.getProductById(1L)).thenReturn(Mono.just(product1));
-        when(productService.getProductById(2L)).thenReturn(Mono.just(product2));
+        when(userService.getUserById(1L)).thenReturn(user);
+        when(productService.getProductById(1L)).thenReturn(product1);
+        when(productService.getProductById(2L)).thenReturn(product2);
 
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
@@ -127,7 +120,6 @@ public class CartServiceImplTest {
             "when clearing the cart, " +
             "then the cart products should be cleared successfully")
     void clearCartTest() {
-
         Long cartId = 1L;
         Cart cart = mock(Cart.class);
         cart.setId(cartId);
@@ -139,7 +131,6 @@ public class CartServiceImplTest {
         assertTrue(cart.getCartProducts().isEmpty());
         verify(cartRepository).save(cart);
     }
-
 
     @Test
     @DisplayName("Identify Abandoned Carts - Given No Abandoned Carts " +
@@ -157,16 +148,14 @@ public class CartServiceImplTest {
         verify(cartRepository).identifyAbandonedCarts(thresholdDate);
     }
 
-
     @Test
     @DisplayName("Identify Abandoned Carts - Given Abandoned Carts " +
             "When Identifying " +
             "Then Return List of Abandoned Carts")
     void identifyAbandonedCarts_AbandonedCartsExistTest() {
-
         LocalDate thresholdDate = LocalDate.now().minusDays(1);
 
-        when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(Arrays.asList(mock(Cart.class), mock(Cart.class)));
+        when(cartRepository.identifyAbandonedCarts(thresholdDate)).thenReturn(Arrays.asList(Cart.builder().build(), Cart.builder().build()));
 
         List<Cart> result = cartServiceImpl.identifyAbandonedCarts(thresholdDate);
 
@@ -182,9 +171,7 @@ public class CartServiceImplTest {
     void createCartTest() {
         Long userId = 123L;
 
-        Cart cart = mock(Cart.class);
-        when(cart.getId()).thenReturn(userId);
-        when(cart.getUser_id()).thenReturn(userId);
+        Cart cart = Cart.builder().id(userId).user_id(userId).build();
 
         when(cartRepository.save(any(Cart.class))).thenReturn(cart);
 
@@ -202,7 +189,7 @@ public class CartServiceImplTest {
     void getCartTest() {
         Long cartId = 123L;
 
-        Cart cart = new Cart();
+        Cart cart = Cart.builder().build();
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
 
         CartDto retrievedCartDto = cartServiceImpl.getCart(cartId);
@@ -216,8 +203,8 @@ public class CartServiceImplTest {
             "when retrieving all carts, " +
             "then return the list of all carts")
     void getAllCartsTest() {
-        Cart cart1 = mock(Cart.class);
-        Cart cart2 = mock(Cart.class);
+        Cart cart1 = Cart.builder().build();
+        Cart cart2 = Cart.builder().build();
         List<Cart> expectedCarts = Arrays.asList(cart1, cart2);
 
         when(cartRepository.findAll()).thenReturn(expectedCarts);
@@ -229,6 +216,7 @@ public class CartServiceImplTest {
         assertTrue(actualCarts.contains(cart2));
         verify(cartRepository).findAll();
     }
+
 
     @Test
     @DisplayName("Given a non-existent cart, " +
@@ -246,7 +234,6 @@ public class CartServiceImplTest {
             cartServiceImpl.addProductToCart(cartProduct);
         });
     }
-
 
     @Test
     @DisplayName("Given a non-existent cart, " +
@@ -276,6 +263,7 @@ public class CartServiceImplTest {
         });
     }
 
+
     @Test
     @DisplayName("Given a non-existent product in the cart, " +
             "when calculating the cart total, " +
@@ -284,15 +272,11 @@ public class CartServiceImplTest {
         Long cartId = 1L;
         Long userId = 1L;
 
-        Cart cart = new Cart();
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setProductId(999L);
-        cart.setCartProducts(Collections.singletonList(cartProduct));
+        CartProduct cartProduct = CartProduct.builder().productId(999L).build();
+        Cart cart = Cart.builder().cartProducts(Collections.singletonList(cartProduct)).build();
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-
-        when(userService.getUserById(userId)).thenReturn(Mono.just(new User()));
-
+        when(userService.getUserById(userId)).thenReturn(User.builder().build());
         when(productService.getProductById(cartProduct.getProductId())).thenThrow(new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
 
         assertThrows(CartProductNotFoundException.class, () -> {
@@ -308,8 +292,7 @@ public class CartServiceImplTest {
         Long cartId = 1L;
         Long userId = 1L;
 
-        when(userService.getUserById(userId)).thenReturn(Mono.just(new User()));
-
+        when(userService.getUserById(userId)).thenReturn(User.builder().build());
         when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
 
         assertThrows(CartNotFoundException.class, () -> {
@@ -324,8 +307,7 @@ public class CartServiceImplTest {
     void createCart_UserWithCartExceptionTest() {
         Long userId = 123L;
 
-        Cart existingCart = new Cart();
-        existingCart.setUser_id(userId);
+        Cart existingCart = Cart.builder().user_id(userId).build();
 
         when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
 

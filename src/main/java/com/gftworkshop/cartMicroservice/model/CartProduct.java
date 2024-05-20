@@ -3,6 +3,7 @@ package com.gftworkshop.cartMicroservice.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Builder
 @Table(name = "cart_products")
 public class CartProduct {
     @Id
@@ -23,7 +25,7 @@ public class CartProduct {
     @JsonBackReference
     private Cart cart;
 
-    @Column(name ="product_id")
+    @Column(name = "product_id")
     private Long productId;
 
     @Column(name = "product_name")
