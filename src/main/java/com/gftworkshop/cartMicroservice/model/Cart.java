@@ -1,12 +1,6 @@
 package com.gftworkshop.cartMicroservice.model;
 
 
-import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import jakarta.persistence.*;

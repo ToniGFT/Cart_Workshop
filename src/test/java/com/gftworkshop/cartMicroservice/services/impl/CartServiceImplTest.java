@@ -118,6 +118,17 @@ public class CartServiceImplTest {
         verify(cartRepository).findById(1L);
     }
 
+    @Test
+    @DisplayName("Given a specific weight, " +
+            "when calculating weight cost, " +
+            "then it should return te correct cost")
+    public void testCalculateWeightCost() {
+        assertEquals(new BigDecimal("5"), cartServiceImpl.calculateWeightCost(5));
+        assertEquals(new BigDecimal("10"), cartServiceImpl.calculateWeightCost(6));
+        assertEquals(new BigDecimal("20"), cartServiceImpl.calculateWeightCost(11));
+        assertEquals(new BigDecimal("50"), cartServiceImpl.calculateWeightCost(21));
+    }
+
 
     @Test
     @DisplayName("Given an existing cart, " +
@@ -321,5 +332,26 @@ public class CartServiceImplTest {
             cartServiceImpl.getCartTotal(cartId, userId);
         });
     }
+
+    @Test
+    @DisplayName("Given a user ID with an existing cart, " +
+            "when creating a cart, " +
+            "then an IllegalArgumentException should be thrown")
+    void createCart_UserAlreadyHasCartTest() {
+        Long userId = 123L;
+
+        Cart existingCart = new Cart();
+        existingCart.setUser_id(userId);
+        when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            cartServiceImpl.createCart(userId);
+        });
+
+        assertEquals("User with ID " + userId + " already has a cart.", thrown.getMessage());
+
+        verify(cartRepository, never()).save(any(Cart.class));
+    }
+
 
 }
