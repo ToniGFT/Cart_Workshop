@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.services;
 
 import com.gftworkshop.cartMicroservice.api.dto.Product;
+import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,11 +67,11 @@ public class ProductServiceTest {
                 .setBody("Product not found")
                 .addHeader("Content-Type", "text/plain"));
 
-        RestClientResponseException exception = assertThrows(RestClientResponseException.class, () -> {
+        Exception exception = assertThrows(ExternalMicroserviceException.class, () -> {
             productService.getProductById(999L);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, ((ExternalMicroserviceException) exception).getStatusCode());
     }
 
     @Test
@@ -81,11 +82,11 @@ public class ProductServiceTest {
                 .setBody("Internal Server Error")
                 .addHeader("Content-Type", "text/plain"));
 
-        RestClientResponseException exception = assertThrows(RestClientResponseException.class, () -> {
+        Exception exception = assertThrows(ExternalMicroserviceException.class, () -> {
             productService.getProductById(1L);
         });
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ((ExternalMicroserviceException) exception).getStatusCode());
     }
 
     @AfterEach
