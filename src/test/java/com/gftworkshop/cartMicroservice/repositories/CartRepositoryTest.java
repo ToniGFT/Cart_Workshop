@@ -2,6 +2,7 @@ package com.gftworkshop.cartMicroservice.repositories;
 
 import com.gftworkshop.cartMicroservice.model.Cart;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.time.LocalDate;
