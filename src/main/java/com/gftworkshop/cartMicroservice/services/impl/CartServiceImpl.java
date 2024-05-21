@@ -168,7 +168,18 @@ public class CartServiceImpl implements CartService {
 
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
-        return entityToDto(cart);
+
+        for(CartProduct cartProduct:cart.getCartProducts()){
+            int actualStock = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
+            if(cartProduct.getQuantity()>actualStock){
+                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: "+cartProduct.getQuantity()+". Actual stock: "+actualStock);
+            }
+        }
+
+        CartDto cartDto = entityToDto(cart);
+        cartDto.setTotalPrice(getCartTotal(cart.getId(),cart.getUserId()));
+
+        return cartDto;
     }
 
     public List<Cart> getAllCarts() {
