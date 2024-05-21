@@ -1,10 +1,8 @@
-package com.gftworkshop.cartMicroservice;
+package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
-import com.gftworkshop.cartMicroservice.services.CartService;
-import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +17,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-public class IntegrationTests {
+public class ControllerIntegrationTests {
 
     private ObjectMapper objectMapper;
 
