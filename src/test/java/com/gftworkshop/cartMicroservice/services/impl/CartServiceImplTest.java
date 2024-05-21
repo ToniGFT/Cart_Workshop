@@ -4,10 +4,7 @@ import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.Country;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
-import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.UserNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.UserWithCartException;
+import com.gftworkshop.cartMicroservice.exceptions.*;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
@@ -25,6 +22,8 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -53,8 +52,9 @@ class CartServiceImplTest {
     void addProductToCartTest() {
         Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
 
-        CartProduct cartProduct = CartProduct.builder().id(1L).cart(cart).build();
+        CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
 
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L,"prodName","description",new BigDecimal("100"),100,"category",100.0));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
 
@@ -62,6 +62,26 @@ class CartServiceImplTest {
 
         verify(cartProductRepository).save(cartProduct);
         verify(cartRepository).save(cart);
+    }
+
+    @Test
+    @DisplayName("Given a cart and a product, " +
+            "when adding the product to the cart, if there isn't enough stock, " +
+            "an exception should be thrown")
+    void addProductToCartTestNotEnoughStock() {
+        Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
+
+        CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(1000).cart(cart).build();
+
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L,"prodName","description",new BigDecimal("100"),100,"category",100.0));
+
+
+
+        Exception exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
+            cartServiceImpl.addProductToCart(cartProduct);
+        });
+
+        assertEquals("Not enough stock to add product to cart. Desired amount: 1000. Actual stock: 100", exception.getMessage());
     }
 
     @Test
@@ -246,9 +266,13 @@ class CartServiceImplTest {
             "then a CartNotFoundException should be thrown")
     void addProductToCart_CartNotFoundExceptionTest() {
 
-        CartProduct cartProduct = mock(CartProduct.class);
-        when(cartProduct.getCart()).thenReturn(mock(Cart.class));
-        when(cartProduct.getCart().getId()).thenReturn(1L);
+        Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
+
+        CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
+
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L,"prodName","description",new BigDecimal("100"),100,"category",100.0));
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+
 
         when(cartRepository.findById(1L)).thenReturn(Optional.empty());
 

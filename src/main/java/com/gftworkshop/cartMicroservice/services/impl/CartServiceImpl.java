@@ -4,6 +4,7 @@ import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
+import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;
 import com.gftworkshop.cartMicroservice.exceptions.UserWithCartException;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
@@ -42,13 +43,19 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addProductToCart(CartProduct cartProduct) {
-        Cart cart = cartRepository.findById(cartProduct.getCart().getId())
-                .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartProduct.getCart().getId() + NOT_FOUND));
+        int actualProductAmount = productService.getProductById(cartProduct.getProductId()).getStock();
 
-        cart.getCartProducts().add(cartProduct);
-        cartProduct.setCart(cart);
-        cartProductRepository.save(cartProduct);
-        cartRepository.save(cart);
+        if(actualProductAmount>=cartProduct.getQuantity()){
+            Cart cart = cartRepository.findById(cartProduct.getCart().getId())
+                    .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartProduct.getCart().getId() + " not found"));
+
+            cart.getCartProducts().add(cartProduct);
+            cartProduct.setCart(cart);
+            cartProductRepository.save(cartProduct);
+            cartRepository.save(cart);
+        } else {
+            throw new CartProductInvalidQuantityException("Not enough stock to add product to cart. Desired amount: "+cartProduct.getQuantity()+". Actual stock: "+actualProductAmount);
+        }
     }
 
     @Override

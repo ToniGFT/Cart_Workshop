@@ -60,15 +60,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(NoSuchElementException.class)
+    @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ErrorResponse> handleCartNotSuchElement(NoSuchElementException e, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(404, e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler(ExecutionControl.InternalException.class)
+    @ExceptionHandler(ExecutionControl.InternalException.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(InternalError e, WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+    }
+
+    @ExceptionHandler(ExternalMicroserviceException.class)
+    public ResponseEntity<ErrorResponse> handleExternalMicroserviceException(ExternalMicroserviceException e, WebRequest request) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getStatusCode().value(), e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
