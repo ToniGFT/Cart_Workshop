@@ -79,7 +79,7 @@ class CartControllerTest {
         @Test
         @DisplayName("When adding cart by ID, then expect OK status")
         void addCartByUserIdTest() throws Exception {
-            CartDto savedCart = CartDto.builder().user_id(cartId).build();
+            CartDto savedCart = CartDto.builder().userId(cartId).build();
 
             when(cartService.createCart(cartId)).thenReturn(savedCart);
 
