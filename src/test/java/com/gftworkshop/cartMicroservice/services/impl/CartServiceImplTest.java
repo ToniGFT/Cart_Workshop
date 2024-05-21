@@ -24,7 +24,7 @@ import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,7 +54,7 @@ class CartServiceImplTest {
 
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L,"prodName","description",new BigDecimal("100"),100,"category",100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
 
@@ -73,8 +73,7 @@ class CartServiceImplTest {
 
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(1000).cart(cart).build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L,"prodName","description",new BigDecimal("100"),100,"category",100.0));
-
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
 
 
         Exception exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
@@ -270,7 +269,7 @@ class CartServiceImplTest {
 
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L,"prodName","description",new BigDecimal("100"),100,"category",100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
 
