@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,20 +21,15 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 public class ControllerIntegrationTests {
 
-    private ObjectMapper objectMapper;
 
+    private ObjectMapper objectMapper;
+    private CartDto expectedCart;
     @Autowired
     private WebTestClient client;
 
     @BeforeEach
     void setUp() {
-        objectMapper = new ObjectMapper();
-    }
-
-    @Test
-    void getCartByIdTest() {
-        //Given
-        CartDto expectedCart = CartDto.builder()
+        expectedCart = CartDto.builder()
                 .id(1L)
                 .userId(101L)
                 .cartProducts(Arrays.asList(
@@ -57,15 +54,44 @@ public class ControllerIntegrationTests {
                 ))
                 .build();
 
-        //When
-        client.get().uri("/carts/{id}", 1L).exchange()
-                .expectStatus().isOk()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                .expectBody(CartDto.class)
-                .value(cartDto -> {
-                    //Then
-                    assertThat(cartDto).isEqualTo(expectedCart);
-                });
-
+        objectMapper = new ObjectMapper();
     }
+
+    @Nested
+    @DisplayName("Tests for adding a cart by user id")
+    class GetCartById{
+        @Test
+        @DisplayName("When retrieving cart by Id " +
+        "Then expect identical cart.")
+        void getCartByIdTest() {
+            //When
+            client.get().uri("/carts/{id}", 1L).exchange()
+                    .expectStatus().isOk()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody(CartDto.class)
+                    .value(cartDto -> {
+                        //Then
+                        assertThat(cartDto).isEqualTo(expectedCart);
+                    });
+
+        }
+
+        @Test
+        void getCartById_BadRequestTest() {
+            client.get().uri("/carts/{id}", "sads").exchange()
+                    .expectStatus().isBadRequest()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody();
+        }
+
+        @Test
+        void getCartById_CartNotFoundTest() {
+            //When
+            client.get().uri("/carts/{id}", -3).exchange()
+                    .expectStatus().isNotFound()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody();
+        }
+    }
+
 }
