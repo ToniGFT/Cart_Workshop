@@ -19,13 +19,14 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-public class ControllerIntegrationTests {
+class ControllerIntegrationTests {
 
 
     private ObjectMapper objectMapper;
     private CartDto expectedCart;
     @Autowired
     private WebTestClient client;
+
 
     @BeforeEach
     void setUp() {
@@ -115,7 +116,7 @@ public class ControllerIntegrationTests {
         }
 
         @Test
-        void addCartByUserId_NotFound() {
+        void addCartByUserId_NotFoundTest() {
             Long userId = 101L;
 
             client.post().uri("/carts/{id}", userId).exchange()
@@ -124,7 +125,7 @@ public class ControllerIntegrationTests {
         }
 
         @Test
-        void addCartByUserId_BadRequest_String() {
+        void addCartByUserId_BadRequest_StringTest() {
             String userId = "prueba";
 
             client.post().uri("/carts/{id}", userId).exchange()
@@ -133,7 +134,7 @@ public class ControllerIntegrationTests {
         }
 
         @Test
-        void addCartByUserId_BadRequest_Double() {
+        void addCartByUserId_BadRequest_DoubleTest() {
             Double userId = 1.1;
 
             client.post().uri("/carts/{id}", userId).exchange()
@@ -142,5 +143,45 @@ public class ControllerIntegrationTests {
         }
 
     }
+
+    @Nested
+    @DisplayName("Test for removing a cart by id")
+    class removeCartByIdEndpoint {
+
+        @Test
+        void removeCartByIdTest() {
+            Long cartId = 1L;
+
+            client.delete().uri("/carts/{id}", cartId).exchange()
+                    .expectStatus().isOk();
+        }
+
+        @Test
+        void removeCartById_NotFoundTest() {
+            Long cartId = 9999L;
+
+            client.delete().uri("/carts/{id}", cartId).exchange()
+                    .expectStatus().isNotFound();
+        }
+
+        @Test
+        void removeCartById_BadRequest_StringTest() {
+            String userId = "prueba";
+
+            client.delete().uri("/carts/{id}", userId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
+        }
+
+        @Test
+        void removeCartById_BadRequest_DoubleTest() {
+            Double userId = 1.1;
+
+            client.delete().uri("/carts/{id}", userId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
+        }
+    }
+
 
 }
