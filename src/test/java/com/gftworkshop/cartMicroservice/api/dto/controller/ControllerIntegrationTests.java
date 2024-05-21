@@ -144,22 +144,61 @@ class ControllerIntegrationTests {
 
         @Test
         void removeCartById_BadRequest_StringTest() {
-            String userId = "prueba";
+            String cartId = "prueba";
 
-            client.delete().uri("/carts/{id}", userId).exchange()
+            client.delete().uri("/carts/{id}", cartId).exchange()
                     .expectStatus()
                     .isBadRequest();
         }
 
         @Test
         void removeCartById_BadRequest_DoubleTest() {
-            Double userId = 1.1;
+            Double cartId = 1.1;
 
-            client.delete().uri("/carts/{id}", userId).exchange()
+            client.delete().uri("/carts/{id}", cartId).exchange()
                     .expectStatus()
                     .isBadRequest();
         }
     }
 
+    @Nested
+    @DisplayName("Test for removing a cartProduct by id")
+    class removeProductByIdEndpoint{
+
+        @Test
+        void removeCartProductByIdTest() {
+            Long cartProductId = 1L;
+
+            client.delete().uri("/carts/products/{id}", cartProductId).exchange()
+                    .expectStatus()
+                    .isOk();
+        }
+
+        @Test
+        void removeCartProductById_NotFoundTest() {
+            Long cartProductId = 9999L;
+
+            client.delete().uri("/carts/{id}", cartProductId).exchange()
+                    .expectStatus().isNotFound();
+        }
+
+        @Test
+        void removeCartProductById_BadRequest_StringTest() {
+            String cartProductId = "prueba";
+
+            client.delete().uri("/carts/{id}", cartProductId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
+        }
+
+        @Test
+        void removeCartProductById_BadRequest_DoubleTest() {
+            Double cartProductId = 1.1;
+
+            client.delete().uri("/carts/{id}", cartProductId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
+        }
+    }
 
 }
