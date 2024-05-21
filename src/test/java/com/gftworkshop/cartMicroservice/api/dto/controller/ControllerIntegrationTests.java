@@ -58,11 +58,9 @@ public class ControllerIntegrationTests {
     }
 
     @Nested
-    @DisplayName("Tests for adding a cart by user id")
-    class GetCartById{
+    @DisplayName("Tests for getting a cart by id")
+    class GetCartById {
         @Test
-        @DisplayName("When retrieving cart by Id " +
-        "Then expect identical cart.")
         void getCartByIdTest() {
             //When
             client.get().uri("/carts/{id}", 1L).exchange()
@@ -92,6 +90,57 @@ public class ControllerIntegrationTests {
                     .expectHeader().contentType(MediaType.APPLICATION_JSON)
                     .expectBody();
         }
+    }
+
+    @Nested
+    @DisplayName("Tests for adding a cart by user id")
+    class addCartByUserIdEndpoint {
+
+        @Test
+        void addCartByUserIdTest() {
+            Long userId = 104L;
+            CartDto expectedCart = CartDto.builder()
+                    .userId(userId)
+                    .cartProducts(null)
+                    .build();
+
+            client.post().uri("/carts/{id}", userId).exchange()
+                    .expectStatus().isCreated()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody(CartDto.class)
+                    .value(cartDto -> {
+                        assertThat(cartDto.getUserId()).isEqualTo(expectedCart.getUserId());
+                        assertThat(cartDto.getCartProducts()).isEqualTo(expectedCart.getCartProducts());
+                    });
+        }
+
+        @Test
+        void addCartByUserId_NotFound() {
+            Long userId = 101L;
+
+            client.post().uri("/carts/{id}", userId).exchange()
+                    .expectStatus()
+                    .is5xxServerError();
+        }
+
+        @Test
+        void addCartByUserId_BadRequest_String() {
+            String userId = "prueba";
+
+            client.post().uri("/carts/{id}", userId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
+        }
+
+        @Test
+        void addCartByUserId_BadRequest_Double() {
+            Double userId = 1.1;
+
+            client.post().uri("/carts/{id}", userId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
+        }
+
     }
 
 }
