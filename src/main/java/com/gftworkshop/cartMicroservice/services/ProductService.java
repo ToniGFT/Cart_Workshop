@@ -11,6 +11,7 @@ import org.springframework.web.client.RestClientException;
 
 @Service
 public class ProductService {
+    private final String endpointUri = "http://localhost:8081/catalog/products/{id}";
     private final RestClient restClient;
 
     @Autowired
@@ -21,7 +22,7 @@ public class ProductService {
     public Product getProductById(Long productId) {
         try {
             return restClient.get()
-                    .uri("/catalog/products/{id}", productId)
+                    .uri(endpointUri, productId)
                     .retrieve()
                     .body(Product.class);
         } catch (HttpClientErrorException e) {

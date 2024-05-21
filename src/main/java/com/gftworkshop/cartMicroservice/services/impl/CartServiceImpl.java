@@ -50,7 +50,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public void addProductToCart(CartProduct cartProduct) {
-        int actualProductAmount = productService.getProductById(cartProduct.getProductId()).getStock();
+        int actualProductAmount = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
 
         if (actualProductAmount >= cartProduct.getQuantity()) {
             Cart cart = cartRepository.findById(cartProduct.getCart().getId())
