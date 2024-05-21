@@ -49,7 +49,7 @@ public class CartController {
     }
 
     @DeleteMapping("/carts/{id}")
-    public ResponseEntity<?> removeCartById(@PathVariable("id") String id) {
+    public ResponseEntity<Void> removeCartById(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
         cartService.clearCart(idCart);
         return ResponseEntity.ok().build();
@@ -57,19 +57,19 @@ public class CartController {
     }
 
     @PostMapping("/carts/products")
-    public ResponseEntity<?> addProduct(@Valid @RequestBody CartProduct cartProduct) {
+    public ResponseEntity<Void> addProduct(@Valid @RequestBody CartProduct cartProduct) {
         cartService.addProductToCart(cartProduct);
         return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/carts/products")
-    public ResponseEntity<?> updateProduct(@Valid @RequestBody UpdatedCartProductDto cartProduct) {
+    public ResponseEntity<Void> updateProduct(@Valid @RequestBody UpdatedCartProductDto cartProduct) {
         cartProductService.updateQuantity(cartProduct.getId(), cartProduct.getQuantity());
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/carts/products/{id}")
-    public ResponseEntity<?> removeProductById(@PathVariable("id") String id) {
+    public ResponseEntity<CartProductDto> removeProductById(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
         CartProductDto deletedCartProduct = cartProductService.removeProduct(idCart);
         return ResponseEntity.ok(deletedCartProduct);
