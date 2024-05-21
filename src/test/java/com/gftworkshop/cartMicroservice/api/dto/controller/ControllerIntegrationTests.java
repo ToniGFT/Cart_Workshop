@@ -3,6 +3,7 @@ package com.gftworkshop.cartMicroservice.api.dto.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
+import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -91,6 +92,33 @@ public class ControllerIntegrationTests {
                         assertThat(cartDto.getUserId()).isEqualTo(expectedCart.getUserId());
                         assertThat(cartDto.getCartProducts()).isEqualTo(expectedCart.getCartProducts());
                     });
+        }
+
+        @Test
+        void addCartByUserId_NotFound() {
+            Long userId = 101L;
+
+            client.post().uri("/carts/{id}", userId).exchange()
+                    .expectStatus()
+                    .is5xxServerError();
+        }
+
+        @Test
+        void addCartByUserId_BadRequest_String() {
+            String userId = "prueba";
+
+            client.post().uri("/carts/{id}", userId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
+        }
+
+        @Test
+        void addCartByUserId_BadRequest_Double() {
+            Double userId = 1.1;
+
+            client.post().uri("/carts/{id}", userId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
         }
 
     }
