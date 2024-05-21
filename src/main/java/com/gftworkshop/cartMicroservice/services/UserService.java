@@ -11,11 +11,10 @@ import org.springframework.web.client.RestClientException;
 
 @Service
 public class UserService {
-    private final String endpointUri = "http://localhost:8082/users/{id}";
-
+    public String endpointUri = "http://localhost:8082/users/{id}";
     private final RestClient restClient;
 
-    @Autowired
+
     public UserService(RestClient restClient) {
         this.restClient = restClient;
     }
@@ -26,14 +25,8 @@ public class UserService {
                     .uri(endpointUri, userId)
                     .retrieve()
                     .body(User.class);
-        }  catch (HttpClientErrorException e) {
-            throw new ExternalMicroserviceException(e.getStatusCode(),"User Microservice Error: Client error occurred. \n"+ e.getMessage());
-        } catch (HttpServerErrorException e) {
-            throw new ExternalMicroserviceException(e.getStatusCode(),"User Microservice Error: server error occurred. \n"+ e.getMessage());
         } catch (RestClientException e) {
-            throw new ExternalMicroserviceException("User Microservice Error: RestClient error occurred. \n"+ e.getMessage());
-        } catch (Exception e) {
-            throw new ExternalMicroserviceException("User Microservice Error: Unexpected error occurred. \n"+ e.getMessage());
+            throw new ExternalMicroserviceException("USER MICROSERVICE EXCEPTION: " + e.getMessage());
         }
     }
 }
