@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -68,4 +70,29 @@ public class ControllerIntegrationTests {
                 });
 
     }
+
+    @Nested
+    @DisplayName("Tests for adding a cart by user id")
+    class addCartByUserIdEndpoint{
+
+        @Test
+        void addCartByUserIdTest() {
+            Long userId = 104L;
+            CartDto expectedCart = CartDto.builder()
+                    .userId(userId)
+                    .cartProducts(null)
+                    .build();
+
+            client.post().uri("/carts/{id}", userId).exchange()
+                    .expectStatus().isCreated()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody(CartDto.class)
+                    .value(cartDto -> {
+                        assertThat(cartDto.getUserId()).isEqualTo(expectedCart.getUserId());
+                        assertThat(cartDto.getCartProducts()).isEqualTo(expectedCart.getCartProducts());
+                    });
+        }
+
+    }
+
 }

@@ -34,23 +34,18 @@ public class CartController {
     }
 
     @PostMapping("/carts/{id}")
-    public ResponseEntity<?> addCartByUserId(@PathVariable("id") String id) {
+    public ResponseEntity<CartDto> addCartByUserId(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
         CartDto createdCart = cartService.createCart(idCart);
-        if (createdCart != null)
-            return ResponseEntity.created(URI.create("/carts/" + createdCart.getId())).body(createdCart);
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.created(URI.create("/carts/" + createdCart.getId())).body(createdCart);
     }
 
 
     @GetMapping("/carts/{id}")
-    public ResponseEntity<?> getCartById(@PathVariable("id") String id) {
+    public ResponseEntity<CartDto> getCartById(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
         CartDto receivedCart = cartService.getCart(idCart);
-        if (receivedCart != null)
-            return ResponseEntity.ok(receivedCart);
-        return ResponseEntity.notFound().build();
-
+        return ResponseEntity.ok(receivedCart);
     }
 
     @DeleteMapping("/carts/{id}")
@@ -65,7 +60,6 @@ public class CartController {
     public ResponseEntity<?> addProduct(@Valid @RequestBody CartProduct cartProduct) {
         cartService.addProductToCart(cartProduct);
         return ResponseEntity.ok().build();
-
     }
 
     @PatchMapping("/carts/products")
@@ -78,8 +72,6 @@ public class CartController {
     public ResponseEntity<?> removeProductById(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
         CartProductDto deletedCartProduct = cartProductService.removeProduct(idCart);
-        if (deletedCartProduct != null)
-            return ResponseEntity.ok(deletedCartProduct);
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(deletedCartProduct);
     }
 }
