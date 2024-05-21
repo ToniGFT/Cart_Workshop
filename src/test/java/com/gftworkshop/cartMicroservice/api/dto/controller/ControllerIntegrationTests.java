@@ -3,14 +3,15 @@ package com.gftworkshop.cartMicroservice.api.dto.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
-import okhttp3.mockwebserver.MockResponse;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
 
@@ -20,21 +21,16 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class ControllerIntegrationTests {
 
-    private ObjectMapper objectMapper;
 
+    private ObjectMapper objectMapper;
+    private CartDto expectedCart;
     @Autowired
     private WebTestClient client;
 
 
     @BeforeEach
-    void setUp() throws IOException {
-        objectMapper = new ObjectMapper();
-    }
-
-    @Test
-    void getCartByIdTest() {
-        //Given
-        CartDto expectedCart = CartDto.builder()
+    void setUp() {
+        expectedCart = CartDto.builder()
                 .id(1L)
                 .userId(101L)
                 .cartProducts(Arrays.asList(
@@ -59,21 +55,47 @@ class ControllerIntegrationTests {
                 ))
                 .build();
 
-        //When
-        client.get().uri("/carts/{id}", 1L).exchange()
-                .expectStatus().isOk()
-                .expectHeader().contentType(MediaType.APPLICATION_JSON)
-                .expectBody(CartDto.class)
-                .value(cartDto -> {
-                    //Then
-                    assertThat(cartDto).isEqualTo(expectedCart);
-                });
+        objectMapper = new ObjectMapper();
+    }
 
+    @Nested
+    @DisplayName("Tests for getting a cart by id")
+    class GetCartById {
+        @Test
+        void getCartByIdTest() {
+            //When
+            client.get().uri("/carts/{id}", 1L).exchange()
+                    .expectStatus().isOk()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody(CartDto.class)
+                    .value(cartDto -> {
+                        //Then
+                        assertThat(cartDto).isEqualTo(expectedCart);
+                    });
+
+        }
+
+        @Test
+        void getCartById_BadRequestTest() {
+            client.get().uri("/carts/{id}", "sads").exchange()
+                    .expectStatus().isBadRequest()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody();
+        }
+
+        @Test
+        void getCartById_CartNotFoundTest() {
+            //When
+            client.get().uri("/carts/{id}", -3).exchange()
+                    .expectStatus().isNotFound()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                    .expectBody();
+        }
     }
 
     @Nested
     @DisplayName("Tests for adding a cart by user id")
-    class addCartByUserIdEndpoint{
+    class addCartByUserIdEndpoint {
 
         @Test
         void addCartByUserIdTest() {
@@ -124,7 +146,7 @@ class ControllerIntegrationTests {
 
     @Nested
     @DisplayName("Test for removing a cart by id")
-    class removeCartByIdEndpoint{
+    class removeCartByIdEndpoint {
 
         @Test
         void removeCartByIdTest() {

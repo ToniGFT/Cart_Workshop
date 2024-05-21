@@ -26,8 +26,15 @@ import java.util.List;
 @Slf4j
 public class CartServiceImpl implements CartService {
 
-    private static final String CART_NOT_FOUND = "Cart with ID ";
-    private static final String NOT_FOUND = " not found";
+    public static final String CART_NOT_FOUND = "Cart with ID ";
+    public static final String NOT_FOUND = " not found";
+    public static final String NOT_ENOUGH_STOCK = "Not enough stock to add product to cart. Desired amount: ";
+    public static final String ACTUAL_STOCK = ". Actual stock: ";
+    public static final String USER_ALREADY_HAS_CART = "User with ID ";
+    public static final String ALREADY_HAS_CART = " already has a cart.";
+    public static final String NO_ABANDONED_CARTS_FOUND = "No abandoned carts found before ";
+    public static final String FOUND_ABANDONED_CARTS = "Found {} abandoned carts before ";
+    public static final String ABANDONED_CART = "Abandoned cart: {}, at ";
 
     private final CartRepository cartRepository;
     private final CartProductRepository cartProductRepository;
@@ -41,25 +48,35 @@ public class CartServiceImpl implements CartService {
         this.userService = userService;
     }
 
+    public void checkForAbandonedCarts() {
+        LocalDate thresholdDate = LocalDate.now().minusDays(1);
+        identifyAbandonedCarts(thresholdDate);
+    }
+
     @Override
     public void addProductToCart(CartProduct cartProduct) {
-        int actualProductAmount = productService.getProductById(cartProduct.getProductId()).getStock();
+        checkForAbandonedCarts();
 
-        if(actualProductAmount>=cartProduct.getQuantity()){
+        int actualProductAmount = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
+
+
+        if (actualProductAmount >= cartProduct.getQuantity()) {
             Cart cart = cartRepository.findById(cartProduct.getCart().getId())
-                    .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartProduct.getCart().getId() + " not found"));
+                    .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartProduct.getCart().getId() + NOT_FOUND));
 
             cart.getCartProducts().add(cartProduct);
             cartProduct.setCart(cart);
             cartProductRepository.save(cartProduct);
             cartRepository.save(cart);
         } else {
-            throw new CartProductInvalidQuantityException("Not enough stock to add product to cart. Desired amount: "+cartProduct.getQuantity()+". Actual stock: "+actualProductAmount);
+            throw new CartProductInvalidQuantityException(NOT_ENOUGH_STOCK + cartProduct.getQuantity() + ACTUAL_STOCK + actualProductAmount);
         }
     }
 
     @Override
     public BigDecimal getCartTotal(Long cartId, Long userId) {
+        checkForAbandonedCarts();
+
         User user = userService.getUserById(userId);
 
         Cart cart = cartRepository.findById(cartId)
@@ -94,9 +111,10 @@ public class CartServiceImpl implements CartService {
         return new BigDecimal("5");
     }
 
-
     @Transactional
     public void clearCart(Long cartId) {
+        checkForAbandonedCarts();
+
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
 
@@ -115,10 +133,12 @@ public class CartServiceImpl implements CartService {
         List<Cart> abandonedCarts = cartRepository.identifyAbandonedCarts(thresholdDate);
 
         if (abandonedCarts.isEmpty()) {
-            log.info("No abandoned carts found before {}", thresholdDate);
+            log.info(NO_ABANDONED_CARTS_FOUND + thresholdDate);
         } else {
-            log.info("Found {} abandoned carts before {}", abandonedCarts.size(), thresholdDate);
-            abandonedCarts.forEach(cart -> log.debug("Abandoned cart: {}, at {}", cart.getId(), cart.getUpdatedAt()));
+            log.info(FOUND_ABANDONED_CARTS + thresholdDate, abandonedCarts.size());
+            abandonedCarts.forEach(cart -> {
+                log.debug(ABANDONED_CART, cart.getId(), cart.getUpdatedAt());
+            });
         }
 
         return abandonedCarts.stream()
@@ -128,8 +148,10 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto createCart(Long userId) {
+        checkForAbandonedCarts();
+
         cartRepository.findByUserId(userId).ifPresent(cart -> {
-            throw new UserWithCartException("User with ID " + userId + " already has a cart.");
+            throw new UserWithCartException(USER_ALREADY_HAS_CART + userId + ALREADY_HAS_CART);
         });
 
         Cart cart = Cart.builder()
@@ -142,9 +164,22 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartDto getCart(Long cartId) {
+        checkForAbandonedCarts();
+
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
-        return entityToDto(cart);
+
+        for(CartProduct cartProduct:cart.getCartProducts()){
+            int actualStock = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
+            if(cartProduct.getQuantity()>actualStock){
+                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: "+cartProduct.getQuantity()+". Actual stock: "+actualStock);
+            }
+        }
+
+        CartDto cartDto = entityToDto(cart);
+        cartDto.setTotalPrice(getCartTotal(cart.getId(),cart.getUserId()));
+
+        return cartDto;
     }
 
     public List<Cart> getAllCarts() {

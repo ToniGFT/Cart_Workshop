@@ -11,6 +11,7 @@ import org.springframework.web.client.RestClientException;
 
 @Service
 public class UserService {
+    private final String endpointUri = "http://localhost:8082/users/{id}";
 
     private final RestClient restClient;
 
@@ -22,7 +23,7 @@ public class UserService {
     public User getUserById(Long userId) {
         try {
             return restClient.get()
-                    .uri("/users/{id}", userId)
+                    .uri(endpointUri, userId)
                     .retrieve()
                     .body(User.class);
         }  catch (HttpClientErrorException e) {
