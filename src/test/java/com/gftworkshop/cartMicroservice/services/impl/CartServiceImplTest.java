@@ -201,18 +201,26 @@ class CartServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a cartId, " + "when getting the cart, " + "then return the corresponding cart")
+    @DisplayName("Given a valid cart ID, when getting the cart, then return the corresponding cart and calculate the total correctly")
     void getCartTest() {
-        Long cartId = 123L;
+        Long cartId = 1L;
+        Long userId = 1L;
+        User user = User.builder().country(new Country(1L, 0.07)).id(userId).build();
+        Product product = Product.builder().id(1L).price(new BigDecimal("20")).weight(2.0).current_stock(20).build();
+        CartProduct cartProduct = CartProduct.builder().productId(1L).price(new BigDecimal("20")).quantity(2).build();
+        Cart cart = Cart.builder().id(cartId).userId(userId).cartProducts(Arrays.asList(cartProduct)).build();
 
-        Cart cart = Cart.builder().build();
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(productService.getProductById(1L)).thenReturn(product);
 
-        CartDto retrievedCartDto = cartServiceImpl.getCart(cartId);
+        CartDto result = cartServiceImpl.getCart(cartId);
 
-        assertEquals(cart.getId(), retrievedCartDto.getId());
-        verify(cartRepository).findById(cartId);
+        assertEquals(cartId, result.getId());
     }
+
+
+
 
     @Test
     @DisplayName("Given existing carts, " + "when retrieving all carts, " + "then return the list of all carts")

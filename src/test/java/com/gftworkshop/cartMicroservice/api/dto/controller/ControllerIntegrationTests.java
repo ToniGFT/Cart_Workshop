@@ -3,16 +3,15 @@ package com.gftworkshop.cartMicroservice.api.dto.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
-import org.junit.Ignore;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.math.BigDecimal;
@@ -169,18 +168,18 @@ class ControllerIntegrationTests {
 
         @Test
         void removeCartById_BadRequest_StringTest() {
-            String userId = "prueba";
+            String cartId = "prueba";
 
-            client.delete().uri("/carts/{id}", userId).exchange()
+            client.delete().uri("/carts/{id}", cartId).exchange()
                     .expectStatus()
                     .isBadRequest();
         }
 
         @Test
         void removeCartById_BadRequest_DoubleTest() {
-            Double userId = 1.1;
+            Double cartId = 1.1;
 
-            client.delete().uri("/carts/{id}", userId).exchange()
+            client.delete().uri("/carts/{id}", cartId).exchange()
                     .expectStatus()
                     .isBadRequest();
         }
@@ -189,7 +188,40 @@ class ControllerIntegrationTests {
     @Nested
     @DisplayName("PATCH - Updating quantity of a product")
     class UpdateProductQuantityEndpoint {
+        @Test
+        void removeCartProductByIdTest() {
+            Long cartProductId = 1L;
 
+            client.delete().uri("/carts/products/{id}", cartProductId).exchange()
+                    .expectStatus()
+                    .isOk();
+        }
+
+        @Test
+        void removeCartProductById_NotFoundTest() {
+            Long cartProductId = 9999L;
+
+            client.delete().uri("/carts/{id}", cartProductId).exchange()
+                    .expectStatus().isNotFound();
+        }
+
+        @Test
+        void removeCartProductById_BadRequest_StringTest() {
+            String cartProductId = "prueba";
+
+            client.delete().uri("/carts/{id}", cartProductId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
+        }
+
+        @Test
+        void removeCartProductById_BadRequest_DoubleTest() {
+            Double cartProductId = 1.1;
+
+            client.delete().uri("/carts/{id}", cartProductId).exchange()
+                    .expectStatus()
+                    .isBadRequest();
+        }
     }
 
 }
