@@ -3,13 +3,16 @@ package com.gftworkshop.cartMicroservice.api.dto.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.Ignore;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 import java.math.BigDecimal;
@@ -19,14 +22,16 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@Sql(scripts = {"/testdata.sql"})
 class ControllerIntegrationTests {
-
 
     private ObjectMapper objectMapper;
     private CartDto expectedCart;
     @Autowired
     private WebTestClient client;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void setUp() {
@@ -59,8 +64,8 @@ class ControllerIntegrationTests {
     }
 
     @Nested
-    @DisplayName("Tests for getting a cart by id")
-    class GetCartById {
+    @DisplayName("GET - Tests for getting a cart by id")
+    class GetCartByIdEndpoint {
         @Test
         void getCartByIdTest() {
             //When
@@ -94,7 +99,7 @@ class ControllerIntegrationTests {
     }
 
     @Nested
-    @DisplayName("Tests for adding a cart by user id")
+    @DisplayName("POST - Tests for adding a cart by user id")
     class addCartByUserIdEndpoint {
 
         @Test
@@ -114,7 +119,6 @@ class ControllerIntegrationTests {
                         assertThat(cartDto.getCartProducts()).isEqualTo(expectedCart.getCartProducts());
                     });
         }
-
         @Test
         void addCartByUserId_NotFoundTest() {
             Long userId = 101L;
@@ -123,7 +127,6 @@ class ControllerIntegrationTests {
                     .expectStatus()
                     .is5xxServerError();
         }
-
         @Test
         void addCartByUserId_BadRequest_StringTest() {
             String userId = "prueba";
@@ -145,7 +148,7 @@ class ControllerIntegrationTests {
     }
 
     @Nested
-    @DisplayName("Test for removing a cart by id")
+    @DisplayName("DELETE - Test for removing a cart by id")
     class removeCartByIdEndpoint {
 
         @Test
@@ -183,5 +186,10 @@ class ControllerIntegrationTests {
         }
     }
 
+    @Nested
+    @DisplayName("PATCH - Updating quantity of a product")
+    class UpdateProductQuantityEndpoint {
+
+    }
 
 }
