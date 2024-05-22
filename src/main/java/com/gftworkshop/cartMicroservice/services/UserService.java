@@ -3,6 +3,7 @@ package com.gftworkshop.cartMicroservice.services;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -20,13 +21,12 @@ public class UserService {
     }
 
     public User getUserById(Long userId) {
-        try {
-            return restClient.get()
-                    .uri(endpointUri, userId)
-                    .retrieve()
-                    .body(User.class);
-        } catch (RestClientException e) {
-            throw new ExternalMicroserviceException("USER MICROSERVICE EXCEPTION: " + e.getMessage());
-        }
+        return restClient.get()
+                .uri(endpointUri, userId)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, (request, response) -> {
+                    throw new ExternalMicroserviceException("USER MICROSERVICE EXCEPTION: " + response.getStatusText()+" "+response.getBody());
+                })
+                .body(User.class);
     }
 }
