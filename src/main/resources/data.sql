@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS cart_products (
     cart_id BIGINT,
     product_id BIGINT,
     product_name VARCHAR(255),
-    product_category VARCHAR(255),
+    product_category_id BIGINT,
     product_description VARCHAR(255),
     quantity INT,
     price DECIMAL(10, 2),
@@ -24,8 +24,8 @@ INSERT INTO cart ( user_id, updated_at) VALUES (2, '2024-05-02 12:00:00');
 INSERT INTO cart ( user_id, updated_at) VALUES (3, '2024-05-03 12:00:00');
 
 -- Insert data into 'cart_products'
-INSERT INTO cart_products ( cart_id, product_id, product_name, product_category, product_description, quantity, price) VALUES
-(1, 1, 'Apple MacBook Pro', 'Electronics', 'Latest model of Apple MacBook Pro 16 inch.', 1, 2399.99),
-(1, 2,'Logitech Mouse', 'Electronics', 'Wireless Logitech Mouse M235', 2, 29.99),
-( 2, 3,'Adidas Running Shoes', 'Footwear', 'Adidas Ultraboost for men size 10', 1, 180.00),
-( 3, 4,'Sony Headphones', 'Electronics', 'Sony WH-1000XM4 Noise Cancelling', 1, 348.50);
+INSERT INTO cart_products ( cart_id, product_id, product_name, product_category_id, product_description, quantity, price) VALUES
+(1, 1, 'Jacket', 1, 'Something indicate large central measure watch provide.', 1, 58.79),
+(1, 2, 'Building Blocks', 2, 'Agent word occur number chair.', 2, 7.89),
+(2, 3, 'Swimming Goggles', 3, 'Walk range media doctor interest.', 1, 30.53),
+(3, 4, 'Football', 3, 'Country expect price certain different bag everyone.', 1, 21.93);

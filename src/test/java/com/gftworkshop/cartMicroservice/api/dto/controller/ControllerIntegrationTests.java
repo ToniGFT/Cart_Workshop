@@ -1,7 +1,7 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,25 +35,23 @@ class ControllerIntegrationTests {
         expectedCart = CartDto.builder()
                 .id(1L)
                 .userId(1L)
-                .totalPrice(new BigDecimal("54129.340"))
+                .totalPrice(new BigDecimal("1650.540"))
                 .cartProducts(Arrays.asList(
                         CartProduct.builder()
                                 .id(1L)
                                 .productId(1L)
-                                .productName("Apple MacBook Pro")
-                                .productCategory("Electronics")
-                                .productDescription("Latest model of Apple MacBook Pro 16 inch.")
+                                .productName("Jacket")
+                                .productDescription("Something indicate large central measure watch provide.")
                                 .quantity(1)
-                                .price(new BigDecimal("2399.99"))
+                                .price(new BigDecimal("58.79"))
                                 .build(),
                         CartProduct.builder()
                                 .id(2L)
                                 .productId(2L)
-                                .productName("Logitech Mouse")
-                                .productCategory("Electronics")
-                                .productDescription("Wireless Logitech Mouse M235")
+                                .productName("Building Blocks")
+                                .productDescription("Agent word occur number chair.")
                                 .quantity(2)
-                                .price(new BigDecimal("29.99"))
+                                .price(new BigDecimal("7.89"))
                                 .build()
                 ))
                 .build();
@@ -223,32 +221,29 @@ class ControllerIntegrationTests {
         }
     }
 
-//    @Test
-//    void postCartProduct() {
-//        // Given
-//        User user = User.builder().id(104L).build();
-//        Cart cart = Cart.builder().id(4L).userId(user.getId()).build();
-//
-//        CartProduct cartProduct = CartProduct.builder()
-//                .id(6L)
-//                .cart(cart)
-//                .productId(6L)
-//                .productName("Logitech Mouse")
-//                .productCategory("Electronics")
-//                .productDescription("Wireless Logitech Mouse M235")
-//                .quantity(2)
-//                .price(new BigDecimal("29.99"))
-//                .build();
-//
-//        // When
-//        client.post().uri("/carts/products")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .bodyValue(cartProduct)
-//                .exchange()
-//                .expectStatus().isCreated()
-//                .expectBody()
-//                .jsonPath("$.cart.id").isEqualTo(1L);
-//    }
+    @Test
+    void postCartProduct() {
+        Cart cart = Cart.builder().id(1L).userId(1L).build();
+
+        CartProduct cartProduct = CartProduct.builder()
+                .cart(cart)
+                .productId(5L)
+                .productName("Football")
+                .productDescription("Speak value yard here station.")
+                .quantity(2)
+                .price(new BigDecimal("46.7"))
+                .build();
+
+        client.post().uri("/carts/products")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(cartProduct)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody()
+                .jsonPath("$.cart.id").isEqualTo(1L);
+
+    }
+
 
 
 }

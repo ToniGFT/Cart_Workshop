@@ -34,10 +34,6 @@ public class CartProduct {
     @Column(name = "product_name")
     private String productName;
 
-    @NotBlank(message = "Product category cannot be blank")
-    @Column(name = "product_category")
-    private String productCategory;
-
     @NotBlank(message = "Product description cannot be blank")
     @Column(name = "product_description")
     private String productDescription;
