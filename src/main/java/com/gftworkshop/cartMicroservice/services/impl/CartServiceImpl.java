@@ -59,7 +59,6 @@ public class CartServiceImpl implements CartService {
 
         int actualProductAmount = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
 
-
         if (actualProductAmount >= cartProduct.getQuantity()) {
             Cart cart = cartRepository.findById(cartProduct.getCart().getId())
                     .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartProduct.getCart().getId() + NOT_FOUND));
@@ -169,15 +168,15 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
 
-        for(CartProduct cartProduct:cart.getCartProducts()){
+        for (CartProduct cartProduct : cart.getCartProducts()) {
             int actualStock = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
-            if(cartProduct.getQuantity()>actualStock){
-                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: "+cartProduct.getQuantity()+". Actual stock: "+actualStock);
+            if (cartProduct.getQuantity() > actualStock) {
+                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: " + cartProduct.getQuantity() + ". Actual stock: " + actualStock);
             }
         }
 
         CartDto cartDto = entityToDto(cart);
-        cartDto.setTotalPrice(getCartTotal(cart.getId(),cart.getUserId()));
+        cartDto.setTotalPrice(getCartTotal(cart.getId(), cart.getUserId()));
 
         return cartDto;
     }
