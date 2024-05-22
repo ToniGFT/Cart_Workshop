@@ -155,7 +155,6 @@ class CartControllerTest {
             CartProduct cartProduct = CartProduct.builder()
                     .id(1L)
                     .productName("Product Name")
-                    .productCategory("Product Category")
                     .productDescription("Product Description")
                     .quantity(1)
                     .price(BigDecimal.TEN)

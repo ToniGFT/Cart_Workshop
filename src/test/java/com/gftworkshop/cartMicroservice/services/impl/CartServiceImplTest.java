@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 class CartServiceImplTest {
@@ -45,6 +46,34 @@ class CartServiceImplTest {
         userService = mock(UserService.class);
         productService = mock(ProductService.class);
         cartServiceImpl = new CartServiceImpl(cartRepository, cartProductRepository, productService, userService);
+    }
+
+    @Test
+    @DisplayName("Given a cart and a product, when adding the product to the cart, if there isn't enough stock, then a CartProductInvalidQuantityException should be thrown")
+    void addProductToCart_NotEnoughStockExceptionTest() {
+
+        Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
+
+        CartProduct cartProduct = CartProduct.builder()
+                .id(1L)
+                .productId(1L)
+                .quantity(1000)
+                .cart(cart)
+                .build();
+
+        Product product = Product.builder()
+                .id(1L)
+                .current_stock(100)
+                .build();
+
+        lenient().when(productService.getProductById(1L)).thenReturn(product);
+        lenient().when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+
+        CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
+            cartServiceImpl.addProductToCart(cartProduct);
+        });
+
+        assertEquals("Not enough stock to add product to cart. Desired amount: 1000. Actual stock: 100", exception.getMessage());
     }
 
     @Test
@@ -333,6 +362,5 @@ class CartServiceImplTest {
 
         assertEquals("User with ID " + userId + " already has a cart.", exception.getMessage());
     }
-
 
 }

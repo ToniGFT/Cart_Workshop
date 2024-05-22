@@ -30,12 +30,12 @@ public class ProductServiceTest {
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
         productService = new ProductService(restClient);
+        productService.endpointUri = "/catalog/products/{id}";
     }
 
     @Test
     @DisplayName("When fetching a product by ID, then the correct product details are returned")
     void testGetProductById() {
-        productService.endpointUri = "/catalog/products/{id}";
         String productJson = """
                 {
                     "id": 1,
