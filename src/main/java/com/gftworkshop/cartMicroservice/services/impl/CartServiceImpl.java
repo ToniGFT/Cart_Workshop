@@ -58,33 +58,27 @@ public class CartServiceImpl implements CartService {
         checkForAbandonedCarts();
 
         int actualProductAmount = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
-
-
-        if (actualProductAmount >= cartProduct.getQuantity()) {
-            Cart cart = cartRepository.findById(cartProduct.getCart().getId())
-                    .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartProduct.getCart().getId() + NOT_FOUND));
-
-            cart.getCartProducts().add(cartProduct);
-            cartProduct.setCart(cart);
-            cartProductRepository.save(cartProduct);
-            cartRepository.save(cart);
-        } else {
+        if (cartProduct.getQuantity()>actualProductAmount) {
             throw new CartProductInvalidQuantityException(NOT_ENOUGH_STOCK + cartProduct.getQuantity() + ACTUAL_STOCK + actualProductAmount);
         }
+
+        Cart cart = cartRepository.findById(cartProduct.getCart().getId())
+                .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartProduct.getCart().getId() + NOT_FOUND));
+
+        cart.getCartProducts().add(cartProduct);
+        cartProduct.setCart(cart);
+        cartProductRepository.save(cartProduct);
+        cartRepository.save(cart);
     }
 
     @Override
     public BigDecimal getCartTotal(Long cartId, Long userId) {
-        checkForAbandonedCarts();
-
         User user = userService.getUserById(userId);
-
         Cart cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
 
         BigDecimal total = BigDecimal.ZERO;
         double totalWeight = 0.0;
-
         for (CartProduct cartProduct : cart.getCartProducts()) {
             Product product = productService.getProductById(cartProduct.getProductId());
 
