@@ -220,8 +220,6 @@ class CartServiceImplTest {
     }
 
 
-
-
     @Test
     @DisplayName("Given existing carts, " + "when retrieving all carts, " + "then return the list of all carts")
     void getAllCartsTest() {
@@ -241,7 +239,9 @@ class CartServiceImplTest {
 
 
     @Test
-    @DisplayName("Given a non-existent cart, " + "when adding a product to the cart, " + "then a CartNotFoundException should be thrown")
+    @DisplayName("Given a non-existent cart, " +
+            "when adding a product to the cart, " +
+            "then a CartNotFoundException should be thrown")
     void addProductToCart_CartNotFoundExceptionTest() {
 
         Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();

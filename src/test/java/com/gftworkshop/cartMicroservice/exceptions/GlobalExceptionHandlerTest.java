@@ -129,10 +129,28 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void testHandleExternalMicroserviceException() {
-        ExternalMicroserviceException exception = new ExternalMicroserviceException(HttpStatusCode.valueOf(500),"User Microservice Error: Client error occurred. \n");
+        ExternalMicroserviceException exception = new ExternalMicroserviceException("User Microservice Error: Client error occurred. \n");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleExternalMicroserviceException(exception, webRequest);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
         assertEquals("User Microservice Error: Client error occurred. \n", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    void testhandleUserWithCartException() {
+        UserWithCartException exception = new UserWithCartException("User has already a Cart");
+        ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleUserWithCartException(exception, webRequest);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
+        assertEquals("User has already a Cart", responseEntity.getBody().getMessage());
+    }
+
+    @Test
+    void testhandleUserNotFoundException() {
+        UserNotFoundException exception = new UserNotFoundException("User not found");
+        ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleUserNotFoundException(exception, webRequest);
+
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("User not found", responseEntity.getBody().getMessage());
     }
 }
