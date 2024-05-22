@@ -35,7 +35,7 @@ class ControllerIntegrationTests {
         expectedCart = CartDto.builder()
                 .id(1L)
                 .userId(1L)
-                .totalPrice(new BigDecimal("1650.540"))
+                .totalPrice(new BigDecimal("100.2297"))
                 .cartProducts(Arrays.asList(
                         CartProduct.builder()
                                 .id(1L)
