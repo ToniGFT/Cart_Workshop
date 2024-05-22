@@ -25,3 +25,7 @@ spring:
 
 lombok:
   addLombokGeneratedAnnotation: true
+
+server:
+  port: 8080
+
