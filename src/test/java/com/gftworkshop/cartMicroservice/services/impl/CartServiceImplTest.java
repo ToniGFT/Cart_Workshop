@@ -138,7 +138,7 @@ class CartServiceImplTest {
 
         BigDecimal expectedTotal = new BigDecimal("65");
         BigDecimal weightCost = new BigDecimal("10");
-        BigDecimal tax = expectedTotal.multiply(new BigDecimal("7.0"));
+        BigDecimal tax = expectedTotal.multiply(new BigDecimal("0.07"));
         expectedTotal = expectedTotal.add(tax).add(weightCost);
 
         BigDecimal actualTotal = cartServiceImpl.getCartTotal(1L, 1L);
