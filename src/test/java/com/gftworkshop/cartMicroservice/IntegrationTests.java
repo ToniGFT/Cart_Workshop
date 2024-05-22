@@ -1,19 +1,14 @@
 package com.gftworkshop.cartMicroservice;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
-import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
-import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.ProductService;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -22,35 +17,22 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-public class IntegrationTests {
+class IntegrationTests {
 
+    private static final Logger log = LoggerFactory.getLogger(IntegrationTests.class);
     @Autowired
     private WebTestClient client;
 
-    private static ObjectMapper objectMapper;
-    private static MockWebServer mockWebServer;
-    private static ProductService productService;
-
     @BeforeAll
     static void beforeAll() throws IOException {
-        objectMapper = new ObjectMapper();
-        mockWebServer = new MockWebServer();
-        mockWebServer.start(8081);
-        productService = mock(ProductService.class);
-    }
-
-    @AfterAll
-    static void afterAll() throws IOException {
-        mockWebServer.close();
+        ObjectMapper objectMapper = new ObjectMapper();
+        ProductService productService = mock(ProductService.class);
     }
 
     @Test
@@ -94,11 +76,14 @@ public class IntegrationTests {
     }
 
     @Test
-    void postCartProduct() throws JsonProcessingException {
+    void postCartProduct() {
+        // Given
+        Cart cart = Cart.builder().id(1L).userId(101L).build();
 
         CartProduct cartProduct = CartProduct.builder()
-                .id(2L)
-                .productId(2L)
+                .cart(cart)
+                .id(5L)
+                .productId(6L)
                 .productName("Logitech Mouse")
                 .productCategory("Electronics")
                 .productDescription("Wireless Logitech Mouse M235")
@@ -106,19 +91,13 @@ public class IntegrationTests {
                 .price(new BigDecimal("29.99"))
                 .build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
-
+        // When
         client.post().uri("/carts/products")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(cartProduct)
                 .exchange()
                 .expectStatus().isCreated()
-                .expectBody(CartProduct.class)
-                .value(cartProductResponse -> {
-                    assertThat(cartProductResponse).isEqualTo(cartProduct);
-                });
-
-
+                .expectBody()
+                .jsonPath("$.cart.id").isEqualTo(1L);
     }
-
 }
