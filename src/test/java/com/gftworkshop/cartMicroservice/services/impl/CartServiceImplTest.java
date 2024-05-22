@@ -90,7 +90,7 @@ class CartServiceImplTest {
         User user = User.builder().country(new Country(1L, 0.07)).build();
 
         Product product1 = Product.builder().weight(2.0).build();
-        Product product2 = Product.builder().weight(3.5).build();
+        Product product2 = Product.builder().weight(2.0).build();
 
         Cart cart = Cart.builder().build();
 
@@ -113,7 +113,6 @@ class CartServiceImplTest {
         expectedTotal = expectedTotal.add(tax).add(weightCost);
 
         BigDecimal actualTotal = cartServiceImpl.getCartTotal(1L, 1L);
-        actualTotal = actualTotal.setScale(2, RoundingMode.HALF_UP);
         assertEquals(expectedTotal, actualTotal);
 
         verify(userService).getUserById(1L);

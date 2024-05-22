@@ -82,7 +82,7 @@ public class CartServiceImpl implements CartService {
         for (CartProduct cartProduct : cart.getCartProducts()) {
             Product product = productService.getProductById(cartProduct.getProductId());
 
-            totalWeight += product.getWeight();
+            totalWeight += (product.getWeight()*cartProduct.getQuantity());
             BigDecimal productTotal = cartProduct.getPrice().multiply(BigDecimal.valueOf(cartProduct.getQuantity()));
             total = total.add(productTotal);
         }
