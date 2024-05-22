@@ -4,6 +4,10 @@
 DELETE FROM cart_products;
 DELETE FROM cart;
 
+-- Restablecer el contador de AUTO_INCREMENT
+ALTER TABLE cart ALTER COLUMN id RESTART WITH 1;
+ALTER TABLE cart_products ALTER COLUMN id RESTART WITH 1;
+
 -- Restablecer los datos iniciales
 INSERT INTO cart (id, user_id, updated_at) VALUES (1, 1, '2024-05-01 12:00:00');
 INSERT INTO cart (id, user_id, updated_at) VALUES (2, 2, '2024-05-02 12:00:00');
