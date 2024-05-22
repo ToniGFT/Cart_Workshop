@@ -94,21 +94,24 @@ class CartServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a cart and a product, " + "when adding the product to the cart, if there isn't enough stock, " + "an exception should be thrown")
+    @DisplayName("Given a cart and a product, when adding the product to the cart, if there isn't enough stock, an exception should be thrown")
     void addProductToCartTestNotEnoughStock() {
+
         Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
-
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(1000).cart(cart).build();
+        cart.getCartProducts().add(cartProduct);
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
+        Product product = new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0);
+        when(productService.getProductById(1L)).thenReturn(product);
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
-
-        Exception exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
-            cartServiceImpl.addProductToCart(cartProduct);
+        CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
+            cartServiceImpl.getCart(1L);
         });
 
-        assertEquals("Not enough stock to add product to cart. Desired amount: 1000. Actual stock: 100", exception.getMessage());
+        assertEquals("Not enough stock. Quantity desired: 1000. Actual stock: 100", exception.getMessage());
     }
+
 
     @Test
     @DisplayName("Given a cart with multiple products and a user, " + "when calculating the cart total including tax and weight costs, " + "then the total should be calculated correctly")
