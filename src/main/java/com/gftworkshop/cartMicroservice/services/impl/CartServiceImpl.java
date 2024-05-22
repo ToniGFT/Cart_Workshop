@@ -88,7 +88,7 @@ public class CartServiceImpl implements CartService {
         }
 
         BigDecimal weightCost = calculateWeightCost(totalWeight);
-        BigDecimal tax = total.multiply(BigDecimal.valueOf(user.getCountry().getTax()));
+        BigDecimal tax = total.multiply(BigDecimal.valueOf(user.getCountry().getTax()/100));
         total = total.add(tax).add(weightCost);
 
         return total;

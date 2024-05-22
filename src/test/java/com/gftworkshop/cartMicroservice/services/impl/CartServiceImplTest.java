@@ -83,7 +83,7 @@ class CartServiceImplTest {
 
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, 100.0));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
 
@@ -101,7 +101,7 @@ class CartServiceImplTest {
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(1000).cart(cart).build();
         cart.getCartProducts().add(cartProduct);
 
-        Product product = new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0);
+        Product product = new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0);
         when(productService.getProductById(1L)).thenReturn(product);
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
@@ -116,7 +116,7 @@ class CartServiceImplTest {
     @Test
     @DisplayName("Given a cart with multiple products and a user, " + "when calculating the cart total including tax and weight costs, " + "then the total should be calculated correctly")
     void getCartTotalTest() {
-        User user = User.builder().country(new Country(1L, 0.07)).build();
+        User user = User.builder().country(new Country(1L, 7.0)).build();
 
         Product product1 = Product.builder().weight(2.0).build();
         Product product2 = Product.builder().weight(2.0).build();
@@ -138,7 +138,7 @@ class CartServiceImplTest {
 
         BigDecimal expectedTotal = new BigDecimal("65");
         BigDecimal weightCost = new BigDecimal("10");
-        BigDecimal tax = expectedTotal.multiply(new BigDecimal("0.07"));
+        BigDecimal tax = expectedTotal.multiply(new BigDecimal("7.0"));
         expectedTotal = expectedTotal.add(tax).add(weightCost);
 
         BigDecimal actualTotal = cartServiceImpl.getCartTotal(1L, 1L);
@@ -279,7 +279,7 @@ class CartServiceImplTest {
 
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
 
