@@ -232,11 +232,9 @@ class ControllerIntegrationTests {
     @Test
     void postCartProduct() {
         // Given
-        User user = User.builder().id(104L).build();
-        Cart cart = Cart.builder().id(4L).userId(user.getId()).build();
+        Cart cart = Cart.builder().id(1L).build();
 
         CartProduct cartProduct = CartProduct.builder()
-                .id(6L)
                 .cart(cart)
                 .productId(6L)
                 .productName("Logitech Mouse")
