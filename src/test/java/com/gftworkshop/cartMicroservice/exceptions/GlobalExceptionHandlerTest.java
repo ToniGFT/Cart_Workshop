@@ -129,7 +129,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     void testHandleExternalMicroserviceException() {
-        ExternalMicroserviceException exception = new ExternalMicroserviceException(HttpStatusCode.valueOf(500),"User Microservice Error: Client error occurred. \n");
+        ExternalMicroserviceException exception = new ExternalMicroserviceException("User Microservice Error: Client error occurred. \n");
         ResponseEntity<ErrorResponse> responseEntity = globalExceptionHandler.handleExternalMicroserviceException(exception, webRequest);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());

@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ExternalMicroserviceException.class)
     public ResponseEntity<ErrorResponse> handleExternalMicroserviceException(ExternalMicroserviceException e, WebRequest request) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getStatusCode().value(), e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(500, e.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 
