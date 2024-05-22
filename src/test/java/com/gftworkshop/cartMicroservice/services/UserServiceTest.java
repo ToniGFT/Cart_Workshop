@@ -30,13 +30,13 @@ public class UserServiceTest {
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
         userService = new UserService(restClient);
+        userService.endpointUri = "/users/{id}";
     }
 
     @Test
     @DisplayName("When fetching a user by ID, " +
             "then the correct user details are returned")
     void testGetUserById() {
-        userService.endpointUri = "/users/{id}";
         String userJson = """
                 {
                     "id": 100,
