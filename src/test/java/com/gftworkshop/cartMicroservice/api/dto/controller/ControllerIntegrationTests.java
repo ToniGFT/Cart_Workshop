@@ -6,7 +6,6 @@ import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,7 +19,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 
 @SpringBootTest(webEnvironment = DEFINED_PORT)
-//@Sql(scripts = "/testdata.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = {"/testdata.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class ControllerIntegrationTests {
 
     private CartDto expectedCart;
@@ -37,7 +36,7 @@ class ControllerIntegrationTests {
         expectedCart = CartDto.builder()
                 .id(1L)
                 .userId(1L)
-                .totalPrice(new BigDecimal("1650.540"))
+                .totalPrice(new BigDecimal("100.2297"))
                 .cartProducts(Arrays.asList(
                         CartProduct.builder()
                                 .id(1L)

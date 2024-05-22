@@ -6,11 +6,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
+
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-
 public class Country {
     private Long id;
     private Double tax;

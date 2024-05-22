@@ -28,6 +28,7 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
+
 @Slf4j
 @ExtendWith(MockitoExtension.class)
 class CartServiceImplTest {
@@ -48,13 +49,41 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("Given a cart and a product, when adding the product to the cart, if there isn't enough stock, then a CartProductInvalidQuantityException should be thrown")
+    void addProductToCart_NotEnoughStockExceptionTest() {
+
+        Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
+
+        CartProduct cartProduct = CartProduct.builder()
+                .id(1L)
+                .productId(1L)
+                .quantity(1000)
+                .cart(cart)
+                .build();
+
+        Product product = Product.builder()
+                .id(1L)
+                .current_stock(100)
+                .build();
+
+        lenient().when(productService.getProductById(1L)).thenReturn(product);
+        lenient().when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+
+        CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
+            cartServiceImpl.addProductToCart(cartProduct);
+        });
+
+        assertEquals("Not enough stock to add product to cart. Desired amount: 1000. Actual stock: 100", exception.getMessage());
+    }
+
+    @Test
     @DisplayName("Given a cart and a product, " + "when adding the product to the cart, " + "then the product should be added successfully")
     void addProductToCartTest() {
         Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
 
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
         when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
 
@@ -65,29 +94,34 @@ class CartServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a cart and a product, " + "when adding the product to the cart, if there isn't enough stock, " + "an exception should be thrown")
+    @DisplayName("Given a cart and a product, when adding the product to the cart, if there isn't enough stock, an exception should be thrown")
     void addProductToCartTestNotEnoughStock() {
+
         Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
-
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(1000).cart(cart).build();
+        cart.getCartProducts().add(cartProduct);
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0));
 
+        Product product = new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0);
+        when(productService.getProductById(1L)).thenReturn(product);
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
-        Exception exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
-            cartServiceImpl.addProductToCart(cartProduct);
+        CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
+            cartServiceImpl.getCart(1L);
         });
 
-        assertEquals("Not enough stock to add product to cart. Desired amount: 1000. Actual stock: 100", exception.getMessage());
+        assertEquals("Not enough stock. Quantity desired: 1000. Actual stock: 100", exception.getMessage());
     }
+
 
     @Test
     @DisplayName("Given a cart with multiple products and a user, " + "when calculating the cart total including tax and weight costs, " + "then the total should be calculated correctly")
     void getCartTotalTest() {
-        User user = User.builder().country(new Country(1L, 0.07)).build();
+        User user = User.builder().country(new Country(1L, 7.0)).build();
 
         Product product1 = Product.builder().weight(2.0).build();
-        Product product2 = Product.builder().weight(3.5).build();
+        Product product2 = Product.builder().weight(2.0).build();
 
         Cart cart = Cart.builder().build();
 
@@ -110,7 +144,6 @@ class CartServiceImplTest {
         expectedTotal = expectedTotal.add(tax).add(weightCost);
 
         BigDecimal actualTotal = cartServiceImpl.getCartTotal(1L, 1L);
-        actualTotal = actualTotal.setScale(2, RoundingMode.HALF_UP);
         assertEquals(expectedTotal, actualTotal);
 
         verify(userService).getUserById(1L);
@@ -248,7 +281,7 @@ class CartServiceImplTest {
 
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, "category", 100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
 
@@ -331,6 +364,5 @@ class CartServiceImplTest {
 
         assertEquals("User with ID " + userId + " already has a cart.", exception.getMessage());
     }
-
 
 }
