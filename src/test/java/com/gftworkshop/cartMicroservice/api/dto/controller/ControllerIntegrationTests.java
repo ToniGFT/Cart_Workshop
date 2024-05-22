@@ -2,11 +2,8 @@ package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-import com.gftworkshop.cartMicroservice.api.dto.User;
-import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -24,25 +20,22 @@ import java.util.Arrays;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.DEFINED_PORT;
 
-@Sql(scripts = {"/testdata.sql"})
 @SpringBootTest(webEnvironment = DEFINED_PORT)
+@Sql(scripts = {"/testdata.sql"})
 class ControllerIntegrationTests {
 
-    private ObjectMapper objectMapper;
     private CartDto expectedCart;
     @Autowired
     private WebTestClient client;
     @Autowired
     private CartRepository cartRepository;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
     @BeforeEach
     void setUp() {
         expectedCart = CartDto.builder()
                 .id(1L)
                 .userId(1L)
+                .totalPrice(new BigDecimal("54129.340"))
                 .cartProducts(Arrays.asList(
                         CartProduct.builder()
                                 .id(1L)
@@ -64,8 +57,6 @@ class ControllerIntegrationTests {
                                 .build()
                 ))
                 .build();
-
-        objectMapper = new ObjectMapper();
     }
 
     @Nested
@@ -124,14 +115,16 @@ class ControllerIntegrationTests {
                         assertThat(cartDto.getCartProducts()).isEqualTo(expectedCart.getCartProducts());
                     });
         }
+
         @Test
         void addCartByUserId_NotFoundTest() {
-            Long userId = 101L;
+            Long userId = 1L;
 
             client.post().uri("/carts/{id}", userId).exchange()
                     .expectStatus()
                     .is5xxServerError();
         }
+
         @Test
         void addCartByUserId_BadRequest_StringTest() {
             String userId = "prueba";
@@ -192,7 +185,7 @@ class ControllerIntegrationTests {
     }
 
     @Nested
-    @DisplayName("PATCH - Updating quantity of a product")
+    @DisplayName("DELETE - Delete product by id")
     class RemoveProductByIdEndpoint {
         @Test
         void removeCartProductByIdTest() {
