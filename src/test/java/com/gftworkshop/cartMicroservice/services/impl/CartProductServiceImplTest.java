@@ -52,15 +52,19 @@ class CartProductServiceImplTest {
     @DisplayName("Update CartProduct Quantity")
     class UpdateCartProductQuantityTests {
         @Test
-        @DisplayName("Given Product ID and New Quantity " +
-                "When Updated " +
-                "Then Return Rows Affected")
+        @DisplayName("Given Product ID and New Quantity When Updated Then Return Rows Affected")
         void updateQuantityTest() {
-            long id = 123L;
+            Long id = 123L;
             int newQuantity = 5;
+            CartProduct cartProduct = new CartProduct();
+            cartProduct.setId(id);
+            cartProduct.setQuantity(3);
+            Cart cart = new Cart();
+            cart.setId(456L);
+            cartProduct.setCart(cart);
 
-            when(cartRepository.findById(id)).thenReturn(Optional.of(new Cart()));
-
+            when(cartProductRepository.findById(id)).thenReturn(Optional.of(cartProduct));
+            when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
             when(cartProductRepository.updateQuantity(id, newQuantity)).thenReturn(1);
 
             int rowsAffected = cartProductService.updateQuantity(id, newQuantity);
@@ -68,6 +72,7 @@ class CartProductServiceImplTest {
             assertEquals(1, rowsAffected);
             verify(cartProductRepository).updateQuantity(id, newQuantity);
         }
+
 
         @Test
         @DisplayName("Given Invalid Quantity " +
@@ -85,41 +90,56 @@ class CartProductServiceImplTest {
         }
 
         @Test
-        @DisplayName("Same Quantity " +
-                "When Updated " +
-                "Then Return 0 Rows Affected")
+        @DisplayName("Same Quantity When Updated Then Return 0 Rows Affected")
         void updateQuantityNoChangesTest() {
-            long id = 123L;
+            Long cartProductId = 123L;
             int currentQuantity = 5;
 
-            when(cartRepository.findById(id)).thenReturn(Optional.of(new Cart()));
+            CartProduct cartProduct = new CartProduct();
+            cartProduct.setId(cartProductId);
+            cartProduct.setQuantity(currentQuantity);
+            Cart cart = new Cart();
+            cart.setId(456L);
+            cartProduct.setCart(cart);
 
-            when(cartProductRepository.updateQuantity(id, currentQuantity)).thenReturn(0);
+            when(cartProductRepository.findById(cartProductId)).thenReturn(Optional.of(cartProduct));
+            when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
 
-            int rowsAffected = cartProductService.updateQuantity(id, currentQuantity);
+            when(cartProductRepository.updateQuantity(cartProductId, currentQuantity)).thenReturn(0);
+
+            int rowsAffected = cartProductService.updateQuantity(cartProductId, currentQuantity);
 
             assertEquals(0, rowsAffected);
-            verify(cartProductRepository).updateQuantity(id, currentQuantity);
+            verify(cartProductRepository).updateQuantity(cartProductId, currentQuantity);
         }
+
 
         @Test
-        @DisplayName("Given Valid Quantity " +
-                "When Updated " +
-                "Then Return Updated Quantity")
+        @DisplayName("Given Valid Quantity When Updated Then Return Updated Quantity")
         void testUpdateQuantity_ValidQuantity_Success() {
-            Long id = 1L;
+            Long cartProductId = 1L;
             int quantity = 5;
 
+            // Mock the Cart and CartProduct as they would be related in the service method
             Cart cart = new Cart();
-            when(cartRepository.findById(id)).thenReturn(Optional.of(cart));
-            when(cartProductRepository.updateQuantity(id, quantity)).thenReturn(quantity);
+            cart.setId(1L);
+            CartProduct cartProduct = new CartProduct();
+            cartProduct.setId(cartProductId);
+            cartProduct.setCart(cart);
+            cartProduct.setQuantity(3);
 
-            int updatedQuantity = cartProductService.updateQuantity(id, quantity);
+            when(cartProductRepository.findById(cartProductId)).thenReturn(Optional.of(cartProduct));
+            when(cartRepository.findById(cart.getId())).thenReturn(Optional.of(cart));
+
+            when(cartProductRepository.updateQuantity(cartProductId, quantity)).thenReturn(quantity);
+
+            int updatedQuantity = cartProductService.updateQuantity(cartProductId, quantity);
 
             assertEquals(quantity, updatedQuantity);
-            verify(cartRepository, times(1)).findById(id);
-            verify(cartProductRepository, times(1)).updateQuantity(id, quantity);
+            verify(cartProductRepository).updateQuantity(cartProductId, quantity);
+            verify(cartRepository).findById(cart.getId());
         }
+
 
         @Test
         @DisplayName("Given Invalid Quantity Zero " +
@@ -160,7 +180,7 @@ class CartProductServiceImplTest {
 
             when(cartRepository.findById(id)).thenReturn(Optional.empty());
 
-            assertThrows(CartNotFoundException.class, () -> {
+            assertThrows(CartProductNotFoundException.class, () -> {
                 cartProductService.updateQuantity(id, quantity);
             });
 
@@ -176,7 +196,7 @@ class CartProductServiceImplTest {
         @DisplayName("When removing existing CartProduct, then verify deletion and returned value")
         void removeProductTest() {
             CartProduct cartProductToRemove = new CartProduct();
-            cartProductToRemove.setId(id); // Asegúrate de establecer el ID u otras propiedades necesarias
+            cartProductToRemove.setId(id);
             when(cartProductRepository.findById(id)).thenReturn(Optional.of(cartProductToRemove));
 
             CartProductDto removedProduct = cartProductService.removeProduct(id);
