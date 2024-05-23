@@ -32,9 +32,16 @@ public class CartProductServiceImpl implements CartProductService {
         if (quantity <= 0) {
             throw new CartProductInvalidQuantityException("The quantity must be higher than 0");
         }
-        Optional<Cart> optionalCart = cartRepository.findById(id);
+
+        Optional<CartProduct> cartProduct = cartProductRepository.findById(id);
+        if(cartProduct.isEmpty()){
+            throw new CartProductNotFoundException("CartProduct with ID " + id + " not found");
+        }
+        long cartId = cartProduct.get().getCart().getId();
+
+        Optional<Cart> optionalCart = cartRepository.findById(cartId);
         if (optionalCart.isEmpty()) {
-            throw new CartNotFoundException("Cart with ID " + id + " not found");
+            throw new CartNotFoundException("Cart with ID " + cartId + " not found");
         }
         log.info("Updating quantity for CartProduct with ID {} to {}", id, quantity);
         int updatedQuantity = cartProductRepository.updateQuantity(id, quantity);
