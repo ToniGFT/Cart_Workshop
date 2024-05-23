@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.client.RestClient;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -31,6 +32,7 @@ public class ProductServiceTest {
                 .build();
         productService = new ProductService(restClient);
         productService.endpointUri = "/catalog/products/{id}";
+        productService.discountUri = "/catalog/products/{product_id}/price-checkout?quantity={quantity}";
     }
 
     @Test
@@ -86,6 +88,56 @@ public class ProductServiceTest {
             productService.getProductById(1L);
         });
 
+    }
+
+    @Test
+    @DisplayName("When fetching discounted price, then the correct discounted price is returned")
+    void testGetProductDiscountedPrice() {
+        mockWebServer.enqueue(new MockResponse()
+                .setBody("75.0")
+                .addHeader("Content-Type", "application/json"));
+
+        float price = productService.getProductDiscountedPrice(1L, 2);
+        assertEquals(75.0, price, 0.001);
+    }
+
+    @Test
+    @DisplayName("When product ID does not exist for discount, then a 404 Not Found error is returned")
+    void testGetProductDiscountedPriceNotFound() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.NOT_FOUND.value())
+                .setBody("Product discount not found")
+                .addHeader("Content-Type", "text/plain"));
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.getProductDiscountedPrice(999L, 1);
+        });
+    }
+
+    @Test
+    @DisplayName("When server error occurs during fetching discount, then a 500 error is returned")
+    void testGetProductDiscountedPriceServerError() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setBody("Internal Server Error")
+                .addHeader("Content-Type", "text/plain"));
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.getProductDiscountedPrice(1L, 1);
+        });
+    }
+
+    @Test
+    @DisplayName("When the server returns malformed response, then handle the error gracefully")
+    void testGetProductDiscountedPriceMalformedResponse() {
+        mockWebServer.enqueue(new MockResponse()
+                .setBody("not a float")
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .addHeader("Content-Type", "application/json"));
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.getProductDiscountedPrice(1L, 3);
+        });
     }
 
     @AfterEach
