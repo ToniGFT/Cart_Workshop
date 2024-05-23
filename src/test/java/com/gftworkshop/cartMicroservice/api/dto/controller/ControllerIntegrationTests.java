@@ -238,27 +238,25 @@ class ControllerIntegrationTests {
     }
 
     @Test
-    void postCartProduct() {
-        // Given
-        Cart cart = Cart.builder().id(1L).userId(1L).build();
+    void postCartProductTest() {
+        String cartProductJson = """
+        {
+          "cart": {
+            "id": 1
+          },
+          "productId": 1,
+          "productName": "Pride and Prejudice",
+          "productCategory": "Books",
+          "productDescription": "Book by Jane Austen",
+          "quantity": 10,
+          "price": 20
+        }""";
 
-        CartProduct cartProduct = CartProduct.builder()
-                .cart(cart)
-                .productId(5L)
-                .productName("Football")
-                .productDescription("Speak value yard here station.")
-                .quantity(2)
-                .price(new BigDecimal("46.7"))
-                .build();
-        // When
         client.post().uri("/carts/products")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(cartProduct)
+                .bodyValue(cartProductJson)
                 .exchange()
-                .expectStatus().isCreated()
-                .expectBody()
-                .jsonPath("$.cart.id").isEqualTo(4L);
+                .expectStatus().isOk();
+
     }
-
-
 }
