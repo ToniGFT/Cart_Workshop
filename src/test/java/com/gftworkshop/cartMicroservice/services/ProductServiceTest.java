@@ -2,94 +2,114 @@ package com.gftworkshop.cartMicroservice.services;
 
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
-import org.junit.Ignore;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
+import org.mockito.Mockito;
 import org.springframework.web.client.RestClient;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
 
-public class ProductServiceTest {
+class ProductServiceTest {
 
-    private MockWebServer mockWebServer;
+    private RestClient restClient;
     private ProductService productService;
 
     @BeforeEach
-    void setUp() throws IOException {
-        mockWebServer = new MockWebServer();
-        mockWebServer.start();
-        RestClient restClient = RestClient.builder()
-                .baseUrl(mockWebServer.url("/").toString())
-                .build();
+    void setUp() {
+        restClient = Mockito.mock(RestClient.class);
         productService = new ProductService(restClient);
-        productService.endpointUri = "/catalog/products/{id}";
     }
 
-    @Test
-    @DisplayName("When fetching a product by ID, then the correct product details are returned")
-    void testGetProductById() {
-        String productJson = """
-                {
-                    "id": 1,
-                    "name": "Laptop",
-                    "description": "High-end gaming laptop",
-                    "price": 1200.00,
-                    "stock": 10,
-                    "category": "Electronics",
-                    "discount": 0.10,
-                    "weight": 2.5
-                }
-                """;
+    @Nested
+    @DisplayName("When getProductById")
+    class WhenGetProductById {
 
-        mockWebServer.enqueue(new MockResponse()
-                .setBody(productJson)
-                .addHeader("Content-Type", "application/json"));
+        @Test
+        @DisplayName("Given a valid ID then return Product")
+        void getProductByIdWithValidId() {
+            Product expectedProduct = Product.builder()
+                    .id(1L)
+                    .name("Sample Product")
+                    .description("Description here")
+                    .price(new BigDecimal("19.99"))
+                    .current_stock(100)
+                    .weight(1.5)
+                    .build();
+            RestClient.RequestHeadersUriSpec request = Mockito.mock(RestClient.RequestHeadersUriSpec.class);
+            RestClient.ResponseSpec response = Mockito.mock(RestClient.ResponseSpec.class);
 
-        Product product = productService.getProductById(1L);
+            when(restClient.get()).thenReturn(request);
+            when(request.uri(any(String.class), anyLong())).thenReturn(request);
+            when(request.retrieve()).thenReturn(response);
+            when(response.onStatus(any(), any())).thenReturn(response);
+            when(response.body(Product.class)).thenReturn(expectedProduct);
 
-        assertNotNull(product);
-        assertEquals(1L, (long) product.getId());
-        assertEquals(0, new BigDecimal("1200.00").compareTo(product.getPrice()));
+            Product actualProduct = productService.getProductById(1L);
+
+            assertThat(actualProduct).isNotNull();
+            assertThat(actualProduct).isEqualTo(expectedProduct);
+        }
+
+        @Test
+        @DisplayName("Given an invalid ID then throw ExternalMicroserviceException")
+        void getProductByIdWithInvalidId() {
+            RestClient.RequestHeadersUriSpec request = Mockito.mock(RestClient.RequestHeadersUriSpec.class);
+            RestClient.ResponseSpec response = Mockito.mock(RestClient.ResponseSpec.class);
+
+            when(restClient.get()).thenReturn(request);
+            when(request.uri(any(String.class), anyLong())).thenReturn(request);
+            when(request.retrieve()).thenReturn(response);
+            when(response.onStatus(any(), any())).thenThrow(new ExternalMicroserviceException("CATALOG MICROSERVICE EXCEPTION: Not Found"));
+
+            assertThatThrownBy(() -> productService.getProductById(-1L))
+                    .isInstanceOf(ExternalMicroserviceException.class)
+                    .hasMessageContaining("CATALOG MICROSERVICE EXCEPTION: Not Found");
+        }
     }
 
-    @Test
-    @DisplayName("When fetching a product by ID and the product does not exist, then a 404 Not Found error is returned")
-    void testGetProductByIdNotFound() {
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(404)
-                .setBody("Product not found")
-                .addHeader("Content-Type", "text/plain"));
+    @Nested
+    @DisplayName("When getProductDiscountedPrice")
+    class WhenGetProductDiscountedPrice {
 
-        assertThrows(ExternalMicroserviceException.class, () -> {
-            productService.getProductById(999L);
-        });
+        @Test
+        @DisplayName("Given valid parameters then return discounted price")
+        void getProductDiscountedPriceWithValidParameters() {
+            float expectedPrice = 15.99f;
+            RestClient.RequestHeadersUriSpec request = Mockito.mock(RestClient.RequestHeadersUriSpec.class);
+            RestClient.ResponseSpec response = Mockito.mock(RestClient.ResponseSpec.class);
 
-    }
+            when(restClient.get()).thenReturn(request);
+            when(request.uri(any(String.class), anyLong(), anyInt())).thenReturn(request);
+            when(request.retrieve()).thenReturn(response);
+            when(response.onStatus(any(), any())).thenReturn(response);
+            when(response.body(Float.class)).thenReturn(expectedPrice);
 
-    @Test
-    @DisplayName("When fetching a product by ID and an internal server error occurs, then a 500 error is returned")
-    void testGetProductByIdServerError() {
-        mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(500)
-                .setBody("Internal Server Error")
-                .addHeader("Content-Type", "text/plain"));
+            float actualPrice = productService.getProductDiscountedPrice(1L, 2);
 
-        assertThrows(ExternalMicroserviceException.class, () -> {
-            productService.getProductById(1L);
-        });
+            assertThat(actualPrice).isEqualTo(expectedPrice);
+        }
 
-    }
+        @Test
+        @DisplayName("Given invalid parameters then throw ExternalMicroserviceException")
+        void getProductDiscountedPriceWithInvalidParameters() {
+            RestClient.RequestHeadersUriSpec request = Mockito.mock(RestClient.RequestHeadersUriSpec.class);
+            RestClient.ResponseSpec response = Mockito.mock(RestClient.ResponseSpec.class);
 
-    @AfterEach
-    void tearDown() throws IOException {
-        mockWebServer.shutdown();
+            when(restClient.get()).thenReturn(request);
+            when(request.uri(any(String.class), anyLong(), anyInt())).thenReturn(request);
+            when(request.retrieve()).thenReturn(response);
+            when(response.onStatus(any(), any())).thenThrow(new ExternalMicroserviceException("CATALOG MICROSERVICE EXCEPTION: Error"));
+
+            assertThatThrownBy(() -> productService.getProductDiscountedPrice(1L, -1))
+                    .isInstanceOf(ExternalMicroserviceException.class)
+                    .hasMessageContaining("CATALOG MICROSERVICE EXCEPTION: Error");
+        }
     }
 }

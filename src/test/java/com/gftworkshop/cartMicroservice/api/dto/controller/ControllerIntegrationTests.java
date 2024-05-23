@@ -1,14 +1,15 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -25,11 +26,6 @@ class ControllerIntegrationTests {
     private CartDto expectedCart;
     @Autowired
     private WebTestClient client;
-    @Autowired
-    private CartRepository cartRepository;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @BeforeEach
     void setUp() {
@@ -57,22 +53,6 @@ class ControllerIntegrationTests {
                 ))
                 .build();
     }
-
-    @AfterEach
-    void afterEach() {
-        jdbcTemplate.execute("DELETE FROM cart_products");
-        jdbcTemplate.execute("DELETE FROM cart");
-
-        jdbcTemplate.execute("INSERT INTO cart (id, user_id, updated_at) VALUES (1, 1, '2024-05-01 12:00:00')");
-        jdbcTemplate.execute("INSERT INTO cart (id, user_id, updated_at) VALUES (2, 2, '2024-05-02 12:00:00')");
-        jdbcTemplate.execute("INSERT INTO cart (id, user_id, updated_at) VALUES (3, 3, '2024-05-03 12:00:00')");
-
-        jdbcTemplate.execute("INSERT INTO cart_products (id, cart_id, product_id, product_name, product_description, quantity, price) VALUES (1, 1, 1, 'Jacket', 'Something indicate large central measure watch provide.', 1, 58.79)");
-        jdbcTemplate.execute("INSERT INTO cart_products (id, cart_id, product_id, product_name, product_description, quantity, price) VALUES (2, 1, 2, 'Building Blocks', 'Agent word occur number chair.', 2, 7.89)");
-        jdbcTemplate.execute("INSERT INTO cart_products (id, cart_id, product_id, product_name, product_description, quantity, price) VALUES (3, 2, 3, 'Swimming Goggles', 'Walk range media doctor interest.', 1, 30.53)");
-        jdbcTemplate.execute("INSERT INTO cart_products (id, cart_id, product_id, product_name, product_description, quantity, price) VALUES (4, 3, 4, 'Football', 'Country expect price certain different bag everyone.', 1, 21.93)");
-    }
-
     @Nested
     @DisplayName("GET - Tests for getting a cart by id")
     class GetCartByIdEndpoint {

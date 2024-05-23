@@ -56,45 +56,60 @@ public class CartServiceImpl implements CartService {
     @Override
     public void addProductToCart(CartProduct cartProduct) {
         checkForAbandonedCarts();
+        verifyProductStock(cartProduct);
 
-        int actualProductAmount = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
-        if (cartProduct.getQuantity()>actualProductAmount) {
-            throw new CartProductInvalidQuantityException(NOT_ENOUGH_STOCK + cartProduct.getQuantity() + ACTUAL_STOCK + actualProductAmount);
-        }
+        Cart cart = getCartById(cartProduct.getCart().getId());
+        addToCart(cart, cartProduct);
+    }
 
-        Cart cart = cartRepository.findById(cartProduct.getCart().getId())
-                .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartProduct.getCart().getId() + NOT_FOUND));
 
+    public void addToCart(Cart cart, CartProduct cartProduct) {
         cart.getCartProducts().add(cartProduct);
         cartProduct.setCart(cart);
         cartProductRepository.save(cartProduct);
-        cartRepository.save(cart);
     }
+
+
+    public void verifyProductStock(CartProduct cartProduct) {
+        int actualProductAmount = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
+
+        if (cartProduct.getQuantity() > actualProductAmount) {
+            throw new CartProductInvalidQuantityException(NOT_ENOUGH_STOCK + cartProduct.getQuantity() + ACTUAL_STOCK + actualProductAmount);
+        }
+    }
+
 
     @Override
     public BigDecimal getCartTotal(Long cartId, Long userId) {
-        User user = userService.getUserById(userId);
-        Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
+        User user = getUserById(userId);
+        Cart cart = getCartById(cartId);
 
+        BigDecimal total = calculateProductsTotal(cart);
+        BigDecimal tax = calculateTax(total, user);
+        BigDecimal weightCost = calculateWeightCost(calculateTotalWeight(cart));
+
+        return total.add(tax).add(weightCost);
+    }
+
+    public User getUserById(Long userId) {
+        return userService.getUserById(userId);
+    }
+
+
+    public BigDecimal calculateProductsTotal(Cart cart) {
         BigDecimal total = BigDecimal.ZERO;
-        double totalWeight = 0.0;
         for (CartProduct cartProduct : cart.getCartProducts()) {
-            Product product = productService.getProductById(cartProduct.getProductId());
-
-            totalWeight += (product.getWeight()*cartProduct.getQuantity());
             BigDecimal productTotal = cartProduct.getPrice().multiply(BigDecimal.valueOf(cartProduct.getQuantity()));
             total = total.add(productTotal);
         }
-
-        BigDecimal weightCost = calculateWeightCost(totalWeight);
-        BigDecimal tax = total.multiply(BigDecimal.valueOf(user.getCountry().getTax()/100));
-        total = total.add(tax).add(weightCost);
-
         return total;
     }
 
-    BigDecimal calculateWeightCost(double totalWeight) {
+    public BigDecimal calculateTax(BigDecimal total, User user) {
+        return total.multiply(BigDecimal.valueOf(user.getCountry().getTax() / 100));
+    }
+
+    public BigDecimal calculateWeightCost(double totalWeight) {
         if (totalWeight > 20) {
             return new BigDecimal("50");
         } else if (totalWeight > 10) {
@@ -105,40 +120,59 @@ public class CartServiceImpl implements CartService {
         return new BigDecimal("5");
     }
 
+    public double calculateTotalWeight(Cart cart) {
+        double totalWeight = 0.0;
+        for (CartProduct cartProduct : cart.getCartProducts()) {
+            Product product = productService.getProductById(cartProduct.getProductId());
+            totalWeight += (product.getWeight() * cartProduct.getQuantity());
+        }
+        return totalWeight;
+    }
+
+
     @Transactional
     public void clearCart(Long cartId) {
         checkForAbandonedCarts();
 
-        Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
-
+        Cart cart = getCartById(cartId);
         cartProductRepository.removeAllByCartId(cartId);
         cart.getCartProducts().clear();
         updateCartModifiedDateTime(cart);
         cartRepository.save(cart);
     }
 
-    private void updateCartModifiedDateTime(Cart cart) {
+    public void updateCartModifiedDateTime(Cart cart) {
         cart.setUpdatedAt(LocalDate.now());
     }
 
     @Override
     public List<CartDto> identifyAbandonedCarts(LocalDate thresholdDate) {
-        List<Cart> abandonedCarts = cartRepository.identifyAbandonedCarts(thresholdDate);
+        List<Cart> abandonedCarts = findAbandonedCarts(thresholdDate);
+        logAbandonedCarts(abandonedCarts, thresholdDate);
+        return mapCartsToDto(abandonedCarts);
+    }
 
+    public List<Cart> findAbandonedCarts(LocalDate thresholdDate) {
+        return cartRepository.identifyAbandonedCarts(thresholdDate);
+    }
+
+    public void logAbandonedCarts(List<Cart> abandonedCarts, LocalDate thresholdDate) {
         if (abandonedCarts.isEmpty()) {
-            log.info(NO_ABANDONED_CARTS_FOUND + thresholdDate);
+            log.info(NO_ABANDONED_CARTS_FOUND + "{}", thresholdDate);
         } else {
-            log.info(FOUND_ABANDONED_CARTS + thresholdDate, abandonedCarts.size());
-            abandonedCarts.forEach(cart -> {
-                log.debug(ABANDONED_CART, cart.getId(), cart.getUpdatedAt());
-            });
+            log.info(FOUND_ABANDONED_CARTS + "{}", thresholdDate, abandonedCarts.size());
+            abandonedCarts.forEach(cart ->
+                    log.debug(ABANDONED_CART, cart.getId(), cart.getUpdatedAt())
+            );
         }
+    }
 
+    public List<CartDto> mapCartsToDto(List<Cart> abandonedCarts) {
         return abandonedCarts.stream()
                 .map(this::entityToDto)
                 .toList();
     }
+
 
     @Override
     public CartDto createCart(Long userId) {
@@ -159,28 +193,36 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartDto getCart(Long cartId) {
         checkForAbandonedCarts();
+        Cart cart = getCartById(cartId);
+        verifyCartProductsStock(cart);
+        return createCartDto(cart);
+    }
 
-        Cart cart = cartRepository.findById(cartId)
+    public Cart getCartById(Long cartId) {
+        return cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
+    }
 
-        for(CartProduct cartProduct:cart.getCartProducts()){
+    public CartDto createCartDto(Cart cart) {
+        CartDto cartDto = entityToDto(cart);
+        cartDto.setTotalPrice(getCartTotal(cart.getId(), cart.getUserId()));
+        return cartDto;
+    }
+
+    public void verifyCartProductsStock(Cart cart) {
+        for (CartProduct cartProduct : cart.getCartProducts()) {
             int actualStock = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
-            if(cartProduct.getQuantity()>actualStock){
-                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: "+cartProduct.getQuantity()+". Actual stock: "+actualStock);
+            if (cartProduct.getQuantity() > actualStock) {
+                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: " + cartProduct.getQuantity() + ACTUAL_STOCK + actualStock);
             }
         }
-
-        CartDto cartDto = entityToDto(cart);
-        cartDto.setTotalPrice(getCartTotal(cart.getId(),cart.getUserId()));
-
-        return cartDto;
     }
 
     public List<Cart> getAllCarts() {
         return cartRepository.findAll();
     }
 
-    private CartDto entityToDto(Cart cart) {
+    public CartDto entityToDto(Cart cart) {
         CartDto cartDto = CartDto.builder().build();
         BeanUtils.copyProperties(cart, cartDto);
         return cartDto;
