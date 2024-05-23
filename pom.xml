@@ -102,13 +102,15 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*Generated*</exclude>
+                                <exclude>**/src/test/java/com.gftworkshop.cartMicroservice/api.dto.controller/ControllerIntegrationTests.class</exclude>
+                                <!-- Añade más exclusiones según sea necesario -->
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*Generated*</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
