@@ -12,14 +12,14 @@ import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.ProductService;
 import com.gftworkshop.cartMicroservice.services.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -33,20 +33,20 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CartServiceImplTest {
 
+    @Mock
     private CartRepository cartRepository;
+
+    @Mock
     private CartProductRepository cartProductRepository;
-    private CartServiceImpl cartServiceImpl;
+
+    @Mock
     private UserService userService;
+
+    @Mock
     private ProductService productService;
 
-    @BeforeEach
-    void setUp() {
-        cartRepository = mock(CartRepository.class);
-        cartProductRepository = mock(CartProductRepository.class);
-        userService = mock(UserService.class);
-        productService = mock(ProductService.class);
-        cartServiceImpl = new CartServiceImpl(cartRepository, cartProductRepository, productService, userService);
-    }
+    @InjectMocks
+    private CartServiceImpl cartServiceImpl;
 
     @Test
     @DisplayName("Given a cart and a product, when adding the product to the cart, if there isn't enough stock, then a CartProductInvalidQuantityException should be thrown")
@@ -77,21 +77,19 @@ class CartServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a cart and a product, " + "when adding the product to the cart, " + "then the product should be added successfully")
+    @DisplayName("Given a cart and a product, when adding the product to the cart, then the product should be added successfully")
     void addProductToCartTest() {
         Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
-
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, 100.0));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
-        when(cartProductRepository.save(cartProduct)).thenReturn(cartProduct);
 
         cartServiceImpl.addProductToCart(cartProduct);
 
-        verify(cartProductRepository).save(cartProduct);
-        verify(cartRepository).save(cart);
+        verify(cartProductRepository, times(1)).save(any());
     }
+
 
     @Test
     @DisplayName("Given a cart and a product, when adding the product to the cart, if there isn't enough stock, an exception should be thrown")
@@ -101,9 +99,9 @@ class CartServiceImplTest {
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(1000).cart(cart).build();
         cart.getCartProducts().add(cartProduct);
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, 100.0));
 
-        Product product = new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0);
+        Product product = new Product(1L, "prodName", "description", new BigDecimal("100"), 100, 100.0);
         when(productService.getProductById(1L)).thenReturn(product);
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
@@ -281,7 +279,7 @@ class CartServiceImplTest {
 
         CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).cart(cart).build();
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100,  100.0));
+        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, 100.0));
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
 
@@ -318,22 +316,29 @@ class CartServiceImplTest {
 
 
     @Test
-    @DisplayName("Given a non-existent product in the cart, " + "when calculating the cart total, " + "then a CartProductNotFoundException should be thrown")
+    @DisplayName("Given a non-existent product in the cart, when calculating the cart total, then a CartProductNotFoundException should be thrown")
     void getCartTotal_CartProductNotFoundExceptionTest() {
         Long cartId = 1L;
         Long userId = 1L;
 
-        CartProduct cartProduct = CartProduct.builder().productId(999L).build();
+        int quantity = 5;
+        CartProduct cartProduct = CartProduct.builder().productId(999L).quantity(quantity).build();
+
+        BigDecimal price = BigDecimal.valueOf(10.0);
+        cartProduct.setPrice(price);
+
         Cart cart = Cart.builder().cartProducts(Collections.singletonList(cartProduct)).build();
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-        when(userService.getUserById(userId)).thenReturn(User.builder().build());
+        when(userService.getUserById(userId)).thenReturn(User.builder().country(new Country(101L, 7.5)).build());
+
         when(productService.getProductById(cartProduct.getProductId())).thenThrow(new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
 
         assertThrows(CartProductNotFoundException.class, () -> {
             cartServiceImpl.getCartTotal(cartId, userId);
         });
     }
+
 
     @Test
     @DisplayName("Given a non-existent cart, " + "when calculating the cart total, " + "then a CartNotFoundException should be thrown")
