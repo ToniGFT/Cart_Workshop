@@ -26,8 +26,6 @@ class ControllerIntegrationTests {
     private CartDto expectedCart;
     @Autowired
     private WebTestClient client;
-    @Autowired
-    private CartRepository cartRepository;
 
     @BeforeEach
     void setUp() {
