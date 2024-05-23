@@ -1,20 +1,13 @@
 package com.gftworkshop.cartMicroservice.api.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
-
+@AllArgsConstructor
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class CartProductDto {
+public class UpdatedCartProductDto {
     private Long id;
-    private String productName;
-    private String productDescription;
     private Integer quantity;
-    private BigDecimal price;
 }

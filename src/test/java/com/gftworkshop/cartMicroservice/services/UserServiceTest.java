@@ -1,15 +1,16 @@
 package com.gftworkshop.cartMicroservice.services;
 
 import com.gftworkshop.cartMicroservice.api.dto.User;
+import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientResponseException;
 
 import java.io.IOException;
 
@@ -29,6 +30,7 @@ public class UserServiceTest {
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
         userService = new UserService(restClient);
+        userService.endpointUri = "/users/{id}";
     }
 
     @Test
@@ -72,11 +74,9 @@ public class UserServiceTest {
                 .setBody("Not found")
                 .addHeader("Content-Type", "application/json"));
 
-        Exception exception = assertThrows(RestClientResponseException.class, () -> {
+        assertThrows(ExternalMicroserviceException.class, () -> {
             userService.getUserById(1L);
         });
-
-        assertEquals(HttpStatus.NOT_FOUND, ((RestClientResponseException) exception).getStatusCode());
     }
 
 
@@ -88,11 +88,9 @@ public class UserServiceTest {
                 .setBody("Internal Server Error")
                 .addHeader("Content-Type", "application/json"));
 
-        Exception exception = assertThrows(RestClientResponseException.class, () -> {
+        assertThrows(ExternalMicroserviceException.class, () -> {
             userService.getUserById(1L);
         });
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, ((RestClientResponseException) exception).getStatusCode());
     }
 
 

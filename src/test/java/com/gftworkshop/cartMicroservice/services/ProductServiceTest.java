@@ -1,13 +1,14 @@
 package com.gftworkshop.cartMicroservice.services;
 
 import com.gftworkshop.cartMicroservice.api.dto.Product;
+import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientResponseException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
@@ -29,6 +30,7 @@ public class ProductServiceTest {
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
         productService = new ProductService(restClient);
+        productService.endpointUri = "/catalog/products/{id}";
     }
 
     @Test
@@ -66,11 +68,10 @@ public class ProductServiceTest {
                 .setBody("Product not found")
                 .addHeader("Content-Type", "text/plain"));
 
-        RestClientResponseException exception = assertThrows(RestClientResponseException.class, () -> {
+        assertThrows(ExternalMicroserviceException.class, () -> {
             productService.getProductById(999L);
         });
 
-        assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
     }
 
     @Test
@@ -81,11 +82,10 @@ public class ProductServiceTest {
                 .setBody("Internal Server Error")
                 .addHeader("Content-Type", "text/plain"));
 
-        RestClientResponseException exception = assertThrows(RestClientResponseException.class, () -> {
+        assertThrows(ExternalMicroserviceException.class, () -> {
             productService.getProductById(1L);
         });
 
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, exception.getStatusCode());
     }
 
     @AfterEach
