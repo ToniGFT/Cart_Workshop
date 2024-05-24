@@ -1,73 +1,102 @@
 package com.gftworkshop.cartMicroservice.services;
 
-import com.gftworkshop.cartMicroservice.api.dto.Country;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.Ignore;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClient;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
 
-class UserServiceTest {
+import java.io.IOException;
 
-    private RestClient restClient;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
+public class UserServiceTest {
+
+    private MockWebServer mockWebServer;
     private UserService userService;
 
     @BeforeEach
-    void setUp() {
-        restClient = Mockito.mock(RestClient.class);
+    void setUp() throws IOException {
+        mockWebServer = new MockWebServer();
+        mockWebServer.start();
+        RestClient restClient = RestClient.builder()
+                .baseUrl(mockWebServer.url("/").toString())
+                .build();
         userService = new UserService(restClient);
+        userService.endpointUri = "/users/{id}";
     }
 
-    @Nested
-    @DisplayName("When getUserById")
-    class WhenGetUserById {
+    @Test
+    @DisplayName("When fetching a user by ID, " +
+            "then the correct user details are returned")
+    void testGetUserById() {
+        String userJson = """
+                {
+                    "id": 100,
+                    "email": "john.doe@example.com",
+                    "name": "John",
+                    "lastName": "Doe",
+                    "password": "password123",
+                    "fidelityPoints": 1000,
+                    "birthDate": "1985-10-15",
+                    "phoneNumber": "1234567890",
+                    "country": {
+                        "name": "USA",
+                        "code": "US",
+                        "tax": "21.0"
+                    }
+                }
+                """;
 
-        @Test
-        @DisplayName("Given a valid ID then return User")
-        void getUserByIdWithValidId() {
-            Country country = Country.builder().tax(11.0).build();
-            User expectedUser = User.builder().id(1L).country(country).build();
-            RestClient.RequestHeadersUriSpec request = Mockito.mock(RestClient.RequestHeadersUriSpec.class);
-            RestClient.ResponseSpec response = Mockito.mock(RestClient.ResponseSpec.class);
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(userJson)
+                .addHeader("Content-Type", "application/json"));
 
-            when(restClient.get()).thenReturn(request);
-            when(request.uri(any(String.class), anyLong())).thenReturn(request);
-            when(request.retrieve()).thenReturn(response);
+        User user = userService.getUserById(100L);
 
-            when(response.onStatus(any(), any())).thenReturn(response);
+        assertEquals(100L,(long) user.getId());
+        assertEquals(21.0,user.getCountry().getTax(), 0.001);
 
-            when(response.body(User.class)).thenReturn(expectedUser);
+    }
 
-            User actualUser = userService.getUserById(1L);
+    @Test
+    @DisplayName("When fetching a non-existent user by ID, then a 404 error is returned")
+    void testGetUserByIdNotFound() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.NOT_FOUND.value())
+                .setBody("Not found")
+                .addHeader("Content-Type", "application/json"));
 
-            assertThat(actualUser).isNotNull();
-            assertThat(actualUser).isEqualTo(expectedUser);
-        }
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            userService.getUserById(1L);
+        });
+    }
 
 
-        @Test
-        @DisplayName("Given an invalid ID then throw ExternalMicroserviceException")
-        void getUserByIdWithInvalidId() {
-            RestClient.RequestHeadersUriSpec request = Mockito.mock(RestClient.RequestHeadersUriSpec.class);
-            RestClient.ResponseSpec response = Mockito.mock(RestClient.ResponseSpec.class);
+    @Test
+    @DisplayName("When fetching a User by ID and an internal server error occurs, then a 500 error is returned")
+    void testGetUserByIdServerError() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setBody("Internal Server Error")
+                .addHeader("Content-Type", "application/json"));
 
-            when(restClient.get()).thenReturn(request);
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            userService.getUserById(1L);
+        });
+    }
 
-            when(request.uri(any(String.class), anyLong())).thenReturn(request);
-            when(request.retrieve()).thenReturn(response);
-            when(response.onStatus(any(), any())).thenThrow(new ExternalMicroserviceException("USER MICROSERVICE EXCEPTION: Not Found"));
 
-            assertThatThrownBy(() -> userService.getUserById(-1L))
-                    .isInstanceOf(ExternalMicroserviceException.class)
-                    .hasMessageContaining("USER MICROSERVICE EXCEPTION: Not Found");
-        }
+
+    @AfterEach
+    void tearDown() throws IOException {
+        mockWebServer.shutdown();
     }
 }
