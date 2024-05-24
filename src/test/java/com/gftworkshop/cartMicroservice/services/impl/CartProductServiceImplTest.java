@@ -178,6 +178,28 @@ class CartProductServiceImplTest {
             Long id = 999L;
             int quantity = 5;
 
+            Cart cart = Cart.builder().id(888L).build();
+            CartProduct cartProduct = CartProduct.builder().cart(cart).build();
+
+            when(cartProductRepository.findById(id)).thenReturn(Optional.of(cartProduct));
+
+            when(cartRepository.findById(cart.getId())).thenReturn(Optional.empty());
+
+            assertThrows(CartNotFoundException.class, () -> {
+                cartProductService.updateQuantity(id, quantity);
+            });
+
+            verify(cartProductRepository, never()).updateQuantity(anyLong(), anyInt());
+        }
+
+
+        @Test
+        @DisplayName("Given Nonexistent Cart Product " +
+                "Then Throws Exception")
+        void testUpdateQuantity_CartProductNotFound() {
+            Long id = 999L;
+            int quantity = 5;
+
             when(cartRepository.findById(id)).thenReturn(Optional.empty());
 
             assertThrows(CartProductNotFoundException.class, () -> {
