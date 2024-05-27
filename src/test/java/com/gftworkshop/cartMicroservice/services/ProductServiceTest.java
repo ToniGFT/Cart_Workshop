@@ -15,6 +15,8 @@ import okhttp3.mockwebserver.MockWebServer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -31,8 +33,9 @@ public class ProductServiceTest {
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
         productService = new ProductService(restClient);
-        productService.endpointUri = "/catalog/products/{id}";
-        productService.discountUri = "/catalog/products/{product_id}/price-checkout?quantity={quantity}";
+        productService.productUrl= "/catalog/products/{id}";
+        productService.productsUrl= "/catalog/products/productsWithDiscount";
+        productService.discountUrl = "/catalog/products/{product_id}/price-checkout?quantity={quantity}";
     }
 
     @Test
@@ -66,7 +69,7 @@ public class ProductServiceTest {
     @DisplayName("When fetching a product by ID and the product does not exist, then a 404 Not Found error is returned")
     void testGetProductByIdNotFound() {
         mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(404)
+                .setResponseCode(HttpStatus.NOT_FOUND.value())
                 .setBody("Product not found")
                 .addHeader("Content-Type", "text/plain"));
 
@@ -80,7 +83,7 @@ public class ProductServiceTest {
     @DisplayName("When fetching a product by ID and an internal server error occurs, then a 500 error is returned")
     void testGetProductByIdServerError() {
         mockWebServer.enqueue(new MockResponse()
-                .setResponseCode(500)
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .setBody("Internal Server Error")
                 .addHeader("Content-Type", "text/plain"));
 
@@ -132,13 +135,103 @@ public class ProductServiceTest {
     void testGetProductDiscountedPriceMalformedResponse() {
         mockWebServer.enqueue(new MockResponse()
                 .setBody("not a float")
-                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setResponseCode(HttpStatus.BAD_REQUEST.value())
                 .addHeader("Content-Type", "application/json"));
 
         assertThrows(ExternalMicroserviceException.class, () -> {
             productService.getProductDiscountedPrice(1L, 3);
         });
     }
+
+    @Test
+    @DisplayName("When fetching products with discounted prices successfully, then return the correct products list")
+    void testGetProductByIdWithDiscountedPriceSuccess() throws Exception {
+        String productListJson = """
+                [{
+                    "id": 1,
+                    "name": "Laptop",
+                    "description": "High-end gaming laptop",
+                    "price": 1080.00,
+                    "stock": 10,
+                    "category": "Electronics",
+                    "discount": 0.10,
+                    "weight": 2.5
+                },
+                {
+                    "id": 2,
+                    "name": "Laptop",
+                    "description": "High-end gaming laptop",
+                    "price": 1080.00,
+                    "stock": 10,
+                    "category": "Electronics",
+                    "discount": 0.10,
+                    "weight": 2.5
+                }]
+            """;
+
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(productListJson)
+                .addHeader("Content-Type", "application/json"));
+
+        Map<Long, Integer> productIdAmountMap = Map.of(1L, 2);
+        List<Product> products = productService.getProductByIdWithDiscountedPrice(productIdAmountMap);
+
+        assertNotNull(products);
+        assertFalse(products.isEmpty());
+        assertEquals(2, products.size());
+        Product product = products.get(0);
+        assertEquals(1L, (long) product.getId());
+        assertEquals(0, new BigDecimal("1080.00").compareTo(product.getPrice()));
+    }
+
+    @Test
+    @DisplayName("When none of the product IDs exist, then a 404 Not Found error is returned")
+    void testGetProductByIdWithDiscountedPriceNotFound() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.NOT_FOUND.value())
+                .setBody("Products not found")
+                .addHeader("Content-Type", "text/plain"));
+
+        Map<Long, Integer> productIdAmountMap = Map.of(999L, 1);
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.getProductByIdWithDiscountedPrice(productIdAmountMap);
+        });
+    }
+
+    @Test
+    @DisplayName("When server error occurs during fetching products with discounts, then a 500 error is returned")
+    void testGetProductByIdWithDiscountedPriceServerError() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setBody("Internal Server Error")
+                .addHeader("Content-Type", "text/plain"));
+
+        Map<Long, Integer> productIdAmountMap = Map.of(1L, 1);
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.getProductByIdWithDiscountedPrice(productIdAmountMap);
+        });
+    }
+
+    @Test
+    @DisplayName("When the server returns a malformed response for products with discounts, then handle the error gracefully")
+    void testGetProductByIdWithDiscountedPriceMalformedResponse() {
+        mockWebServer.enqueue(new MockResponse()
+                .setBody("not a valid list")
+                .setResponseCode(HttpStatus.BAD_REQUEST.value())
+                .addHeader("Content-Type", "application/json"));
+
+        Map<Long, Integer> productIdAmountMap = Map.of(1L, 3);
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.getProductByIdWithDiscountedPrice(productIdAmountMap);
+        });
+    }
+
+
+
+
 
     @AfterEach
     void tearDown() throws IOException {
