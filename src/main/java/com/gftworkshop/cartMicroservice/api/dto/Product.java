@@ -17,7 +17,7 @@ public class Product {
     private String name;
     private String description;
     private BigDecimal price;
-    private Integer current_stock;
+    private Integer currentStock;
     private Double weight;
 
 
