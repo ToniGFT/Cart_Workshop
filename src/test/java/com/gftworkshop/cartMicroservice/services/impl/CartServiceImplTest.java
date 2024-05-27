@@ -23,9 +23,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
@@ -69,9 +67,7 @@ class CartServiceImplTest {
         lenient().when(productService.getProductById(1L)).thenReturn(product);
         lenient().when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
-        CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
-            cartServiceImpl.addProductToCart(cartProduct);
-        });
+        CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> cartServiceImpl.addProductToCart(cartProduct));
 
         assertEquals("Not enough stock to add product to cart. Desired amount: 1000. Actual stock: 100", exception.getMessage());
     }
@@ -105,9 +101,7 @@ class CartServiceImplTest {
         when(productService.getProductById(1L)).thenReturn(product);
         when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
-        CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> {
-            cartServiceImpl.getCart(1L);
-        });
+        CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> cartServiceImpl.fetchValidatedCart(1L));
 
         assertEquals("Not enough stock. Quantity desired: 1000. Actual stock: 100", exception.getMessage());
     }
@@ -141,7 +135,7 @@ class CartServiceImplTest {
         BigDecimal tax = expectedTotal.multiply(new BigDecimal("0.07"));
         expectedTotal = expectedTotal.add(tax).add(weightCost);
 
-        BigDecimal actualTotal = cartServiceImpl.getCartTotal(1L, 1L);
+        BigDecimal actualTotal = cartServiceImpl.calculateCartTotal(1L, 1L);
         assertEquals(expectedTotal, actualTotal);
 
         verify(userService).getUserById(1L);
@@ -150,24 +144,12 @@ class CartServiceImplTest {
     }
 
     @Test
-    @DisplayName("Given a total weight, " + "when calculating the weight cost, " + "then the cost should be calculated correctly")
+    @DisplayName("Given a total weight, when calculating the weight cost, then the cost should be calculated correctly according to weight ranges")
     void calculateWeightCostTest() {
-
-        BigDecimal expectedCost1 = new BigDecimal("50");
-        BigDecimal actualCost1 = cartServiceImpl.calculateWeightCost(25);
-        assertEquals(expectedCost1, actualCost1);
-
-        BigDecimal expectedCost2 = new BigDecimal("20");
-        BigDecimal actualCost2 = cartServiceImpl.calculateWeightCost(15);
-        assertEquals(expectedCost2, actualCost2);
-
-        BigDecimal expectedCost3 = new BigDecimal("10");
-        BigDecimal actualCost3 = cartServiceImpl.calculateWeightCost(7);
-        assertEquals(expectedCost3, actualCost3);
-
-        BigDecimal expectedCost4 = new BigDecimal("5");
-        BigDecimal actualCost4 = cartServiceImpl.calculateWeightCost(3);
-        assertEquals(expectedCost4, actualCost4);
+        assertEquals(new BigDecimal("5"), cartServiceImpl.computeShippingCost(3));
+        assertEquals(new BigDecimal("10"), cartServiceImpl.computeShippingCost(7));
+        assertEquals(new BigDecimal("20"), cartServiceImpl.computeShippingCost(15));
+        assertEquals(new BigDecimal("50"), cartServiceImpl.computeShippingCost(25));
     }
 
 
@@ -180,7 +162,7 @@ class CartServiceImplTest {
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
 
-        cartServiceImpl.clearCart(cartId);
+        cartServiceImpl.emptyCart(cartId);
 
         assertTrue(cart.getCartProducts().isEmpty());
         verify(cartRepository).save(cart);
@@ -239,13 +221,13 @@ class CartServiceImplTest {
         User user = User.builder().country(new Country(1L, 0.07)).id(userId).build();
         Product product = Product.builder().id(1L).price(new BigDecimal("20")).weight(2.0).current_stock(20).build();
         CartProduct cartProduct = CartProduct.builder().productId(1L).price(new BigDecimal("20")).quantity(2).build();
-        Cart cart = Cart.builder().id(cartId).userId(userId).cartProducts(Arrays.asList(cartProduct)).build();
+        Cart cart = Cart.builder().id(cartId).userId(userId).cartProducts(Collections.singletonList(cartProduct)).build();
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
         when(userService.getUserById(userId)).thenReturn(user);
         when(productService.getProductById(1L)).thenReturn(product);
 
-        CartDto result = cartServiceImpl.getCart(cartId);
+        CartDto result = cartServiceImpl.fetchValidatedCart(cartId);
 
         assertEquals(cartId, result.getId());
     }
@@ -260,7 +242,7 @@ class CartServiceImplTest {
 
         when(cartRepository.findAll()).thenReturn(expectedCarts);
 
-        List<Cart> actualCarts = cartServiceImpl.getAllCarts();
+        List<Cart> actualCarts = cartServiceImpl.fetchAllCarts();
 
         assertEquals(expectedCarts.size(), actualCarts.size());
         assertTrue(actualCarts.contains(cart1));
@@ -285,9 +267,7 @@ class CartServiceImplTest {
 
         when(cartRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(CartNotFoundException.class, () -> {
-            cartServiceImpl.addProductToCart(cartProduct);
-        });
+        assertThrows(CartNotFoundException.class, () -> cartServiceImpl.addProductToCart(cartProduct));
     }
 
     @Test
@@ -296,9 +276,7 @@ class CartServiceImplTest {
 
         when(cartRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(CartNotFoundException.class, () -> {
-            cartServiceImpl.clearCart(1L);
-        });
+        assertThrows(CartNotFoundException.class, () -> cartServiceImpl.emptyCart(1L));
     }
 
     @Test
@@ -309,9 +287,7 @@ class CartServiceImplTest {
 
         when(userService.getUserById(userId)).thenThrow(new UserNotFoundException("User with ID " + userId + " not found"));
 
-        assertThrows(UserNotFoundException.class, () -> {
-            cartServiceImpl.getCartTotal(cartId, userId);
-        });
+        assertThrows(UserNotFoundException.class, () -> cartServiceImpl.calculateCartTotal(cartId, userId));
     }
 
 
@@ -334,9 +310,7 @@ class CartServiceImplTest {
 
         when(productService.getProductById(cartProduct.getProductId())).thenThrow(new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
 
-        assertThrows(CartProductNotFoundException.class, () -> {
-            cartServiceImpl.getCartTotal(cartId, userId);
-        });
+        assertThrows(CartProductNotFoundException.class, () -> cartServiceImpl.calculateCartTotal(cartId, userId));
     }
 
 
@@ -349,9 +323,7 @@ class CartServiceImplTest {
         when(userService.getUserById(userId)).thenReturn(User.builder().build());
         when(cartRepository.findById(cartId)).thenReturn(Optional.empty());
 
-        assertThrows(CartNotFoundException.class, () -> {
-            cartServiceImpl.getCartTotal(cartId, userId);
-        });
+        assertThrows(CartNotFoundException.class, () -> cartServiceImpl.calculateCartTotal(cartId, userId));
     }
 
     @Test
@@ -363,9 +335,7 @@ class CartServiceImplTest {
 
         when(cartRepository.findByUserId(userId)).thenReturn(Optional.of(existingCart));
 
-        UserWithCartException exception = assertThrows(UserWithCartException.class, () -> {
-            cartServiceImpl.createCart(userId);
-        });
+        UserWithCartException exception = assertThrows(UserWithCartException.class, () -> cartServiceImpl.createCart(userId));
 
         assertEquals("User with ID " + userId + " already has a cart.", exception.getMessage());
     }
