@@ -70,7 +70,7 @@ public class CartServiceImpl implements CartService {
     }
 
     public void validateProductStock(CartProduct cartProduct) {
-        int availableStock = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
+        int availableStock = productService.getProductById(cartProduct.getProductId()).getCurrentStock();
 
         if (cartProduct.getQuantity() > availableStock) {
             throw new CartProductInvalidQuantityException(NOT_ENOUGH_STOCK + cartProduct.getQuantity() + ACTUAL_STOCK + availableStock);
@@ -211,7 +211,7 @@ public class CartServiceImpl implements CartService {
 
     public void validateCartProductsStock(Cart cart) {
         for (CartProduct cartProduct : cart.getCartProducts()) {
-            int availableStock = productService.getProductById(cartProduct.getProductId()).getCurrent_stock();
+            int availableStock = productService.getProductById(cartProduct.getProductId()).getCurrentStock();
             if (cartProduct.getQuantity() > availableStock) {
                 throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: " + cartProduct.getQuantity() + ACTUAL_STOCK + availableStock);
             }
