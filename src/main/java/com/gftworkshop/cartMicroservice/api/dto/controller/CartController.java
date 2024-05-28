@@ -59,7 +59,7 @@ public class CartController {
     @PostMapping("/carts/products")
     public ResponseEntity<Void> addProduct(@Valid @RequestBody CartProduct cartProduct) {
         cartService.addProductToCart(cartProduct);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.created(URI.create("/carts/products")).build();
     }
 
     @PatchMapping("/carts/products")
