@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
@@ -82,9 +83,12 @@ public class CartServiceImpl implements CartService {
         User user = fetchUserById(userId);
         Cart cart = fetchCartById(cartId);
 
-        BigDecimal totalProductCost = computeProductTotal(cart);
+        List<CartProductDto> cartProductDtos = CartProduct.convertToDtoList(cart.getCartProducts());
+        List<Product> products = productService.getProductByIdWithDiscountedPrice(cartProductDtos);
+
+        BigDecimal totalProductCost = computeProductTotal(products);
         BigDecimal tax = computeTax(totalProductCost, user);
-        BigDecimal shippingCost = computeShippingCost(computeTotalWeight(cart));
+        BigDecimal shippingCost = computeShippingCost(computeTotalWeight(products));
 
         return totalProductCost.add(tax).add(shippingCost);
     }
@@ -93,12 +97,9 @@ public class CartServiceImpl implements CartService {
         return userService.getUserById(userId);
     }
 
-    public BigDecimal computeProductTotal(Cart cart) {
+    public BigDecimal computeProductTotal(List<Product> products) {
         BigDecimal total = BigDecimal.ZERO;
-        for (CartProduct cartProduct : cart.getCartProducts()) {
-            BigDecimal productTotal = cartProduct.getPrice().multiply(BigDecimal.valueOf(cartProduct.getQuantity()));
-            total = total.add(productTotal);
-        }
+        for(Product product: products) total = total.add(product.getPrice());
         return total;
     }
 
@@ -121,12 +122,10 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid weight: " + totalWeight));
     }
 
-    public double computeTotalWeight(Cart cart) {
+    public double computeTotalWeight(List<Product> products) {
         double totalWeight = 0.0;
-        for (CartProduct cartProduct : cart.getCartProducts()) {
-            Product product = productService.getProductById(cartProduct.getProductId());
-            totalWeight += (product.getWeight() * cartProduct.getQuantity());
-        }
+        for(Product product: products) totalWeight += product.getWeight();
+        System.out.println(totalWeight);
         return totalWeight;
     }
 

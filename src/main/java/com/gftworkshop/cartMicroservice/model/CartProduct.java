@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -9,6 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -46,4 +49,23 @@ public class CartProduct {
     @NotNull(message = "Price cannot be null")
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
+
+    public static List<CartProductDto> convertToDtoList(List<CartProduct> cartProducts) {
+        return cartProducts.stream()
+                .map(product -> CartProductDto.builder()
+                        .id(product.getId())
+                        .productId(product.getProductId())
+                        .productName(product.getProductName())
+                        .productDescription(product.getProductDescription())
+                        .quantity(product.getQuantity())
+                        .price(product.getPrice())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public static List<Long> getIdList(List<CartProduct> cartProducts) {
+        return cartProducts.stream()
+                .map(CartProduct::getId)
+                .collect(Collectors.toList());
+    }
 }
