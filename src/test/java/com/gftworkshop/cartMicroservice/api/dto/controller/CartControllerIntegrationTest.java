@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -26,6 +27,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@ActiveProfiles("dev")
 public class CartControllerIntegrationTest {
 
     @Autowired
@@ -49,36 +51,27 @@ public class CartControllerIntegrationTest {
     class GetCartByIdEndpoint {
         @Test
         void getCartByIdTest() throws Exception{
-            String username = "sivaprasadreddy";
-            wireMockServer.stubFor(WireMock.get(urlMatching("/carts/.*"))
+            Long id = 1L;
+            wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/.*"))
                     .willReturn(
                             aResponse()
                                     .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                                     .withBody("""
-						{
-							"login": "%s",
-							"name": "K. Siva Prasad Reddy",
-							"twitter_username": "sivalabs",
-							"public_repos": 50
-						}
-						""".formatted(username))));
+                                    {
+                                        "id": 1,
+                                        "name": "Product1",
+                                        "description": "Description1",
+                                        "price": 10.0,
+                                        "current_stock": 100,
+                                        "weight": 1.0
+                                    }
+                                    """)));
 
-            mockMvc.perform(get("/api/users/{username}", username))
+            mockMvc.perform(get("/carts/{id}", id))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.login", is(username)))
-                    .andExpect(jsonPath("$.name", is("K. Siva Prasad Reddy")))
-                    .andExpect(jsonPath("$.public_repos", is(50)));
+                    .andExpect(jsonPath("$.id", is(id.intValue())))
+                    .andExpect(jsonPath("$.totalPrice", is(95.2297)));
 
-
-            //When
-//            client.get().uri("/carts/{id}", 1L).exchange()
-//                    .expectStatus().isOk()
-//                    .expectHeader().contentType(MediaType.APPLICATION_JSON)
-//                    .expectBody(CartDto.class)
-//                    .value(cartDto -> {
-//                        //Then
-//                        assertThat(cartDto).isEqualTo(expectedCart);
-//                    });
 
         }
     }

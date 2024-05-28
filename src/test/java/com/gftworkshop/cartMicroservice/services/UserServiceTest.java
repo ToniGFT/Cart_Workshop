@@ -9,6 +9,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClient;
 
@@ -20,6 +21,7 @@ import static org.junit.Assert.assertThrows;
 public class UserServiceTest {
 
     private MockWebServer mockWebServer;
+    @Autowired
     private UserService userService;
 
     @BeforeEach
@@ -29,8 +31,6 @@ public class UserServiceTest {
         RestClient restClient = RestClient.builder()
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
-        userService = new UserService(restClient);
-        userService.endpointUri = "/users/{id}";
     }
 
     @Test

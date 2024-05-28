@@ -1,34 +1,3 @@
-spring:
-  profiles:
-    active: dev
-
-  application:
-    name: cartMicroservice
-
-  datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    driverClassName: org.h2.Driver
-    username: sa
-    password: ""
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
-  h2:
-    console:
-      enabled: true
-
-server:
-  port: 8081
-
-logging:
-  level:
-    org:
-      springframework: INFO
-    com:
-      yourpackage: DEBUG
 
 catalog:
   api:
@@ -36,3 +5,8 @@ catalog:
     products-uri: /catalog/products/byIds
     product-uri: /catalog/products/{id}
     discount-uri: /catalog/products/{product_id}/price-checkout?quantity={quantity}
+
+users:
+  api:
+    base-url: https://user-microservice-ey3npq3qvq-uc.a.run.app
+    users-uri: /users/{id}
