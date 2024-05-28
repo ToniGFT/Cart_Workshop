@@ -100,6 +100,12 @@
             <artifactId>logback-core</artifactId>
             <version>1.5.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8-standalone</artifactId>
+            <version>2.35.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -123,7 +129,6 @@
                             <excludes>
                                 <exclude>**/*Generated*</exclude>
                                 <exclude>**/src/test/java/com.gftworkshop.cartMicroservice/api.dto.controller/ControllerIntegrationTests.class</exclude>
-                                <!-- Añade más exclusiones según sea necesario -->
                             </excludes>
                         </configuration>
                     </execution>

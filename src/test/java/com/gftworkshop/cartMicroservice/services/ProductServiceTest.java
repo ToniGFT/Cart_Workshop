@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.client.RestClient;
@@ -21,7 +22,10 @@ import static org.junit.Assert.*;
 public class ProductServiceTest {
 
     private MockWebServer mockWebServer;
+
+    @Autowired
     private ProductService productService;
+
 
     @BeforeEach
     void setUp() throws IOException {
@@ -30,9 +34,6 @@ public class ProductServiceTest {
         RestClient restClient = RestClient.builder()
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
-        productService = new ProductService(restClient);
-        productService.endpointUri = "/catalog/products/{id}";
-        productService.discountUri = "/catalog/products/{product_id}/price-checkout?quantity={quantity}";
     }
 
     @Test
