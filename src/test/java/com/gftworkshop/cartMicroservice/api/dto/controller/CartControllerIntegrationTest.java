@@ -1,6 +1,6 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
-import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,17 +15,15 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.CoreMatchers.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -34,6 +32,8 @@ public class CartControllerIntegrationTest {
 
     @Autowired
     protected MockMvc mockMvc;
+
+    ObjectMapper objectMapper;
 
     @RegisterExtension
     static WireMockExtension wireMockServer = WireMockExtension.newInstance()
@@ -50,18 +50,20 @@ public class CartControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
+        objectMapper = new ObjectMapper();
+
         userId = 1L;
         wireMockServer.stubFor(WireMock.get(urlMatching("/users/.*"))
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                                 .withBody("""
-                            {
-                                "id": %d,
-                                "username": "john_doe",
-                                "email": "john@example.com"
-                            }
-                            """.formatted(userId))));
+                                        {
+                                            "id": %d,
+                                            "username": "john_doe",
+                                            "email": "john@example.com"
+                                        }
+                                        """.formatted(userId))));
 
         productId = 1L;
         wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/.*"))
@@ -69,22 +71,22 @@ public class CartControllerIntegrationTest {
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                                 .withBody("""
-                                    {
-                                        "id": 1,
-                                        "name": "Product1",
-                                        "description": "Description1",
-                                        "price": 10.0,
-                                        "currentStock": 100,
-                                        "weight": 1.0
-                                    }
-                                    """.formatted(productId))));
+                                        {
+                                            "id": 1,
+                                            "name": "Product1",
+                                            "description": "Description1",
+                                            "price": 10.0,
+                                            "currentStock": 100,
+                                            "weight": 1.0
+                                        }
+                                        """.formatted(productId))));
     }
 
     @Nested
     @DisplayName("GET - Tests for getting a cart by id")
     class GetCartByIdEndpoint {
         @Test
-        void getCartByIdTest() throws Exception{
+        void getCartByIdTest() throws Exception {
 
             mockMvc.perform(get("/carts/{id}", productId))
                     .andExpect(status().isOk())
@@ -112,7 +114,7 @@ public class CartControllerIntegrationTest {
             mockMvc.perform(get("/carts/{id}", nonExistentId))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code", is(404)))
-                    .andExpect(jsonPath("$.message", is("Cart with ID "+nonExistentId+" not found")));
+                    .andExpect(jsonPath("$.message", is("Cart with ID " + nonExistentId + " not found")));
         }
     }
 
@@ -177,7 +179,7 @@ public class CartControllerIntegrationTest {
             mockMvc.perform(delete("/carts/products/{id}", cartProductId))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.code", is(404)))
-                    .andExpect(jsonPath("$.message", is("No se encontró el CartProduct con ID: "+cartProductId)));
+                    .andExpect(jsonPath("$.message", is("No se encontró el CartProduct con ID: " + cartProductId)));
 
         }
 
@@ -199,6 +201,84 @@ public class CartControllerIntegrationTest {
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code", is(400)))
                     .andExpect(jsonPath("$.message", is("Invalid input")));
+        }
+    }
+
+    @Nested
+    @DisplayName("POST - Tests for adding a cart by user id")
+    class AddCartByUserIdEndpoint {
+
+        @Test
+        void addCartByUserIdTest() throws Exception {
+            Long userId = 4L;
+            wireMockServer.stubFor(WireMock.get(urlMatching("/users/.*"))
+                    .willReturn(
+                            aResponse()
+                                    .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                    .withBody("""
+                                            {
+                                                "id": %d,
+                                                "username": "john_doe",
+                                                "email": "john@example.com"
+                                            }
+                                            """.formatted(userId))));
+
+            mockMvc.perform(post("/carts/{id}", userId)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.userId", is(userId.intValue())))
+                    .andExpect(jsonPath("$.cartProducts").isEmpty());
+        }
+
+        @Test
+        void addCartByUserId_BadRequest_StringTest() throws Exception {
+            String userId = "badFormatId";
+
+            mockMvc.perform(post("/carts/{id}", userId)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code", is(400)))
+                    .andExpect(jsonPath("$.message", is("Invalid input")));
+        }
+
+        @Test
+        void addCartByUserId_BadRequest_DoubleTest() throws Exception {
+            Double userId = 1.1;
+
+            mockMvc.perform(post("/carts/{id}", userId)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code", is(400)))
+                    .andExpect(jsonPath("$.message", is("Invalid input")));
+        }
+    }
+
+    @Nested
+    @DisplayName("POST - Tests for adding a product to the cart")
+    class AddProductToCartIdEndpoint {
+
+        @Test
+        void postCartProductTest() throws Exception {
+            String cartProductJson = """
+                    {
+                      "cart": {
+                        "id": 1
+                      },
+                      "productId": 1,
+                      "productName": "Pride and Prejudice",
+                      "productCategory": "Books",
+                      "productDescription": "Book by Jane Austen",
+                      "quantity": 10,
+                      "price": 20.00
+                    }""";
+
+            //When
+            mockMvc.perform(post("/carts/products")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(cartProductJson))
+
+                    //Then
+                    .andExpect(status().isCreated());
         }
     }
 }
