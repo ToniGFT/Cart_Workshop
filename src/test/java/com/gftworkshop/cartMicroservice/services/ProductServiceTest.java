@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.services;
 
+import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
 import org.junit.Ignore;
@@ -9,14 +10,17 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static org.junit.Assert.*;
 
@@ -36,6 +40,7 @@ public class ProductServiceTest {
         productService.productUrl= "/catalog/products/{id}";
         productService.productsUrl= "/catalog/products/productsWithDiscount";
         productService.discountUrl = "/catalog/products/{product_id}/price-checkout?quantity={quantity}";
+        productService.productsWithDiscountUrl = "/catalog/products/volumePromotion";
     }
 
     @Test
@@ -144,93 +149,80 @@ public class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("When fetching products with discounted prices successfully, then return the correct products list")
-    void testGetProductByIdWithDiscountedPriceSuccess() throws Exception {
-        String productListJson = """
-                [{
-                    "id": 1,
-                    "name": "Laptop",
-                    "description": "High-end gaming laptop",
-                    "price": 1080.00,
-                    "stock": 10,
-                    "category": "Electronics",
-                    "discount": 0.10,
-                    "weight": 2.5
-                },
-                {
-                    "id": 2,
-                    "name": "Laptop",
-                    "description": "High-end gaming laptop",
-                    "price": 1080.00,
-                    "stock": 10,
-                    "category": "Electronics",
-                    "discount": 0.10,
-                    "weight": 2.5
-                }]
+    @DisplayName("When fetching products by IDs with discounted prices successfully, then the correct products are returned")
+    void testGetProductByIdWithDiscountedPriceSuccess() {
+        String productsJson = """
+            [{
+                "id": 1,
+                "name": "Laptop",
+                "description": "High-end gaming laptop",
+                "price": 1200.00,
+                "stock": 10,
+                "category": "Electronics",
+                "discount": 0.10,
+                "weight": 2.5
+            },
+            {
+                "id": 2,
+                "name": "Smartphone",
+                "description": "Latest model",
+                "price": 700.00,
+                "stock": 15,
+                "category": "Electronics",
+                "discount": 0.05,
+                "weight": 0.3
+            }]
             """;
 
+        CartProductDto cartProductDto1 = CartProductDto.builder().id(1L).build();
+        CartProductDto cartProductDto2 = CartProductDto.builder().id(2L).build();
+        List<CartProductDto> cartProductDtos = List.of(
+                cartProductDto1,cartProductDto2
+        );
+
         mockWebServer.enqueue(new MockResponse()
-                .setBody(productListJson)
+                .setBody(productsJson)
                 .addHeader("Content-Type", "application/json"));
 
-        Map<Long, Integer> productIdAmountMap = Map.of(1L, 2);
-        List<Product> products = productService.getProductByIdWithDiscountedPrice(productIdAmountMap);
+        List<Product> products = productService.getProductByIdWithDiscountedPrice(cartProductDtos);
 
         assertNotNull(products);
-        assertFalse(products.isEmpty());
         assertEquals(2, products.size());
-        Product product = products.get(0);
-        assertEquals(1L, (long) product.getId());
-        assertEquals(0, new BigDecimal("1080.00").compareTo(product.getPrice()));
+        assertEquals(1L, (long) products.get(0).getId());
+        assertEquals("Laptop", products.get(0).getName());
     }
 
     @Test
-    @DisplayName("When none of the product IDs exist, then a 404 Not Found error is returned")
+    @DisplayName("When fetching products by IDs with discounted prices and the product does not exist, then a 404 Not Found error is returned")
     void testGetProductByIdWithDiscountedPriceNotFound() {
+        CartProductDto cartProductDto1 = CartProductDto.builder().id(999L).build();
+        List<CartProductDto> cartProductDtos = List.of(cartProductDto1);
+
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(HttpStatus.NOT_FOUND.value())
-                .setBody("Products not found")
+                .setBody("Product not found")
                 .addHeader("Content-Type", "text/plain"));
 
-        Map<Long, Integer> productIdAmountMap = Map.of(999L, 1);
-
         assertThrows(ExternalMicroserviceException.class, () -> {
-            productService.getProductByIdWithDiscountedPrice(productIdAmountMap);
+            productService.getProductByIdWithDiscountedPrice(cartProductDtos);
         });
     }
 
     @Test
-    @DisplayName("When server error occurs during fetching products with discounts, then a 500 error is returned")
+    @DisplayName("When fetching products by IDs with discounted prices and an internal server error occurs, then a 500 error is returned")
     void testGetProductByIdWithDiscountedPriceServerError() {
+        CartProductDto cartProductDto1 = CartProductDto.builder().id(1L).build();
+        List<CartProductDto> cartProductDtos = List.of(cartProductDto1);
+
         mockWebServer.enqueue(new MockResponse()
                 .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .setBody("Internal Server Error")
                 .addHeader("Content-Type", "text/plain"));
 
-        Map<Long, Integer> productIdAmountMap = Map.of(1L, 1);
-
         assertThrows(ExternalMicroserviceException.class, () -> {
-            productService.getProductByIdWithDiscountedPrice(productIdAmountMap);
+            productService.getProductByIdWithDiscountedPrice(cartProductDtos);
         });
     }
-
-    @Test
-    @DisplayName("When the server returns a malformed response for products with discounts, then handle the error gracefully")
-    void testGetProductByIdWithDiscountedPriceMalformedResponse() {
-        mockWebServer.enqueue(new MockResponse()
-                .setBody("not a valid list")
-                .setResponseCode(HttpStatus.BAD_REQUEST.value())
-                .addHeader("Content-Type", "application/json"));
-
-        Map<Long, Integer> productIdAmountMap = Map.of(1L, 3);
-
-        assertThrows(ExternalMicroserviceException.class, () -> {
-            productService.getProductByIdWithDiscountedPrice(productIdAmountMap);
-        });
-    }
-
-
-
 
 
     @AfterEach

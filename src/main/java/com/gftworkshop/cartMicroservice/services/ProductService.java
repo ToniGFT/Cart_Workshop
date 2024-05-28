@@ -1,21 +1,22 @@
 package com.gftworkshop.cartMicroservice.services;
 
+import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class ProductService {
     public String productUrl = "http://localhost:8081/catalog/products/{id}";
     public String productsUrl = "http://localhost:8081/catalog/productsWithDiscount";
     public String discountUrl = "http://localhost:8081/catalog/products/{product_id}/price-checkout?quantity={quantity}";
+    public String productsWithDiscountUrl = "http://localhost:8081/catalog/products/volumePromotion";
     private final RestClient restClient;
 
     public ProductService(RestClient restClient) {
@@ -42,15 +43,15 @@ public class ProductService {
                 .body(Float.class);
     }
 
-    public List<Product> getProductByIdWithDiscountedPrice(Map<Long, Integer> productIdAmountMap) {
-        ResponseEntity<List<Product>> responseEntity = restClient.post()
-                .uri(productsUrl, productIdAmountMap)
-                .body(productIdAmountMap)
+    public List<Product> getProductByIdWithDiscountedPrice(List<CartProductDto> cartProducts) {
+        return List.of(Objects.requireNonNull(restClient.post()
+                .uri(productsWithDiscountUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(cartProducts)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, ((request,response) -> {
+                .onStatus(HttpStatusCode::isError, ((request, response) -> {
                     throw new ExternalMicroserviceException("CATALOG MICROSERVICE EXCEPTION: " + response.getStatusText()+" "+response.getBody());
                 }))
-                .toEntity(new ParameterizedTypeReference<List<Product>>() {});
-        return responseEntity.getBody();
+                .body(Product[].class)));
     }
 }
