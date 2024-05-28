@@ -16,6 +16,7 @@ public class ProductService {
     public String productUrl = "http://localhost:8081/catalog/products/{id}";
     public String productsUrl = "http://localhost:8081/catalog/productsWithDiscount";
     public String discountUrl = "http://localhost:8081/catalog/products/{product_id}/price-checkout?quantity={quantity}";
+    public String findByIdsUrl = "http://localhost:8081/catalog/products/byIds";
     public String productsWithDiscountUrl = "http://localhost:8081/catalog/products/volumePromotion";
     private final RestClient restClient;
 
@@ -42,6 +43,20 @@ public class ProductService {
                 }))
                 .body(Float.class);
     }
+
+
+    public List<Product> findProductsByIds(List<Long> ids){
+        return List.of(Objects.requireNonNull(restClient.post()
+                .uri(findByIdsUrl)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(ids)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, ((request, response) -> {
+                    throw new ExternalMicroserviceException("CATALOG MICROSERVICE EXCEPTION: " + response.getStatusText()+" "+response.getBody());
+                }))
+                .body(Product[].class)));
+    }
+
 
     public List<Product> getProductByIdWithDiscountedPrice(List<CartProductDto> cartProducts) {
         return List.of(Objects.requireNonNull(restClient.post()
