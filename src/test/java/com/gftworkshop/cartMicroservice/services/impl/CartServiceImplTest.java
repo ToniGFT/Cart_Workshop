@@ -63,7 +63,7 @@ class CartServiceImplTest {
 
         Product product = Product.builder()
                 .id(1L)
-                .current_stock(100)
+                .currentStock(100)
                 .build();
 
         lenient().when(productService.getProductById(1L)).thenReturn(product);
@@ -237,7 +237,7 @@ class CartServiceImplTest {
         Long cartId = 1L;
         Long userId = 1L;
         User user = User.builder().country(new Country(1L, 0.07)).id(userId).build();
-        Product product = Product.builder().id(1L).price(new BigDecimal("20")).weight(2.0).current_stock(20).build();
+        Product product = Product.builder().id(1L).price(new BigDecimal("20")).weight(2.0).currentStock(20).build();
         CartProduct cartProduct = CartProduct.builder().productId(1L).price(new BigDecimal("20")).quantity(2).build();
         Cart cart = Cart.builder().id(cartId).userId(userId).cartProducts(Arrays.asList(cartProduct)).build();
 

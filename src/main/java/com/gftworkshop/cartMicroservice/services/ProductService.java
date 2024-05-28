@@ -9,14 +9,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 @Service
-@Profile("dev")
 public class ProductService {
     private final RestClient restClient;
     private final String baseUrl;
     private final String productUri;
     private final String discountUri;
 
-    // Constructor para inyectar las propiedades y el RestClient
     public ProductService(RestClient restClient,
                           @Value("${catalog.api.base-url}") String baseUrl,
                           @Value("${catalog.api.product-uri}") String productUri,
