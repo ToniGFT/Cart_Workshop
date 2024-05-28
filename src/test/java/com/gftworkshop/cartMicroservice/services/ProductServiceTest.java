@@ -41,6 +41,7 @@ public class ProductServiceTest {
         productService.productsUrl= "/catalog/products/productsWithDiscount";
         productService.discountUrl = "/catalog/products/{product_id}/price-checkout?quantity={quantity}";
         productService.productsWithDiscountUrl = "/catalog/products/volumePromotion";
+        productService.findByIdsUrl = "/catalog/products/findByIds";
     }
 
     @Test
@@ -224,6 +225,65 @@ public class ProductServiceTest {
         });
     }
 
+    @Test
+    @DisplayName("When fetching products by IDs successfully, then the correct products are returned")
+    void testFindProductsByIdsSuccess() {
+        String productsJson = """
+            [{
+                "id": 1,
+                "name": "Laptop",
+                "description": "High-end gaming laptop",
+                "price": 1200.00,
+                "stock": 10,
+                "category": "Electronics"
+            },
+            {
+                "id": 2,
+                "name": "Smartphone",
+                "description": "Latest model",
+                "price": 700.00,
+                "stock": 15,
+                "category": "Electronics"
+            }]
+            """;
+
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(productsJson)
+                .addHeader("Content-Type", "application/json"));
+
+        List<Product> products = productService.findProductsByIds(Arrays.asList(1L, 2L));
+
+        assertNotNull(products);
+        assertEquals(2, products.size());
+        assertEquals(1L, (long) products.get(0).getId());
+        assertEquals("Laptop", products.get(0).getName());
+    }
+
+    @Test
+    @DisplayName("When fetching products by IDs and no products are found, then an empty list is returned")
+    void testFindProductsByIdsNotFound() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.NOT_FOUND.value())
+                .setBody("Products not found")
+                .addHeader("Content-Type", "text/plain"));
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.findProductsByIds(Arrays.asList(999L));
+        });
+    }
+
+    @Test
+    @DisplayName("When fetching products by IDs and an internal server error occurs, then a 500 error is returned")
+    void testFindProductsByIdsServerError() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setBody("Internal Server Error")
+                .addHeader("Content-Type", "text/plain"));
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.findProductsByIds(Arrays.asList(1L));
+        });
+    }
 
     @AfterEach
     void tearDown() throws IOException {
