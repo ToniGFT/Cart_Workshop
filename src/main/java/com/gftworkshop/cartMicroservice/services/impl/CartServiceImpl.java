@@ -272,7 +272,6 @@ public class CartServiceImpl implements CartService {
             Product product = productMap.get(cartProduct.getProductId());
             if (product != null) {
                 cartProduct.setPrice(product.getPrice());
-                cartProduct.setQuantity(product.getCurrentStock());
                 cartProduct.setProductName(product.getName());
                 cartProduct.setProductDescription(product.getDescription());
             }
