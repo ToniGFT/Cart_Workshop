@@ -45,7 +45,7 @@ public class ProductService {
     }
 
 
-    //FOR THIS ONE
+
     public List<Product> findProductsByIds(List<Long> ids){
         return List.of(Objects.requireNonNull(restClient.post()
                 .uri(findByIdsUrl)

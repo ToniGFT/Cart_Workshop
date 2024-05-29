@@ -23,6 +23,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -83,7 +84,7 @@ public class CartServiceImpl implements CartService {
         User user = fetchUserById(userId);
         Cart cart = fetchCartById(cartId);
 
-        List<CartProductDto> cartProductDtos = CartProduct.convertToDtoList(cart.getCartProducts());
+        List<CartProductDto> cartProductDtos = convertToDtoList(cart.getCartProducts());
         List<Product> products = productService.getProductByIdWithDiscountedPrice(cartProductDtos);
 
         BigDecimal totalProductCost = computeProductTotal(products);
@@ -127,6 +128,25 @@ public class CartServiceImpl implements CartService {
         for(Product product: products) totalWeight += product.getWeight();
         System.out.println(totalWeight);
         return totalWeight;
+    }
+
+    public List<CartProductDto> convertToDtoList(List<CartProduct> cartProducts) {
+        return cartProducts.stream()
+                .map(product -> CartProductDto.builder()
+                        .id(product.getId())
+                        .productId(product.getProductId())
+                        .productName(product.getProductName())
+                        .productDescription(product.getProductDescription())
+                        .quantity(product.getQuantity())
+                        .price(product.getPrice())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public List<Long> getIdList(List<CartProduct> cartProducts) {
+        return cartProducts.stream()
+                .map(CartProduct::getId)
+                .collect(Collectors.toList());
     }
 
     @Transactional

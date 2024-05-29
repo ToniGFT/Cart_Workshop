@@ -50,22 +50,4 @@ public class CartProduct {
     @Column(name = "price", precision = 10, scale = 2)
     private BigDecimal price;
 
-    public static List<CartProductDto> convertToDtoList(List<CartProduct> cartProducts) {
-        return cartProducts.stream()
-                .map(product -> CartProductDto.builder()
-                        .id(product.getId())
-                        .productId(product.getProductId())
-                        .productName(product.getProductName())
-                        .productDescription(product.getProductDescription())
-                        .quantity(product.getQuantity())
-                        .price(product.getPrice())
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    public static List<Long> getIdList(List<CartProduct> cartProducts) {
-        return cartProducts.stream()
-                .map(CartProduct::getId)
-                .collect(Collectors.toList());
-    }
 }

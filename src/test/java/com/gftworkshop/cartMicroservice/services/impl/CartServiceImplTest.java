@@ -1,9 +1,6 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
-import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-import com.gftworkshop.cartMicroservice.api.dto.Country;
-import com.gftworkshop.cartMicroservice.api.dto.Product;
-import com.gftworkshop.cartMicroservice.api.dto.User;
+import com.gftworkshop.cartMicroservice.api.dto.*;
 import com.gftworkshop.cartMicroservice.exceptions.*;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
@@ -108,40 +105,35 @@ class CartServiceImplTest {
 
 
     @Test
-    @DisplayName("Given a cart with multiple products and a user, " + "when calculating the cart total including tax and weight costs, " + "then the total should be calculated correctly")
+    @DisplayName("Given a cart with multiple products and a user, when calculating the cart total including tax and shipping, then the total should be calculated correctly")
     void getCartTotalTest() {
-        User user = User.builder().country(new Country(1L, 7.0)).build();
+        Long userId = 1L;
+        Long cartId = 1L;
+        User user = User.builder().country(new Country(1L, 10.0)).id(userId).build();
+        List<CartProduct> cartProducts = List.of(
+                CartProduct.builder().productId(1L).quantity(1).price(new BigDecimal("10")).build(),
+                CartProduct.builder().productId(2L).quantity(1).price(new BigDecimal("20")).build()
+        );
+        Cart cart = Cart.builder().id(cartId).userId(userId).cartProducts(cartProducts).build();
 
-        Product product1 = Product.builder().weight(2.0).build();
-        Product product2 = Product.builder().weight(2.0).build();
+        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+        when(userService.getUserById(userId)).thenReturn(user);
 
-        Cart cart = Cart.builder().build();
+        Product product1 = Product.builder().id(1L).price(new BigDecimal("10")).weight(1.0).build();
+        Product product2 = Product.builder().id(2L).price(new BigDecimal("20")).weight(1.0).build();
+        List<Product> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
 
-        CartProduct cartProduct1 = CartProduct.builder().productId(1L).price(new BigDecimal("10")).quantity(2).cart(cart).build();
+        when(productService.getProductByIdWithDiscountedPrice(anyList())).thenReturn(products);
 
-        CartProduct cartProduct2 = CartProduct.builder().productId(2L).price(new BigDecimal("15")).quantity(3).cart(cart).build();
 
-        List<CartProduct> cartProducts = Arrays.asList(cartProduct1, cartProduct2);
-        cart.setCartProducts(cartProducts);
+        BigDecimal expectedTotal = new BigDecimal("38.0"); // Total products = 10+20, Tax = 10%, Shipping = 5
+        BigDecimal cartTotal = cartServiceImpl.calculateCartTotal(cartId, userId);
 
-        when(userService.getUserById(1L)).thenReturn(user);
-        when(productService.getProductById(1L)).thenReturn(product1);
-        when(productService.getProductById(2L)).thenReturn(product2);
-
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
-
-        BigDecimal expectedTotal = new BigDecimal("65");
-        BigDecimal weightCost = new BigDecimal("10");
-        BigDecimal tax = expectedTotal.multiply(new BigDecimal("0.07"));
-        expectedTotal = expectedTotal.add(tax).add(weightCost);
-
-        BigDecimal actualTotal = cartServiceImpl.calculateCartTotal(1L, 1L);
-        assertEquals(expectedTotal, actualTotal);
-
-        verify(userService).getUserById(1L);
-        verify(productService, times(2)).getProductById(anyLong());
-        verify(cartRepository).findById(1L);
+        assertEquals(expectedTotal, cartTotal);
     }
+
 
     @Test
     @DisplayName("Given a total weight, when calculating the weight cost, then the cost should be calculated correctly according to weight ranges")
@@ -296,21 +288,17 @@ class CartServiceImplTest {
     void getCartTotal_CartProductNotFoundExceptionTest() {
         Long cartId = 1L;
         Long userId = 1L;
-
-        int quantity = 5;
-        CartProduct cartProduct = CartProduct.builder().productId(999L).quantity(quantity).build();
-
-        BigDecimal price = BigDecimal.valueOf(10.0);
-        cartProduct.setPrice(price);
-
-        Cart cart = Cart.builder().cartProducts(Collections.singletonList(cartProduct)).build();
+        User user = User.builder().country(new Country(1L, 0.07)).id(userId).build();
+        List<CartProduct> cartProducts = List.of(
+                CartProduct.builder().productId(1L).quantity(2).price(new BigDecimal("10")).build()
+        );
+        Cart cart = Cart.builder().id(cartId).userId(userId).cartProducts(cartProducts).build();
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-        when(userService.getUserById(userId)).thenReturn(User.builder().country(new Country(101L, 7.5)).build());
+        when(userService.getUserById(userId)).thenReturn(user);
+        when(productService.getProductByIdWithDiscountedPrice(anyList())).thenThrow(new ExternalMicroserviceException("Product not found"));
 
-        when(productService.getProductById(cartProduct.getProductId())).thenThrow(new CartProductNotFoundException("Product with ID " + cartProduct.getProductId() + " not found"));
-
-        assertThrows(CartProductNotFoundException.class, () -> cartServiceImpl.calculateCartTotal(cartId, userId));
+        assertThrows(ExternalMicroserviceException.class, () -> cartServiceImpl.calculateCartTotal(cartId, userId));
     }
 
 
@@ -338,6 +326,22 @@ class CartServiceImplTest {
         UserWithCartException exception = assertThrows(UserWithCartException.class, () -> cartServiceImpl.createCart(userId));
 
         assertEquals("User with ID " + userId + " already has a cart.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Given a list of cart products, when getIdList is called, then it should return the list of product IDs")
+    void testGetIdList() {
+        CartServiceImpl cartService = new CartServiceImpl(null, null, null, null);
+        CartProduct cartProduct1 = new CartProduct();
+        cartProduct1.setId(1L);
+        CartProduct cartProduct2 = new CartProduct();
+        cartProduct2.setId(2L);
+        CartProduct cartProduct3 = new CartProduct();
+        cartProduct3.setId(3L);
+
+        List<CartProduct> cartProducts = List.of(cartProduct1, cartProduct2, cartProduct3);
+        List<Long> result = cartService.getIdList(cartProducts);
+        assertEquals(List.of(1L, 2L, 3L), result, "The IDs should match the IDs of the products in the list");
     }
 
 }
