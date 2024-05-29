@@ -2,14 +2,11 @@ package com.gftworkshop.cartMicroservice.services;
 
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.web.client.RestClient;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -17,23 +14,27 @@ import okhttp3.mockwebserver.MockWebServer;
 import java.io.IOException;
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ProductServiceTest {
+
+class ProductServiceTest {
 
     private MockWebServer mockWebServer;
-
-    @Autowired
     private ProductService productService;
-
 
     @BeforeEach
     void setUp() throws IOException {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
+
         RestClient restClient = RestClient.builder()
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
+
+        productService = new ProductService(restClient,
+                mockWebServer.url("/").toString(),
+                "/product/{productId}",
+                "/discount/{productId}/{quantity}");
     }
 
     @Test
@@ -74,7 +75,6 @@ public class ProductServiceTest {
         assertThrows(ExternalMicroserviceException.class, () -> {
             productService.getProductById(999L);
         });
-
     }
 
     @Test
@@ -88,7 +88,6 @@ public class ProductServiceTest {
         assertThrows(ExternalMicroserviceException.class, () -> {
             productService.getProductById(1L);
         });
-
     }
 
     @Test

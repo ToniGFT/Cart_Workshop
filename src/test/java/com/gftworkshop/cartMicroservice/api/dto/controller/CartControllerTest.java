@@ -162,7 +162,7 @@ class CartControllerTest {
 
             ResponseEntity<?> response = cartController.addProduct(cartProduct);
 
-            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
             verify(cartService, times(1)).addProductToCart(cartProduct);
         }
 
