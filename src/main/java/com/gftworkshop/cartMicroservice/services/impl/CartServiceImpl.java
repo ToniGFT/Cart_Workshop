@@ -119,7 +119,7 @@ public class CartServiceImpl implements CartService {
 
     public BigDecimal computeProductTotal(List<Product> products) {
         BigDecimal total = BigDecimal.ZERO;
-        for(Product product: products) total = total.add(product.getPrice());
+        for (Product product : products) total = total.add(product.getPrice());
         return total;
     }
 
@@ -151,7 +151,7 @@ public class CartServiceImpl implements CartService {
 
     public double computeTotalWeight(List<Product> products) {
         double totalWeight = 0.0;
-        for(Product product: products) totalWeight += product.getWeight();
+        for (Product product : products) totalWeight += product.getWeight();
         System.out.println(totalWeight);
         return totalWeight;
     }
