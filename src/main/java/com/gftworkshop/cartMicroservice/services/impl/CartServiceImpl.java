@@ -63,23 +63,28 @@ public class CartServiceImpl implements CartService {
         checkForAbandonedCarts();
         validateProductStock(cartProduct);
 
-        Optional<CartProduct> existingCartProductOpt = cartProductRepository.findByCartIdAndProductId(
-                cartProduct.getCart().getId(), cartProduct.getProductId());
-
+        Optional<CartProduct> existingCartProductOpt = findExistingCartProduct(cartProduct);
         if (existingCartProductOpt.isPresent()) {
-
-            CartProduct existingCartProduct = existingCartProductOpt.get();
-            int currentQuantity = existingCartProduct.getQuantity();
-            int newQuantity = currentQuantity + cartProduct.getQuantity();
-            existingCartProduct.setQuantity(newQuantity);
-            cartProductRepository.save(existingCartProduct);
+            updateExistingCartProduct(existingCartProductOpt.get(), cartProduct);
         } else {
-            checkForAbandonedCarts();
-            validateProductStock(cartProduct);
-
-            Cart cart = fetchCartById(cartProduct.getCart().getId());
-            addCartProduct(cart, cartProduct);
+            AddNewCartProduct(cartProduct);
         }
+    }
+
+    private Optional<CartProduct> findExistingCartProduct(CartProduct cartProduct) {
+        return cartProductRepository.findByCartIdAndProductId(cartProduct.getCart().getId(), cartProduct.getProductId());
+    }
+
+    private void updateExistingCartProduct(CartProduct existingCartProduct, CartProduct newCartProduct) {
+        int currentQuantity = existingCartProduct.getQuantity();
+        int newQuantity = currentQuantity + newCartProduct.getQuantity();
+        existingCartProduct.setQuantity(newQuantity);
+        cartProductRepository.save(existingCartProduct);
+    }
+
+    private void AddNewCartProduct(CartProduct cartProduct) {
+        Cart cart = fetchCartById(cartProduct.getCart().getId());
+        addCartProduct(cart, cartProduct);
     }
 
 
@@ -269,19 +274,43 @@ public class CartServiceImpl implements CartService {
         List<Product> products = getProductsByIds(productIds);
         Map<Long, Product> productMap = mapProductsById(products);
 
-        for (CartProduct cartProduct : cart.getCartProducts()) {
-            Product product = productMap.get(cartProduct.getProductId());
-            if (product != null) {
-                cartProduct.setPrice(product.getPrice());
-                cartProduct.setProductName(product.getName());
-                cartProduct.setProductDescription(product.getDescription());
-            }
-        }
-        cartProductRepository.saveAll(cart.getCartProducts());
+        processCartProducts(cart, productMap);
         updateCartTimestamp(cart);
         return cart;
     }
 
+    private void processCartProducts(Cart cart, Map<Long, Product> productMap) {
+        for (CartProduct cartProduct : cart.getCartProducts()) {
+            Product product = productMap.get(cartProduct.getProductId());
+            if (product != null) {
+                setCartProductInfo(cartProduct, product);
+            }
+        }
+        cartProductRepository.saveAll(cart.getCartProducts());
+    }
+
+    private void updateCartProductInfo(Cart cart, Map<Long, Product> productMap) {
+        for (CartProduct cartProduct : cart.getCartProducts()) {
+            updateCartProduct(cartProduct, productMap);
+        }
+    }
+
+    private void updateCartProduct(CartProduct cartProduct, Map<Long, Product> productMap) {
+        Product product = productMap.get(cartProduct.getProductId());
+        if (product != null) {
+            setCartProductInfo(cartProduct, product);
+        }
+    }
+
+    private void setCartProductInfo(CartProduct cartProduct, Product product) {
+        cartProduct.setPrice(product.getPrice());
+        cartProduct.setProductName(product.getName());
+        cartProduct.setProductDescription(product.getDescription());
+    }
+
+    private void saveCartProducts(Cart cart) {
+        cartProductRepository.saveAll(cart.getCartProducts());
+    }
 
     public Cart fetchCartById(Long cartId) {
         return cartRepository.findById(cartId)
