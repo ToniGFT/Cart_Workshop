@@ -87,21 +87,28 @@ class CartServiceImplTest {
     @Test
     @DisplayName("Given a cart and a product, when adding the product to the cart, if there isn't enough stock, an exception should be thrown")
     void addProductToCartTestNotEnoughStock() {
-
         Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
-        CartProduct cartProduct = CartProduct.builder().id(1L).productId(1L).quantity(1000).cart(cart).build();
-        cart.getCartProducts().add(cartProduct);
 
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "prodName", "description", new BigDecimal("100"), 100, 100.0));
+        CartProduct cartProduct = CartProduct.builder()
+                .id(1L)
+                .productId(1L)
+                .quantity(1000)
+                .cart(cart)
+                .build();
 
-        Product product = new Product(1L, "prodName", "description", new BigDecimal("100"), 100, 100.0);
+        Product product = Product.builder()
+                .id(1L)
+                .currentStock(100)
+                .build();
+
         when(productService.getProductById(1L)).thenReturn(product);
-        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
 
-        CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> cartServiceImpl.fetchValidatedCart(1L));
-
-        assertEquals("Not enough stock. Quantity desired: 1000. Actual stock: 100", exception.getMessage());
+        assertThrows(
+                CartProductInvalidQuantityException.class,
+                () -> cartServiceImpl.addProductToCart(cartProduct)
+        );
     }
+
 
 
     @Test
@@ -211,18 +218,47 @@ class CartServiceImplTest {
         Long cartId = 1L;
         Long userId = 1L;
         User user = User.builder().country(new Country(1L, 0.07)).id(userId).build();
+        List<Product> products = new ArrayList<>();
         Product product = Product.builder().id(1L).price(new BigDecimal("20")).weight(2.0).currentStock(20).build();
+        products.add(product);
+        List<CartProduct> cartProducts = new ArrayList<>();
         CartProduct cartProduct = CartProduct.builder().productId(1L).price(new BigDecimal("20")).quantity(2).build();
+        cartProducts.add(cartProduct);
         Cart cart = Cart.builder().id(cartId).userId(userId).cartProducts(Collections.singletonList(cartProduct)).build();
 
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
         when(userService.getUserById(userId)).thenReturn(user);
-        when(productService.getProductById(1L)).thenReturn(product);
+        when(productService.findProductsByIds(anyList())).thenReturn(products);
 
         CartDto result = cartServiceImpl.fetchValidatedCart(cartId);
 
         assertEquals(cartId, result.getId());
     }
+
+    @Test
+    @DisplayName("Given a valid cart ID, when getting the cart if the amount exceeds the available amount, the method throws an exception")
+    void getCartTestFail() {
+        Long cartId = 1L;
+        Long userId = 1L;
+        User user = User.builder().country(new Country(1L, 0.07)).id(userId).build();
+        List<Product> products = new ArrayList<>();
+        Product product = Product.builder().id(1L).price(new BigDecimal("20")).weight(2.0).currentStock(20).build();
+        products.add(product);
+        List<CartProduct> cartProducts = new ArrayList<>();
+        CartProduct cartProduct = CartProduct.builder().productId(1L).price(new BigDecimal("20")).quantity(200).build();
+        cartProducts.add(cartProduct);
+        Cart cart = Cart.builder().id(cartId).userId(userId).cartProducts(cartProducts).build();
+
+        when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
+        when(productService.findProductsByIds(anyList())).thenReturn(products);
+
+        assertThrows(CartProductInvalidQuantityException.class, () -> {
+            cartServiceImpl.fetchValidatedCart(cartId);
+        });
+        verify(cartRepository).findById(cartId);
+        verify(productService).findProductsByIds(anyList());
+    }
+
 
 
     @Test

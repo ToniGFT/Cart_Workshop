@@ -23,6 +23,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -229,13 +231,24 @@ public class CartServiceImpl implements CartService {
     }
 
     public void validateCartProductsStock(Cart cart) {
+        List<Long> productIds = cart.getCartProducts().stream()
+                .map(CartProduct::getProductId)
+                .collect(Collectors.toList());
+
+        List<Product> products = productService.findProductsByIds(productIds);
+
+        Map<Long, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
         for (CartProduct cartProduct : cart.getCartProducts()) {
-            int availableStock = productService.getProductById(cartProduct.getProductId()).getCurrentStock();
+            Product product = productMap.get(cartProduct.getProductId());
+            int availableStock = product.getCurrentStock();
             if (cartProduct.getQuantity() > availableStock) {
-                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: " + cartProduct.getQuantity() + ACTUAL_STOCK + availableStock);
+                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: " + cartProduct.getQuantity() + ", actual stock: " + availableStock);
             }
         }
     }
+
 
     public List<Cart> fetchAllCarts() {
         return cartRepository.findAll();
