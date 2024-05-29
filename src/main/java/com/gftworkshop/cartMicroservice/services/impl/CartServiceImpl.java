@@ -61,6 +61,7 @@ public class CartServiceImpl implements CartService {
     @Override
     public void addProductToCart(CartProduct cartProduct) {
         checkForAbandonedCarts();
+        validateProductStock(cartProduct);
 
         Optional<CartProduct> existingCartProductOpt = cartProductRepository.findByCartIdAndProductId(
                 cartProduct.getCart().getId(), cartProduct.getProductId());
