@@ -103,7 +103,7 @@ class CartServiceImplTest {
 
         CartProductInvalidQuantityException exception = assertThrows(CartProductInvalidQuantityException.class, () -> cartServiceImpl.fetchValidatedCart(1L));
 
-        assertEquals("Not enough stock. Quantity desired: 1000. Actual stock: 100", exception.getMessage());
+        assertEquals("Not enough stock to add product to cart. Desired amount: 1000. Actual stock: 100", exception.getMessage());
     }
 
 
