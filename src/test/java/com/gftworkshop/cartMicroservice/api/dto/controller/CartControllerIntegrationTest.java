@@ -24,6 +24,8 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
@@ -43,6 +45,7 @@ public class CartControllerIntegrationTest {
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
         registry.add("catalog.api.base-url", wireMockServer::baseUrl);
+        registry.add("users.api.base-url", () -> "https://user-microservice-ey3npq3qvq-uc.a.run.app");
     }
 
     private Long userId;
@@ -58,12 +61,12 @@ public class CartControllerIntegrationTest {
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                                 .withBody("""
-                                        {
-                                            "id": %d,
-                                            "username": "john_doe",
-                                            "email": "john@example.com"
-                                        }
-                                        """.formatted(userId))));
+                {
+                    "id": %d,
+                    "username": "john_doe",
+                    "email": "john@example.com"
+                }
+                """.formatted(userId))));
 
         productId = 1L;
         wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/.*"))
@@ -80,6 +83,41 @@ public class CartControllerIntegrationTest {
                                             "weight": 1.0
                                         }
                                         """.formatted(productId))));
+
+        wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/byIds.*"))
+                .willReturn(
+                        aResponse()
+                                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                .withBody("""
+                                    [
+                                        {
+                                            "id": 1,
+                                            "name": "Product1",
+                                            "description": "Description1",
+                                            "price": 10.0,
+                                            "currentStock": 100,
+                                            "weight": 1.0
+                                        }
+                                    ]
+                                    """)));
+
+        wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/volumePromotion"))
+                .willReturn(
+                        aResponse()
+                                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                .withBody("""
+                                        {
+                                              "id": 1,
+                                              "name": "string",
+                                              "description": "string",
+                                              "price": 10.0,
+                                              "categoryId": 0,
+                                              "weight": 0,
+                                              "currentStock": 100,
+                                              "minStock": 0
+                                            }
+                                    """)));
+
     }
 
     @Nested
