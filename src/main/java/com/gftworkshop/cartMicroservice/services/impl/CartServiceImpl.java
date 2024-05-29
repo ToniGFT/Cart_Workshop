@@ -255,7 +255,28 @@ public class CartServiceImpl implements CartService {
         checkForAbandonedCarts();
         Cart cart = fetchCartById(cartId);
         validateCartProductsStock(cart);
+        updateAndSaveCartProductInfo(cart);
         return prepareCartDto(cart);
+    }
+
+    @Transactional
+    public Cart updateAndSaveCartProductInfo(Cart cart) {
+        List<Long> productIds = getProductIdsFromCart(cart);
+        List<Product> products = getProductsByIds(productIds);
+        Map<Long, Product> productMap = mapProductsById(products);
+
+        for (CartProduct cartProduct : cart.getCartProducts()) {
+            Product product = productMap.get(cartProduct.getProductId());
+            if (product != null) {
+                cartProduct.setPrice(product.getPrice());
+                cartProduct.setQuantity(product.getCurrentStock());
+                cartProduct.setProductName(product.getName());
+                cartProduct.setProductDescription(product.getDescription());
+            }
+        }
+        cartProductRepository.saveAll(cart.getCartProducts());
+        updateCartTimestamp(cart);
+        return cart;
     }
 
 
