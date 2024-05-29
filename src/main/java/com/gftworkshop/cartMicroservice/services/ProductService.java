@@ -49,7 +49,7 @@ public class ProductService {
 
     public float getProductDiscountedPrice(Long productId, int quantity) {
         return restClient.get()
-                .uri(discountUrl, productId, quantity)
+                .uri(baseUrl + discountUrl, productId, quantity)
                 .retrieve()
                 .onStatus(HttpStatusCode::isError, ((request, response) -> {
                     throw new ExternalMicroserviceException("CATALOG MICROSERVICE EXCEPTION: " + response.getStatusText()+" "+response.getBody());
@@ -61,7 +61,7 @@ public class ProductService {
 
     public List<Product> findProductsByIds(List<Long> ids){
         return List.of(Objects.requireNonNull(restClient.post()
-                .uri(findByIdsUrl)
+                .uri(baseUrl + findByIdsUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(ids)
                 .retrieve()
@@ -74,7 +74,7 @@ public class ProductService {
 
     public List<Product> getProductByIdWithDiscountedPrice(List<CartProductDto> cartProducts) {
         return List.of(Objects.requireNonNull(restClient.post()
-                .uri(volumePromotionUrl)
+                .uri(baseUrl + volumePromotionUrl)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(cartProducts)
                 .retrieve()
