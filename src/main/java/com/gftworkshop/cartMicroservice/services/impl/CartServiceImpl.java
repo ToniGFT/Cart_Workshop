@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,11 +61,23 @@ public class CartServiceImpl implements CartService {
     @Override
     public void addProductToCart(CartProduct cartProduct) {
         checkForAbandonedCarts();
-        validateProductStock(cartProduct);
 
-        Cart cart = fetchCartById(cartProduct.getCart().getId());
-        addCartProduct(cart, cartProduct);
+        Optional<CartProduct> existingCartProductOpt = cartProductRepository.findByCartIdAndProductId(
+                cartProduct.getCart().getId(), cartProduct.getProductId());
+
+        if (existingCartProductOpt.isPresent()) {
+
+            CartProduct existingCartProduct = existingCartProductOpt.get();
+            int currentQuantity = existingCartProduct.getQuantity();
+            int newQuantity = currentQuantity + cartProduct.getQuantity();
+            existingCartProduct.setQuantity(newQuantity);
+            cartProductRepository.save(existingCartProduct);
+        } else {
+
+            addCartProduct(cartProduct.getCart(), cartProduct);
+        }
     }
+
 
     public void addCartProduct(Cart cart, CartProduct cartProduct) {
         cart.getCartProducts().add(cartProduct);
