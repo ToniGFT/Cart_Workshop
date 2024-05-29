@@ -13,6 +13,8 @@ import okhttp3.mockwebserver.MockWebServer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -34,7 +36,9 @@ class ProductServiceTest {
         productService = new ProductService(restClient,
                 mockWebServer.url("/").toString(),
                 "/product/{productId}",
-                "/discount/{productId}/{quantity}");
+                "/catalog/products/{product_id}/price-checkout?quantity={quantity}",
+                "/catalog/products/byIds",
+                "http://localhost:8081/catalog/products/volumePromotion");
     }
 
     @Test
@@ -139,6 +143,73 @@ class ProductServiceTest {
             productService.getProductDiscountedPrice(1L, 3);
         });
     }
+
+    @Test
+    @DisplayName("When fetching products by IDs, then the correct list of products is returned")
+    void testFindProductsByIds() {
+        String productsJson = """
+                [
+                    {
+                        "id": 1,
+                        "name": "Laptop",
+                        "description": "High-end gaming laptop",
+                        "price": 1200.00,
+                        "stock": 10,
+                        "category": "Electronics",
+                        "discount": 0.10,
+                        "weight": 2.5
+                    },
+                    {
+                        "id": 2,
+                        "name": "Smartphone",
+                        "description": "Latest smartphone model",
+                        "price": 800.00,
+                        "stock": 15,
+                        "category": "Electronics",
+                        "discount": 0.05,
+                        "weight": 0.5
+                    }
+                ]
+                """;
+
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(productsJson)
+                .addHeader("Content-Type", "application/json"));
+
+        List<Product> products = productService.findProductsByIds(Arrays.asList(1L, 2L));
+
+        assertNotNull(products);
+        assertEquals(2, products.size());
+        assertEquals(1L, (long) products.get(0).getId());
+        assertEquals(2L, (long) products.get(1).getId());
+    }
+
+    @Test
+    @DisplayName("When fetching products by IDs and an internal server error occurs, then a 500 error is returned")
+    void testFindProductsByIdsServerError() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setBody("Internal Server Error")
+                .addHeader("Content-Type", "text/plain"));
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.findProductsByIds(Arrays.asList(1L, 2L));
+        });
+    }
+
+    @Test
+    @DisplayName("When fetching products by IDs and the server returns malformed response, then handle the error gracefully")
+    void testFindProductsByIdsMalformedResponse() {
+        mockWebServer.enqueue(new MockResponse()
+                .setBody("not a valid JSON")
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .addHeader("Content-Type", "application/json"));
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.findProductsByIds(Arrays.asList(1L, 2L));
+        });
+    }
+
 
     @AfterEach
     void tearDown() throws IOException {
