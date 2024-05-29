@@ -29,7 +29,7 @@ public class CartController {
 
     @GetMapping("/carts")
     public ResponseEntity<List<Cart>> getAllCarts() {
-        List<Cart> savedCart = cartService.getAllCarts();
+        List<Cart> savedCart = cartService.fetchAllCarts();
         return ResponseEntity.ok(savedCart);
     }
 
@@ -44,14 +44,14 @@ public class CartController {
     @GetMapping("/carts/{id}")
     public ResponseEntity<CartDto> getCartById(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
-        CartDto receivedCart = cartService.getCart(idCart);
+        CartDto receivedCart = cartService.fetchValidatedCart(idCart);
         return ResponseEntity.ok(receivedCart);
     }
 
     @DeleteMapping("/carts/{id}")
     public ResponseEntity<Void> removeCartById(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
-        cartService.clearCart(idCart);
+        cartService.emptyCart(idCart);
         return ResponseEntity.ok().build();
 
     }
