@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -60,11 +61,23 @@ public class CartServiceImpl implements CartService {
     @Override
     public void addProductToCart(CartProduct cartProduct) {
         checkForAbandonedCarts();
-        validateProductStock(cartProduct);
 
-        Cart cart = fetchCartById(cartProduct.getCart().getId());
-        addCartProduct(cart, cartProduct);
+        Optional<CartProduct> existingCartProductOpt = cartProductRepository.findByCartIdAndProductId(
+                cartProduct.getCart().getId(), cartProduct.getProductId());
+
+        if (existingCartProductOpt.isPresent()) {
+
+            CartProduct existingCartProduct = existingCartProductOpt.get();
+            int currentQuantity = existingCartProduct.getQuantity();
+            int newQuantity = currentQuantity + cartProduct.getQuantity();
+            existingCartProduct.setQuantity(newQuantity);
+            cartProductRepository.save(existingCartProduct);
+        } else {
+
+            addCartProduct(cartProduct.getCart(), cartProduct);
+        }
     }
+
 
     public void addCartProduct(Cart cart, CartProduct cartProduct) {
         cart.getCartProducts().add(cartProduct);
@@ -242,7 +255,28 @@ public class CartServiceImpl implements CartService {
         checkForAbandonedCarts();
         Cart cart = fetchCartById(cartId);
         validateCartProductsStock(cart);
+        updateAndSaveCartProductInfo(cart);
         return prepareCartDto(cart);
+    }
+
+    @Transactional
+    public Cart updateAndSaveCartProductInfo(Cart cart) {
+        List<Long> productIds = getProductIdsFromCart(cart);
+        List<Product> products = getProductsByIds(productIds);
+        Map<Long, Product> productMap = mapProductsById(products);
+
+        for (CartProduct cartProduct : cart.getCartProducts()) {
+            Product product = productMap.get(cartProduct.getProductId());
+            if (product != null) {
+                cartProduct.setPrice(product.getPrice());
+                cartProduct.setQuantity(product.getCurrentStock());
+                cartProduct.setProductName(product.getName());
+                cartProduct.setProductDescription(product.getDescription());
+            }
+        }
+        cartProductRepository.saveAll(cart.getCartProducts());
+        updateCartTimestamp(cart);
+        return cart;
     }
 
 
