@@ -73,8 +73,11 @@ public class CartServiceImpl implements CartService {
             existingCartProduct.setQuantity(newQuantity);
             cartProductRepository.save(existingCartProduct);
         } else {
+            checkForAbandonedCarts();
+            validateProductStock(cartProduct);
 
-            addCartProduct(cartProduct.getCart(), cartProduct);
+            Cart cart = fetchCartById(cartProduct.getCart().getId());
+            addCartProduct(cart, cartProduct);
         }
     }
 
