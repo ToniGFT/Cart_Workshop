@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.services;
 
+import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
 import org.junit.jupiter.api.AfterEach;
@@ -38,7 +39,7 @@ class ProductServiceTest {
                 "/product/{productId}",
                 "/catalog/products/{product_id}/price-checkout?quantity={quantity}",
                 "/catalog/products/byIds",
-                "http://localhost:8081/catalog/products/volumePromotion");
+                "/catalog/products/volumePromotion");
     }
 
     @Test
@@ -207,6 +208,101 @@ class ProductServiceTest {
 
         assertThrows(ExternalMicroserviceException.class, () -> {
             productService.findProductsByIds(Arrays.asList(1L, 2L));
+        });
+    }
+
+    @Test
+    @DisplayName("When fetching products with discounted price, then the correct list of products with discounted price is returned")
+    void testGetProductByIdWithDiscountedPrice() {
+        String productsJson = """
+            [
+                {
+                    "id": 1,
+                    "name": "Laptop",
+                    "description": "High-end gaming laptop",
+                    "price": 1200.00,
+                    "stock": 10,
+                    "category": "Electronics",
+                    "discount": 0.10,
+                    "weight": 2.5
+                },
+                {
+                    "id": 2,
+                    "name": "Smartphone",
+                    "description": "Latest smartphone model",
+                    "price": 800.00,
+                    "stock": 15,
+                    "category": "Electronics",
+                    "discount": 0.05,
+                    "weight": 0.5
+                }
+            ]
+            """;
+
+        mockWebServer.enqueue(new MockResponse()
+                .setBody(productsJson)
+                .addHeader("Content-Type", "application/json"));
+
+        CartProductDto cartProductDto1 = CartProductDto.builder()
+                .id(1L)
+                .productId(1L)
+                .productName("Laptop")
+                .productDescription("High-end gaming laptop")
+                .quantity(1)
+                .price(new BigDecimal("1200.00"))
+                .build();
+
+        CartProductDto cartProductDto2 = CartProductDto.builder()
+                .id(2L)
+                .productId(2L)
+                .productName("Smartphone")
+                .productDescription("Latest smartphone model")
+                .quantity(1)
+                .price(new BigDecimal("800.00"))
+                .build();
+
+        List<CartProductDto> cartProducts = Arrays.asList(cartProductDto1, cartProductDto2);
+
+        List<Product> products = productService.getProductByIdWithDiscountedPrice(cartProducts);
+
+        assertNotNull(products);
+        assertEquals(2, products.size());
+        assertEquals(1L, (long) products.get(0).getId());
+        assertEquals(2L, (long) products.get(1).getId());
+        assertEquals("Laptop", products.get(0).getName());
+        assertEquals("Smartphone", products.get(1).getName());
+    }
+
+    @Test
+    @DisplayName("When fetching products with discounted price and an error occurs, then ExternalMicroserviceException is thrown")
+    void testGetProductByIdWithDiscountedPriceError() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .setBody("Internal Server Error")
+                .addHeader("Content-Type", "text/plain"));
+
+        CartProductDto cartProductDto1 = CartProductDto.builder()
+                .id(1L)
+                .productId(1L)
+                .productName("Laptop")
+                .productDescription("High-end gaming laptop")
+                .quantity(1)
+                .price(new BigDecimal("1200.00"))
+                .build();
+
+        CartProductDto cartProductDto2 = CartProductDto.builder()
+                .id(2L)
+                .productId(2L)
+                .productName("Smartphone")
+                .productDescription("Latest smartphone model")
+                .quantity(1)
+                .price(new BigDecimal("800.00"))
+                .build();
+
+        List<CartProductDto> cartProducts = Arrays.asList(cartProductDto1, cartProductDto2);
+
+        assertThrows(ExternalMicroserviceException.class, () -> {
+            productService.getProductByIdWithDiscountedPrice(cartProducts);
         });
     }
 
