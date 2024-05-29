@@ -16,7 +16,6 @@ import com.gftworkshop.cartMicroservice.services.ProductService;
 import com.gftworkshop.cartMicroservice.services.UserService;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -152,27 +151,20 @@ public class CartServiceImpl implements CartService {
     public double computeTotalWeight(List<Product> products) {
         double totalWeight = 0.0;
         for (Product product : products) totalWeight += product.getWeight();
-        System.out.println(totalWeight);
         return totalWeight;
     }
 
     public List<CartProductDto> convertToDtoList(List<CartProduct> cartProducts) {
         return cartProducts.stream()
-                .map(product -> CartProductDto.builder()
-                        .id(product.getId())
-                        .productId(product.getProductId())
-                        .productName(product.getProductName())
-                        .productDescription(product.getProductDescription())
-                        .quantity(product.getQuantity())
-                        .price(product.getPrice())
-                        .build())
-                .collect(Collectors.toList());
+                .map(EntityToDto::convertCartProductToDto)
+                .toList();
     }
+
 
     public List<Long> getIdList(List<CartProduct> cartProducts) {
         return cartProducts.stream()
                 .map(CartProduct::getId)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -219,7 +211,7 @@ public class CartServiceImpl implements CartService {
 
     public List<CartDto> convertCartsToDto(List<Cart> abandonedCarts) {
         return abandonedCarts.stream()
-                .map(this::convertEntityToDto)
+                .map(EntityToDto::convertCartToDto)
                 .toList();
     }
 
@@ -228,7 +220,7 @@ public class CartServiceImpl implements CartService {
         checkForAbandonedCarts();
         ensureUserDoesNotAlreadyHaveCart(userId);
         Cart cart = buildAndSaveCart(userId);
-        return convertEntityToDto(cart);
+        return EntityToDto.convertCartToDto(cart);
     }
 
     public void ensureUserDoesNotAlreadyHaveCart(Long userId) {
@@ -260,28 +252,47 @@ public class CartServiceImpl implements CartService {
     }
 
     public CartDto prepareCartDto(Cart cart) {
-        CartDto cartDto = convertEntityToDto(cart);
+        CartDto cartDto = EntityToDto.convertCartToDto(cart);
         cartDto.setTotalPrice(calculateCartTotal(cart.getId(), cart.getUserId()));
         return cartDto;
     }
 
     public void validateCartProductsStock(Cart cart) {
-        List<Long> productIds = cart.getCartProducts().stream()
+        List<Long> productIds = getProductIdsFromCart(cart);
+        List<Product> products = getProductsByIds(productIds);
+        Map<Long, Product> productMap = mapProductsById(products);
+        checkStockForCartProducts(cart, productMap);
+    }
+
+    private List<Long> getProductIdsFromCart(Cart cart) {
+        return cart.getCartProducts().stream()
                 .map(CartProduct::getProductId)
-                .collect(Collectors.toList());
+                .toList();
+    }
 
-        List<Product> products = productService.findProductsByIds(productIds);
+    private List<Product> getProductsByIds(List<Long> productIds) {
+        return productService.findProductsByIds(productIds);
+    }
 
-        Map<Long, Product> productMap = products.stream()
+    private Map<Long, Product> mapProductsById(List<Product> products) {
+        return products.stream()
                 .collect(Collectors.toMap(Product::getId, Function.identity()));
+    }
 
+    private void checkStockForCartProducts(Cart cart, Map<Long, Product> productMap) {
         for (CartProduct cartProduct : cart.getCartProducts()) {
             Product product = productMap.get(cartProduct.getProductId());
             int availableStock = product.getCurrentStock();
-            if (cartProduct.getQuantity() > availableStock) {
-                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: " + cartProduct.getQuantity() + ", actual stock: " + availableStock);
+            int desiredQuantity = cartProduct.getQuantity();
+            if (desiredQuantity > availableStock) {
+                throwStockException(cartProduct, availableStock);
             }
         }
+    }
+
+    private void throwStockException(CartProduct cartProduct, int availableStock) {
+        throw new CartProductInvalidQuantityException(
+                "Not enough stock. Quantity desired: " + cartProduct.getQuantity() + ", actual stock: " + availableStock);
     }
 
 
@@ -289,9 +300,4 @@ public class CartServiceImpl implements CartService {
         return cartRepository.findAll();
     }
 
-    public CartDto convertEntityToDto(Cart cart) {
-        CartDto cartDto = CartDto.builder().build();
-        BeanUtils.copyProperties(cart, cartDto);
-        return cartDto;
-    }
 }
