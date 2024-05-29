@@ -73,8 +73,11 @@ public class CartServiceImpl implements CartService {
             existingCartProduct.setQuantity(newQuantity);
             cartProductRepository.save(existingCartProduct);
         } else {
+            checkForAbandonedCarts();
+            validateProductStock(cartProduct);
 
-            addCartProduct(cartProduct.getCart(), cartProduct);
+            Cart cart = fetchCartById(cartProduct.getCart().getId());
+            addCartProduct(cart, cartProduct);
         }
     }
 
@@ -269,7 +272,6 @@ public class CartServiceImpl implements CartService {
             Product product = productMap.get(cartProduct.getProductId());
             if (product != null) {
                 cartProduct.setPrice(product.getPrice());
-                cartProduct.setQuantity(product.getCurrentStock());
                 cartProduct.setProductName(product.getName());
                 cartProduct.setProductDescription(product.getDescription());
             }
