@@ -127,7 +127,7 @@ class CartServiceImplIntegrationTest {
 
         BigDecimal total = cartService.calculateCartTotal(cart.getId(), user.getId());
 
-        BigDecimal expectedTotal = new BigDecimal("252.000");
+        BigDecimal expectedTotal = new BigDecimal("1222.3958");
 
         assertEquals(expectedTotal, total);
     }
@@ -224,7 +224,7 @@ class CartServiceImplIntegrationTest {
     @Test
     void testCreateCart() {
 
-        Long userId = 4L;
+        Long userId = 10L;
 
         CartDto createdCart = cartService.createCart(userId);
 

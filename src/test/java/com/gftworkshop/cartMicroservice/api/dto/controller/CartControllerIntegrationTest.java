@@ -84,7 +84,7 @@ public class CartControllerIntegrationTest {
                                         }
                                         """.formatted(productId))));
 
-        wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/byIds.*"))
+        wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/byIds"))
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
