@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
@@ -22,6 +23,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -99,9 +103,12 @@ public class CartServiceImpl implements CartService {
         User user = fetchUserById(userId);
         Cart cart = fetchCartById(cartId);
 
-        BigDecimal totalProductCost = computeProductTotal(cart);
+        List<CartProductDto> cartProductDtos = convertToDtoList(cart.getCartProducts());
+        List<Product> products = productService.getProductByIdWithDiscountedPrice(cartProductDtos);
+
+        BigDecimal totalProductCost = computeProductTotal(products);
         BigDecimal tax = computeTax(totalProductCost, user);
-        BigDecimal shippingCost = computeShippingCost(computeTotalWeight(cart));
+        BigDecimal shippingCost = computeShippingCost(computeTotalWeight(products));
 
         return totalProductCost.add(tax).add(shippingCost);
     }
@@ -110,10 +117,10 @@ public class CartServiceImpl implements CartService {
         return userService.getUserById(userId);
     }
 
-    public BigDecimal computeProductTotal(Cart cart) {
-        return cart.getCartProducts().stream()
-                .map(cp -> cp.getPrice().multiply(BigDecimal.valueOf(cp.getQuantity())))
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    public BigDecimal computeProductTotal(List<Product> products) {
+        BigDecimal total = BigDecimal.ZERO;
+        for(Product product: products) total = total.add(product.getPrice());
+        return total;
     }
 
     public BigDecimal computeTax(BigDecimal total, User user) {
@@ -142,13 +149,30 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid weight: " + totalWeight));
     }
 
-    public double computeTotalWeight(Cart cart) {
-        return cart.getCartProducts().stream()
-                .mapToDouble(cp -> {
-                    Product product = productService.getProductById(cp.getProductId());
-                    return product.getWeight() * cp.getQuantity();
-                })
-                .sum();
+    public double computeTotalWeight(List<Product> products) {
+        double totalWeight = 0.0;
+        for(Product product: products) totalWeight += product.getWeight();
+        System.out.println(totalWeight);
+        return totalWeight;
+    }
+
+    public List<CartProductDto> convertToDtoList(List<CartProduct> cartProducts) {
+        return cartProducts.stream()
+                .map(product -> CartProductDto.builder()
+                        .id(product.getId())
+                        .productId(product.getProductId())
+                        .productName(product.getProductName())
+                        .productDescription(product.getProductDescription())
+                        .quantity(product.getQuantity())
+                        .price(product.getPrice())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    public List<Long> getIdList(List<CartProduct> cartProducts) {
+        return cartProducts.stream()
+                .map(CartProduct::getId)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -229,6 +253,7 @@ public class CartServiceImpl implements CartService {
         return prepareCartDto(cart);
     }
 
+
     public Cart fetchCartById(Long cartId) {
         return cartRepository.findById(cartId)
                 .orElseThrow(() -> new CartNotFoundException(CART_NOT_FOUND + cartId + NOT_FOUND));
@@ -241,13 +266,24 @@ public class CartServiceImpl implements CartService {
     }
 
     public void validateCartProductsStock(Cart cart) {
+        List<Long> productIds = cart.getCartProducts().stream()
+                .map(CartProduct::getProductId)
+                .collect(Collectors.toList());
+
+        List<Product> products = productService.findProductsByIds(productIds);
+
+        Map<Long, Product> productMap = products.stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
         for (CartProduct cartProduct : cart.getCartProducts()) {
-            int availableStock = getAvailableStock(cartProduct);
+            Product product = productMap.get(cartProduct.getProductId());
+            int availableStock = product.getCurrentStock();
             if (cartProduct.getQuantity() > availableStock) {
-                throw new CartProductInvalidQuantityException(NOT_ENOUGH_STOCK + cartProduct.getQuantity() + ACTUAL_STOCK + availableStock);
+                throw new CartProductInvalidQuantityException("Not enough stock. Quantity desired: " + cartProduct.getQuantity() + ", actual stock: " + availableStock);
             }
         }
     }
+
 
     public List<Cart> fetchAllCarts() {
         return cartRepository.findAll();

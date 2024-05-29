@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CartProductServiceIntegrationTest {
 
 
-    private CartProductService cartProductService;
+    private CartProductServiceImpl cartProductService;
 
 
     @Autowired
@@ -41,7 +41,7 @@ public class CartProductServiceIntegrationTest {
 
     @Test
     public void whenUpdateQuantityWithValidIdThenReturnUpdatedQuantity() {
-        Long cartProductId = 1L;
+        Long cartProductId = 4L;
         int newQuantity = 5;
         int expectedResponse = 1;
 
@@ -72,7 +72,7 @@ public class CartProductServiceIntegrationTest {
 
     @Test
     public void whenRemoveProductWithValidIdThenReturnCartProductDto() {
-        Long cartProductId = 1L;
+        Long cartProductId = 4L;
         CartProduct mockCartProduct = new CartProduct();
         mockCartProduct.setId(cartProductId);
 
