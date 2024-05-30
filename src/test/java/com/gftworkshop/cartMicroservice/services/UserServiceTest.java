@@ -4,7 +4,6 @@ import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,10 +13,10 @@ import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class UserServiceTest {
+class UserServiceTest {
 
     private MockWebServer mockWebServer;
     private UserService userService;
@@ -26,16 +25,18 @@ public class UserServiceTest {
     void setUp() throws IOException {
         mockWebServer = new MockWebServer();
         mockWebServer.start();
+
         RestClient restClient = RestClient.builder()
                 .baseUrl(mockWebServer.url("/").toString())
                 .build();
-        userService = new UserService(restClient);
-        userService.endpointUri = "/users/{id}";
+
+        userService = new UserService(restClient,
+                mockWebServer.url("/").toString(),
+                "/users/{userId}");
     }
 
     @Test
-    @DisplayName("When fetching a user by ID, " +
-            "then the correct user details are returned")
+    @DisplayName("When fetching a user by ID, then the correct user details are returned")
     void testGetUserById() {
         String userJson = """
                 {
@@ -61,9 +62,8 @@ public class UserServiceTest {
 
         User user = userService.getUserById(100L);
 
-        assertEquals(100L,(long) user.getId());
-        assertEquals(21.0,user.getCountry().getTax(), 0.001);
-
+        assertEquals(100L, (long) user.getId());
+        assertEquals(21.0, user.getCountry().getTax(), 0.001);
     }
 
     @Test
@@ -79,7 +79,6 @@ public class UserServiceTest {
         });
     }
 
-
     @Test
     @DisplayName("When fetching a User by ID and an internal server error occurs, then a 500 error is returned")
     void testGetUserByIdServerError() {
@@ -92,8 +91,6 @@ public class UserServiceTest {
             userService.getUserById(1L);
         });
     }
-
-
 
     @AfterEach
     void tearDown() throws IOException {

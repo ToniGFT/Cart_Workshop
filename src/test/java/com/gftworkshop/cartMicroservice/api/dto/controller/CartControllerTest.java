@@ -95,7 +95,7 @@ class CartControllerTest {
         void getCartByIdTest() throws Exception {
             CartDto cart = CartDto.builder().id(cartId).build();
 
-            when(cartService.getCart(cartId)).thenReturn(cart);
+            when(cartService.fetchValidatedCart(cartId)).thenReturn(cart);
 
             mockMvc.perform(get("/carts/{id}", cartId)
                             .contentType(MediaType.APPLICATION_JSON))
@@ -162,7 +162,7 @@ class CartControllerTest {
 
             ResponseEntity<?> response = cartController.addProduct(cartProduct);
 
-            assertEquals(HttpStatus.OK, response.getStatusCode());
+            assertEquals(HttpStatus.CREATED, response.getStatusCode());
             verify(cartService, times(1)).addProductToCart(cartProduct);
         }
 
@@ -192,11 +192,11 @@ class CartControllerTest {
         void getCartByIdTest() {
             CartDto cart = CartDto.builder().id(cartId).build();
 
-            when(cartService.getCart(cartId)).thenReturn(cart);
+            when(cartService.fetchValidatedCart(cartId)).thenReturn(cart);
 
             ResponseEntity<?> response = cartController.getCartById(String.valueOf(cart.getId()));
 
-            verify(cartService, times(1)).getCart(cartId);
+            verify(cartService, times(1)).fetchValidatedCart(cartId);
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 
@@ -205,11 +205,11 @@ class CartControllerTest {
         @Test
         @DisplayName("When removing cart by ID, then expect OK status")
         void removeCartByIdTest() {
-            doNothing().when(cartService).clearCart(cartId);
+            doNothing().when(cartService).emptyCart(cartId);
 
             ResponseEntity<?> response = cartController.removeCartById(String.valueOf(cartId));
 
-            verify(cartService, times(1)).clearCart(cartId);
+            verify(cartService, times(1)).emptyCart(cartId);
             assertEquals(HttpStatus.OK, response.getStatusCode());
         }
 
@@ -258,12 +258,12 @@ class CartControllerTest {
         Cart cart2 = Cart.builder().id(2L).build();
         carts.add(cart1);
         carts.add(cart2);
-        when(cartService.getAllCarts()).thenReturn(carts);
+        when(cartService.fetchAllCarts()).thenReturn(carts);
 
         ResponseEntity<List<Cart>> response = cartController.getAllCarts();
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(carts, response.getBody());
-        verify(cartService, times(1)).getAllCarts();
+        verify(cartService, times(1)).fetchAllCarts();
     }
 }

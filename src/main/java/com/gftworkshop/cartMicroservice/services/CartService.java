@@ -10,13 +10,13 @@ import java.util.List;
 public interface CartService {
     void addProductToCart(CartProduct cartProduct);
 
-    BigDecimal getCartTotal(Long cartId, Long userId);
+    BigDecimal calculateCartTotal(Long cartId, Long userId);
 
-    void clearCart(Long cartId);
+    void emptyCart(Long cartId);
 
     List<CartDto> identifyAbandonedCarts(LocalDate thresholdDate);
 
     CartDto createCart(Long userId);
 
-    CartDto getCart(Long cartId);
+    CartDto fetchValidatedCart(Long cartId);
 }
