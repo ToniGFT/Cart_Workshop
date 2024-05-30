@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
 public class CartControllerIntegrationTest {
@@ -44,7 +44,7 @@ public class CartControllerIntegrationTest {
 
     @DynamicPropertySource
     static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("catalog.api.base-url", wireMockServer::baseUrl);
+        registry.add("http://localhost:8080", wireMockServer::baseUrl);
         registry.add("users.api.base-url", () -> "https://user-microservice-ey3npq3qvq-uc.a.run.app");
     }
 
@@ -141,20 +141,22 @@ public class CartControllerIntegrationTest {
 
             productId = 1L;
 
-            wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/" + productId))
+            wireMockServer.stubFor(WireMock.post(urlMatching("/catalog/products/byIds"))
                     .willReturn(
                             aResponse()
                                     .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                                     .withBody("""
+                            [
                                 {
-                                    "id": %d,
+                                    "id": 1,
                                     "name": "Product1",
                                     "description": "Description1",
                                     "price": 10.0,
                                     "currentStock": 100,
                                     "weight": 1.0
                                 }
-                                """.formatted(productId))));
+                            ]
+                            """)));
 
             mockMvc.perform(get("/carts/{id}", productId))
                     .andExpect(status().isOk());
