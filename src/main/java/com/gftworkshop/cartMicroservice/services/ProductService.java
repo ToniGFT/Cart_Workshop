@@ -3,6 +3,7 @@ package com.gftworkshop.cartMicroservice.services;
 import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.exceptions.ExternalMicroserviceException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Service
+@Slf4j
 public class ProductService {
     private final RestClient restClient;
     private final String baseUrl;
@@ -60,14 +62,13 @@ public class ProductService {
 
 
     public List<Product> findProductsByIds(List<Long> ids){
+        String url = baseUrl + findByIdsUrl;
+        log.info("Url findProductsByIds: {}", url);
         return List.of(Objects.requireNonNull(restClient.post()
-                .uri(baseUrl + findByIdsUrl)
+                .uri(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(ids)
                 .retrieve()
-                .onStatus(HttpStatusCode::isError, ((request, response) -> {
-                    throw new ExternalMicroserviceException("CATALOG MICROSERVICE EXCEPTION: " + response.getStatusText()+" "+response.getBody());
-                }))
                 .body(Product[].class)));
     }
 

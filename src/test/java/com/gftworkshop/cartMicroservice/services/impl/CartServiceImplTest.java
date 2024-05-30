@@ -366,6 +366,19 @@ class CartServiceImplTest {
     }
 
     @Test
+    @DisplayName("Test updateExistingCartProduct")
+    void testUpdateExistingCartProduct() {
+        CartProduct existingCartProduct = CartProduct.builder().id(1L).productId(1L).quantity(5).build();
+        CartProduct newCartProduct = CartProduct.builder().id(1L).productId(1L).quantity(10).build();
+
+        cartServiceImpl.updateExistingCartProduct(existingCartProduct, newCartProduct);
+
+        assertEquals(15, existingCartProduct.getQuantity());
+
+        verify(cartProductRepository).save(existingCartProduct);
+    }
+
+    @Test
     @DisplayName("Given a list of cart products, when getIdList is called, then it should return the list of product IDs")
     void testGetIdList() {
         CartServiceImpl cartService = new CartServiceImpl(null, null, null, null);
