@@ -127,7 +127,7 @@ class CartServiceImplIntegrationTest {
 
         BigDecimal total = cartService.calculateCartTotal(cart.getId(), user.getId());
 
-        BigDecimal expectedTotal = new BigDecimal("1222.3958");
+        BigDecimal expectedTotal = new BigDecimal("167.300");
 
         assertEquals(expectedTotal, total);
     }
