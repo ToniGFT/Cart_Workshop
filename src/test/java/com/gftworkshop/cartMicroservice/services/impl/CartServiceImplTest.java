@@ -390,8 +390,14 @@ class CartServiceImplTest {
         cartProduct3.setId(3L);
 
         List<CartProduct> cartProducts = List.of(cartProduct1, cartProduct2, cartProduct3);
-        List<Long> result = EntityToDto.getIdList(cartProducts);
+        List<Long> result = getIdList(cartProducts);
         assertEquals(List.of(1L, 2L, 3L), result, "The IDs should match the IDs of the products in the list");
+    }
+
+    private List<Long> getIdList(List<CartProduct> cartProducts) {
+        return cartProducts.stream()
+                .map(CartProduct::getId)
+                .toList();
     }
 
 }

@@ -173,7 +173,7 @@ public class CartServiceImpl implements CartService {
 
     public List<CartProductDto> convertToDtoList(List<CartProduct> cartProducts) {
         return cartProducts.stream()
-                .map(EntityToDto::convertCartProductToDto)
+                .map(EntityMapper::convertCartProductToDto)
                 .toList();
     }
 
@@ -218,7 +218,7 @@ public class CartServiceImpl implements CartService {
 
     public List<CartDto> convertCartsToDto(List<Cart> abandonedCarts) {
         return abandonedCarts.stream()
-                .map(EntityToDto::convertCartToDto)
+                .map(EntityMapper::convertCartToDto)
                 .toList();
     }
 
@@ -227,7 +227,7 @@ public class CartServiceImpl implements CartService {
         checkForAbandonedCarts();
         ensureUserDoesNotAlreadyHaveCart(userId);
         Cart cart = buildAndSaveCart(userId);
-        return EntityToDto.convertCartToDto(cart);
+        return EntityMapper.convertCartToDto(cart);
     }
 
     public void ensureUserDoesNotAlreadyHaveCart(Long userId) {
@@ -283,7 +283,7 @@ public class CartServiceImpl implements CartService {
     }
 
     public CartDto prepareCartDto(Cart cart) {
-        CartDto cartDto = EntityToDto.convertCartToDto(cart);
+        CartDto cartDto = EntityMapper.convertCartToDto(cart);
         cartDto.setTotalPrice(calculateCartTotal(cart.getId(), cart.getUserId()));
         return cartDto;
     }
