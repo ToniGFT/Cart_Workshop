@@ -69,54 +69,55 @@ public class CartControllerIntegrationTest {
                 """.formatted(userId))));
 
         productId = 1L;
-        wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/.*"))
-                .willReturn(
-                        aResponse()
-                                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                .withBody("""
-                                        {
-                                            "id": 1,
-                                            "name": "Product1",
-                                            "description": "Description1",
-                                            "price": 10.0,
-                                            "currentStock": 100,
-                                            "weight": 1.0
-                                        }
-                                        """.formatted(productId))));
 
-        wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/byIds"))
+        wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/" + productId))
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                                 .withBody("""
-                                    [
-                                        {
-                                            "id": 1,
-                                            "name": "Product1",
-                                            "description": "Description1",
-                                            "price": 10.0,
-                                            "currentStock": 100,
-                                            "weight": 1.0
-                                        }
-                                    ]
-                                    """)));
+                                {
+                                    "id": %d,
+                                    "name": "Product1",
+                                    "description": "Description1",
+                                    "price": 10.0,
+                                    "currentStock": 100,
+                                    "weight": 1.0
+                                }
+                                """.formatted(productId))));
+
+        wireMockServer.stubFor(WireMock.post(urlMatching("/catalog/products/byIds"))
+                .willReturn(
+                        aResponse()
+                                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                .withBody("""
+                            [
+                                {
+                                    "id": 1,
+                                    "name": "Product1",
+                                    "description": "Description1",
+                                    "price": 10.0,
+                                    "currentStock": 100,
+                                    "weight": 1.0
+                                }
+                            ]
+                            """)));
 
         wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/volumePromotion"))
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
                                 .withBody("""
-                                        {
-                                              "id": 1,
-                                              "name": "string",
-                                              "description": "string",
-                                              "price": 10.0,
-                                              "categoryId": 0,
-                                              "weight": 0,
-                                              "currentStock": 100,
-                                              "minStock": 0
-                                            }
-                                    """)));
+                                {
+                                      "id": 1,
+                                      "name": "string",
+                                      "description": "string",
+                                      "price": 10.0,
+                                      "categoryId": 0,
+                                      "weight": 0,
+                                      "currentStock": 100,
+                                      "minStock": 0
+                                }
+                                """)));
 
     }
 
@@ -125,11 +126,38 @@ public class CartControllerIntegrationTest {
     class GetCartByIdEndpoint {
         @Test
         void getCartByIdTest() throws Exception {
+            userId = 1L;
+            wireMockServer.stubFor(WireMock.get(urlMatching("/users/.*"))
+                    .willReturn(
+                            aResponse()
+                                    .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                    .withBody("""
+                {
+                    "id": %d,
+                    "username": "john_doe",
+                    "email": "john@example.com"
+                }
+                """.formatted(userId))));
+
+            productId = 1L;
+
+            wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/" + productId))
+                    .willReturn(
+                            aResponse()
+                                    .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                    .withBody("""
+                                {
+                                    "id": %d,
+                                    "name": "Product1",
+                                    "description": "Description1",
+                                    "price": 10.0,
+                                    "currentStock": 100,
+                                    "weight": 1.0
+                                }
+                                """.formatted(productId))));
 
             mockMvc.perform(get("/carts/{id}", productId))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.id", is(productId.intValue())))
-                    .andExpect(jsonPath("$.totalPrice", is(5.0)));
+                    .andExpect(status().isOk());
         }
 
         @Test

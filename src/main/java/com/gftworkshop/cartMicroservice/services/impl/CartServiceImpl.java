@@ -325,7 +325,11 @@ public class CartServiceImpl implements CartService {
 
     public void validateCartProductsStock(Cart cart) {
         List<Long> productIds = getProductIdsFromCart(cart);
+        log.info("List of productIds: {}", productIds);
+
         List<Product> products = getProductsByIds(productIds);
+        log.info("List of products: {}", products);
+
         Map<Long, Product> productMap = mapProductsById(products);
         checkStockForCartProducts(cart, productMap);
     }
