@@ -6,6 +6,8 @@ import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import org.springframework.beans.BeanUtils;
 
+import java.util.List;
+
 public class EntityToDto {
 
     public static CartDto convertCartToDto(Cart cart) {
@@ -18,6 +20,12 @@ public class EntityToDto {
         CartProductDto cartProductDto = CartProductDto.builder().build();
         BeanUtils.copyProperties(cartProduct, cartProductDto);
         return cartProductDto;
+    }
+
+    public static List<Long> getIdList(List<CartProduct> cartProducts) {
+        return cartProducts.stream()
+                .map(CartProduct::getId)
+                .toList();
     }
 
 }

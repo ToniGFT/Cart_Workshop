@@ -1,6 +1,9 @@
 package com.gftworkshop.cartMicroservice.services.impl;
 
-import com.gftworkshop.cartMicroservice.api.dto.*;
+import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.gftworkshop.cartMicroservice.api.dto.Country;
+import com.gftworkshop.cartMicroservice.api.dto.Product;
+import com.gftworkshop.cartMicroservice.api.dto.User;
 import com.gftworkshop.cartMicroservice.exceptions.*;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
@@ -108,7 +111,6 @@ class CartServiceImplTest {
                 () -> cartServiceImpl.addProductToCart(cartProduct)
         );
     }
-
 
 
     @Test
@@ -260,7 +262,6 @@ class CartServiceImplTest {
     }
 
 
-
     @Test
     @DisplayName("Given existing carts, " + "when retrieving all carts, " + "then return the list of all carts")
     void getAllCartsTest() {
@@ -376,7 +377,7 @@ class CartServiceImplTest {
         cartProduct3.setId(3L);
 
         List<CartProduct> cartProducts = List.of(cartProduct1, cartProduct2, cartProduct3);
-        List<Long> result = cartService.getIdList(cartProducts);
+        List<Long> result = EntityToDto.getIdList(cartProducts);
         assertEquals(List.of(1L, 2L, 3L), result, "The IDs should match the IDs of the products in the list");
     }
 
