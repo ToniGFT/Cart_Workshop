@@ -1,10 +1,12 @@
-package com.gftworkshop.cartMicroservice.services.impl;
+package com.gftworkshop.cartMicroservice.entitymapper;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import org.springframework.beans.BeanUtils;
+
+import java.util.List;
 
 public class EntityMapper {
 
@@ -20,6 +22,9 @@ public class EntityMapper {
         return cartProductDto;
     }
 
-
-
+    public static List<CartProductDto> convertToDtoList(List<CartProduct> cartProducts) {
+        return cartProducts.stream()
+                .map(EntityMapper::convertCartProductToDto)
+                .toList();
+    }
 }
