@@ -1,5 +1,6 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
+import com.gftworkshop.cartMicroservice.api.dto.controller.responses.JsonData;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +13,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -35,27 +34,24 @@ public class CartControllerIntegrationTest {
 
     @RegisterExtension
     static WireMockExtension wireMockServer = WireMockExtension.newInstance()
-            .options(wireMockConfig().dynamicPort())
+            .options(
+                    wireMockConfig()
+                            .dynamicPort()
+                            .usingFilesUnderClasspath("wiremock")
+
+            )
             .build();
 
-    private Long userId;
     private Long productId;
 
     @BeforeEach
     void setUp() {
 
-        userId = 1L;
         wireMockServer.stubFor(WireMock.get(urlMatching("/users/.*"))
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                .withBody("""
-                                        {
-                                            "id": %d,
-                                            "username": "john_doe",
-                                            "email": "john@example.com"
-                                        }
-                                        """.formatted(userId))));
+                                .withBody(JsonData.USER.getJson())));
 
         productId = 1L;
 
@@ -63,50 +59,19 @@ public class CartControllerIntegrationTest {
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                .withBody("""
-                                        {
-                                            "id": %d,
-                                            "name": "Product1",
-                                            "description": "Description1",
-                                            "price": 10.0,
-                                            "currentStock": 100,
-                                            "weight": 1.0
-                                        }
-                                        """.formatted(productId))));
+                                .withBody(JsonData.PRODUCT.getJson())));
 
         wireMockServer.stubFor(WireMock.post(urlMatching("/catalog/products/byIds"))
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                .withBody("""
-                                        [
-                                            {
-                                                "id": 1,
-                                                "name": "Product1",
-                                                "description": "Description1",
-                                                "price": 10.0,
-                                                "currentStock": 100,
-                                                "weight": 1.0
-                                            }
-                                        ]
-                                        """)));
+                                .withBody(JsonData.PRODUCTS.getJson())));
 
         wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/volumePromotion"))
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                .withBody("""
-                                        {
-                                              "id": 1,
-                                              "name": "string",
-                                              "description": "string",
-                                              "price": 10.0,
-                                              "categoryId": 0,
-                                              "weight": 0,
-                                              "currentStock": 100,
-                                              "minStock": 0
-                                        }
-                                        """)));
+                                .withBody(JsonData.VOLUMEPROMOTION_PRODUCT.getJson())));
 
     }
 
@@ -241,13 +206,7 @@ public class CartControllerIntegrationTest {
                     .willReturn(
                             aResponse()
                                     .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                    .withBody("""
-                                            {
-                                                "id": %d,
-                                                "username": "john_doe",
-                                                "email": "john@example.com"
-                                            }
-                                            """.formatted(userId))));
+                                    .withBody(JsonData.USER.getJson())));
 
             mockMvc.perform(post("/carts/{id}", userId)
                             .contentType(MediaType.APPLICATION_JSON))
@@ -285,26 +244,42 @@ public class CartControllerIntegrationTest {
 
         @Test
         void postCartProductTest() throws Exception {
-            String cartProductJson = """
-                    {
-                      "cart": {
-                        "id": 1
-                      },
-                      "productId": 1,
-                      "productName": "Pride and Prejudice",
-                      "productCategory": "Books",
-                      "productDescription": "Book by Jane Austen",
-                      "quantity": 10,
-                      "price": 20.00
-                    }""";
+
+            //When
+            mockMvc.perform(post("/carts/products")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(JsonData.PRODUCT.getJson()))
+
+                    //Then
+                    .andExpect(status().isCreated());
+        }
+
+        @Test
+        void postCartProduct_BadRequest_Test() throws Exception {
+            String invalidInput = "a";
+            String cartProductJson = "{\n" +
+                    "  \"cart\": {\n" +
+                    "    \"id\": 1\n" +
+                    "  },\n" +
+                    "  \"productId\": 1,\n" +
+                    "  \"productName\": \"Pride and Prejudice\",\n" +
+                    "  \"productCategory\": \"Books\",\n" +
+                    "  \"productDescription\": \"Book by Jane Austen\",\n" +
+                    "  \"quantity\": \"" + invalidInput + "\",\n" +
+                    "  \"price\": 20.00\n" +
+                    "}";
+
+            String expectedErrorMessage = "Invalid JSON format: JSON parse error: Cannot deserialize value of type `java.lang.Integer` from String \""
+                    + invalidInput + "\": not a valid `java.lang.Integer` value";
 
             //When
             mockMvc.perform(post("/carts/products")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(cartProductJson))
-
-                    //Then
-                    .andExpect(status().isCreated());
+                    // Then
+                    .andExpect(status().isBadRequest())
+                    .andExpect(jsonPath("$.code", is(400)))
+                    .andExpect(jsonPath("$.message", is(expectedErrorMessage)));
         }
     }
 }

@@ -63,7 +63,6 @@ public class ProductService {
 
     public List<Product> findProductsByIds(List<Long> ids){
         String url = baseUrl + findByIdsUrl;
-        log.info("Url findProductsByIds: {}", url);
         return List.of(Objects.requireNonNull(restClient.post()
                 .uri(url)
                 .contentType(MediaType.APPLICATION_JSON)
