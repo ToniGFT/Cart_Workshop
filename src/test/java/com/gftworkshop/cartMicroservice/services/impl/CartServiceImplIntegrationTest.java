@@ -208,7 +208,7 @@ class CartServiceImplIntegrationTest {
 
         List<CartDto> expectedAbandonedCarts = new ArrayList<>();
 
-        expectedAbandonedCarts.add(EntityToDto.convertCartToDto(cart1));
+        expectedAbandonedCarts.add(EntityMapper.convertCartToDto(cart1));
 
         LocalDate thresholdDate = LocalDate.now().minusDays(2);
 
