@@ -86,6 +86,33 @@ class CartServiceImplTest {
         verify(cartProductRepository, times(1)).save(any());
     }
 
+    @Test
+    @DisplayName("Given a cart and a product, when adding the product to the cart, then the product should be added successfully checking existing cartProduct update")
+    void addProductToCartTest_updateExistingCartProduct() {
+        Cart cart = Cart.builder().id(1L).cartProducts(new ArrayList<>()).build();
+        CartProduct cartProduct = CartProduct.builder()
+                .id(1L)
+                .productId(1L)
+                .productName("Jacket")
+                .productDescription("Something indicate large central measure watch provide.")
+                .quantity(1)
+                .price(BigDecimal.valueOf(58.79))
+                .cart(cart)
+                .build();
+
+        Product existingProduct = Product.builder()
+                .id(1L)
+                .currentStock(10)
+                .build();
+        when(cartRepository.findById(1L)).thenReturn(Optional.of(cart));
+        when(productService.getProductById(1L)).thenReturn(existingProduct);
+
+        cartServiceImpl.addProductToCart(cartProduct);
+
+        verify(cartProductRepository, times(1)).save(cartProduct);
+    }
+
+
 
     @Test
     @DisplayName("Given a cart and a product, when adding the product to the cart, if there isn't enough stock, an exception should be thrown")

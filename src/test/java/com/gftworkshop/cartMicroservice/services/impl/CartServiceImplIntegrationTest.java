@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -26,6 +27,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("dev")
 class CartServiceImplIntegrationTest {
 
     @Autowired
@@ -224,7 +226,7 @@ class CartServiceImplIntegrationTest {
     @Test
     void testCreateCart() {
 
-        Long userId = 10L;
+        Long userId = 5L;
 
         CartDto createdCart = cartService.createCart(userId);
 

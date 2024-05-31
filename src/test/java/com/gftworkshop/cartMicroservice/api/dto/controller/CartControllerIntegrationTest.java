@@ -157,7 +157,7 @@ public class CartControllerIntegrationTest {
     class RemoveProductByIdEndpoint {
         @Test
         void removeCartProductByIdTest() throws Exception {
-            Long cartProductId = 1L;
+            Long cartProductId = 3L;
 
             mockMvc.perform(delete("/carts/products/{id}", cartProductId))
                     .andExpect(status().isOk());
@@ -201,7 +201,7 @@ public class CartControllerIntegrationTest {
 
         @Test
         void addCartByUserIdTest() throws Exception {
-            Long userId = 4L;
+            Long userId = 10L;
             wireMockServer.stubFor(WireMock.get(urlMatching("/users/.*"))
                     .willReturn(
                             aResponse()

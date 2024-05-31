@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClient;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -193,7 +194,7 @@ class ProductServiceTest {
                 .setBody("Internal Server Error")
                 .addHeader("Content-Type", "text/plain"));
 
-        assertThrows(ExternalMicroserviceException.class, () -> {
+        assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
             productService.findProductsByIds(Arrays.asList(1L, 2L));
         });
     }
@@ -206,7 +207,7 @@ class ProductServiceTest {
                 .setResponseCode(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .addHeader("Content-Type", "application/json"));
 
-        assertThrows(ExternalMicroserviceException.class, () -> {
+        assertThrows(HttpServerErrorException.InternalServerError.class, () -> {
             productService.findProductsByIds(Arrays.asList(1L, 2L));
         });
     }

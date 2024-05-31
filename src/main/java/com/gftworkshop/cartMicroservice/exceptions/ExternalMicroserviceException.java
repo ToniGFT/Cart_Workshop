@@ -7,3 +7,5 @@ public class ExternalMicroserviceException extends RuntimeException {
         super(message);
     }
 }
+
+
