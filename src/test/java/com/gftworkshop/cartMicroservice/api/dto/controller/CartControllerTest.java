@@ -176,7 +176,7 @@ class CartControllerTest {
             assertTrue(response.getHeaders().containsKey("Location"));
             assertEquals("/carts/" + cartId, response.getHeaders().getFirst("Location"));
 
-            assertEquals(cart, response.getBody());
+            assertEquals(true, response.getBody());
         }
 
 
