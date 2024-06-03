@@ -1,10 +1,14 @@
 package com.gftworkshop.cartMicroservice.Integration;
 
+import com.gftworkshop.cartMicroservice.Integration.responses.JsonData;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.Country;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
-import com.gftworkshop.cartMicroservice.Integration.responses.JsonData;
+import com.gftworkshop.cartMicroservice.cartmanagement.CartCalculator;
+import com.gftworkshop.cartMicroservice.cartmanagement.CartManager;
+import com.gftworkshop.cartMicroservice.cartmanagement.CartValidator;
+import com.gftworkshop.cartMicroservice.entitymapper.EntityMapper;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
@@ -12,7 +16,6 @@ import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.ProductService;
 import com.gftworkshop.cartMicroservice.services.UserService;
 import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
-import com.gftworkshop.cartMicroservice.services.impl.EntityMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import jakarta.transaction.Transactional;
@@ -40,6 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("dev")
 class CartServiceImplIntegrationTest {
 
+
     @Autowired
     private CartRepository cartRepository;
 
@@ -50,10 +54,18 @@ class CartServiceImplIntegrationTest {
     private ProductService productService;
 
     @Autowired
+    private CartManager cartManager;
+
+    @Autowired
+    private CartValidator cartValidator;
+
+    @Autowired
+    private CartCalculator cartCalculator;
+
+    @Autowired
     private UserService userService;
 
     private CartServiceImpl cartService;
-
 
     @RegisterExtension
     static WireMockExtension wireMockServer = WireMockExtension.newInstance()
@@ -61,13 +73,12 @@ class CartServiceImplIntegrationTest {
                     wireMockConfig()
                             .dynamicPort()
                             .usingFilesUnderClasspath("wiremock")
-
             )
             .build();
 
     @BeforeEach
     public void setUp() {
-        cartService = new CartServiceImpl(cartRepository, cartProductRepository, productService, userService);
+        cartService = new CartServiceImpl(cartManager, cartValidator, cartCalculator);
 
         wireMockServer.stubFor(WireMock.get(urlMatching("/users/.*"))
                 .willReturn(

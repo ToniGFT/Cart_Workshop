@@ -30,6 +30,7 @@ public class CartServiceImpl implements CartService {
         this.cartCalculator = cartCalculator;
     }
 
+
     @Override
     public void addProductToCart(CartProduct cartProduct) {
         cartManager.checkForAbandonedCarts();
