@@ -1,17 +1,13 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
-import com.gftworkshop.cartMicroservice.api.dto.UpdatedCartProductDto;
-import com.gftworkshop.cartMicroservice.exceptions.CartNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.CartProductNotFoundException;
-import com.gftworkshop.cartMicroservice.exceptions.ErrorResponse;
 import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
+import com.gftworkshop.cartMicroservice.api.dto.UpdatedCartProductDto;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.services.impl.CartProductServiceImpl;
 import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,7 +28,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Ignore
 @Slf4j
 class CartControllerTest {
 
