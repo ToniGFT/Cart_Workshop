@@ -1,4 +1,4 @@
-package com.gftworkshop.cartMicroservice.services;
+package com.gftworkshop.cartMicroservice.Integration;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.exceptions.CartProductInvalidQuantityException;

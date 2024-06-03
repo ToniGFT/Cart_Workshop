@@ -1,4 +1,4 @@
-package com.gftworkshop.cartMicroservice.services.impl;
+package com.gftworkshop.cartMicroservice.Integration;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.Country;
@@ -10,6 +10,8 @@ import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.ProductService;
 import com.gftworkshop.cartMicroservice.services.UserService;
+import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
+import com.gftworkshop.cartMicroservice.services.impl.EntityMapper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

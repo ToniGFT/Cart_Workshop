@@ -1,4 +1,4 @@
-package com.gftworkshop.cartMicroservice.api.dto.controller;
+package com.gftworkshop.cartMicroservice.Integration;
 
 import com.gftworkshop.cartMicroservice.api.dto.controller.responses.JsonData;
 import com.github.tomakehurst.wiremock.client.WireMock;
