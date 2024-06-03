@@ -80,7 +80,7 @@ public class CartManager {
     public List<CartDto> convertCartsToDto(List<Cart> abandonedCarts) {
         return abandonedCarts.stream()
                 .map(EntityMapper::convertCartToDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public void logAbandonedCartsInfo(List<Cart> abandonedCarts, LocalDate thresholdDate) {
