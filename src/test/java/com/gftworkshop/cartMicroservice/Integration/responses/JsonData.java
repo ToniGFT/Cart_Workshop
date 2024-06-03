@@ -1,11 +1,11 @@
-package com.gftworkshop.cartMicroservice.api.dto.controller.responses;
+package com.gftworkshop.cartMicroservice.Integration.responses;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum JsonData {
 
-    PRODUCT("""
+    CARTPRODUCT("""
             {
               "cart": {
                 "id": 1
@@ -17,6 +17,20 @@ public enum JsonData {
               "quantity": 10,
               "price": 20.00
             }"""),
+
+    PRODUCT("""
+            {
+                "id": 1,
+                "name": "Producto",
+                "description": "Descripcion producto",
+                "price": 265,
+                "categoryId": 1,
+                "weight": 5,
+                "currentStock": 30,
+                "minStock": 5
+            }
+            """),
+
 
     PRODUCTS(
             """

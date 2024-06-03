@@ -1,6 +1,6 @@
 package com.gftworkshop.cartMicroservice.Integration;
 
-import com.gftworkshop.cartMicroservice.api.dto.controller.responses.JsonData;
+import com.gftworkshop.cartMicroservice.Integration.responses.JsonData;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -59,7 +59,7 @@ public class CartControllerIntegrationTest {
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                .withBody(JsonData.PRODUCT.getJson())));
+                                .withBody(JsonData.CARTPRODUCT.getJson())));
 
         wireMockServer.stubFor(WireMock.post(urlMatching("/catalog/products/byIds"))
                 .willReturn(
@@ -248,7 +248,7 @@ public class CartControllerIntegrationTest {
             //When
             mockMvc.perform(post("/carts/products")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(JsonData.PRODUCT.getJson()))
+                            .content(JsonData.CARTPRODUCT.getJson()))
 
                     //Then
                     .andExpect(status().isCreated());
