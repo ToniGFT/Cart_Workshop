@@ -261,4 +261,10 @@ class CartControllerTest {
         assertEquals(carts, response.getBody());
         verify(cartService, times(1)).fetchAllCarts();
     }
+
+    @Test
+    public void testGetShrek() throws Exception {
+        mockMvc.perform(get("/shrek"))
+                .andExpect(status().isOk());
+    }
 }
