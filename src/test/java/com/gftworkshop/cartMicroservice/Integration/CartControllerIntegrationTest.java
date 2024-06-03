@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
@@ -243,12 +244,12 @@ public class CartControllerIntegrationTest {
         @Test
         void postCartProductTest() throws Exception {
 
-            //When
+            String jsonContent = JsonData.CARTPRODUCT.getJson();
+            System.out.println("JSON Content: " + jsonContent);
+
             mockMvc.perform(post("/carts/products")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(JsonData.CARTPRODUCT.getJson()))
-
-                    //Then
+                            .content(jsonContent))
                     .andExpect(status().isCreated());
         }
 
