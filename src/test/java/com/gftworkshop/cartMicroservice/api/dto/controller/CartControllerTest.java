@@ -2,6 +2,7 @@ package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
+import com.gftworkshop.cartMicroservice.api.dto.Shrek;
 import com.gftworkshop.cartMicroservice.api.dto.UpdatedCartProductDto;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.math.BigDecimal;
@@ -260,5 +263,11 @@ class CartControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(carts, response.getBody());
         verify(cartService, times(1)).fetchAllCarts();
+    }
+
+    @Test
+    public void testGetShrek() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/shrek"))
+                .andExpect(MockMvcResultMatchers.status().isOk());
     }
 }

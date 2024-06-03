@@ -1,6 +1,7 @@
 package com.gftworkshop.cartMicroservice.api.dto.controller;
 
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
+import com.gftworkshop.cartMicroservice.api.dto.Shrek;
 import com.gftworkshop.cartMicroservice.api.dto.UpdatedCartProductDto;
 import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.model.Cart;
@@ -73,5 +74,10 @@ public class CartController {
         Long idCart = Long.parseLong(id);
         CartProductDto deletedCartProduct = cartProductService.removeProduct(idCart);
         return ResponseEntity.ok(deletedCartProduct);
+    }
+
+    @GetMapping("/shrek")
+    public ResponseEntity<Shrek> getShrek() {
+        return ResponseEntity.ok(new Shrek());
     }
 }
