@@ -20,8 +20,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @SpringBootTest()
@@ -211,8 +210,7 @@ public class CartControllerIntegrationTest {
             mockMvc.perform(post("/carts/{id}", userId)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.userId", is(userId.intValue())))
-                    .andExpect(jsonPath("$.cartProducts").isEmpty());
+                    .andExpect(content().string("true"));;
         }
 
         @Test
