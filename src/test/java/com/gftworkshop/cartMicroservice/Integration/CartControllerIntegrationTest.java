@@ -1,6 +1,6 @@
 package com.gftworkshop.cartMicroservice.Integration;
 
-import com.gftworkshop.cartMicroservice.api.dto.controller.responses.JsonData;
+import com.gftworkshop.cartMicroservice.Integration.responses.JsonData;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,14 +14,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.hamcrest.CoreMatchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @SpringBootTest()
@@ -63,7 +63,7 @@ public class CartControllerIntegrationTest {
                 .willReturn(
                         aResponse()
                                 .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                                .withBody(JsonData.PRODUCT.getJson())));
+                                .withBody(JsonData.CARTPRODUCT.getJson())));
 
         wireMockServer.stubFor(WireMock.post(urlMatching("/catalog/products/byIds"))
                 .willReturn(
@@ -214,8 +214,7 @@ public class CartControllerIntegrationTest {
             mockMvc.perform(post("/carts/{id}", userId)
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.userId", is(userId.intValue())))
-                    .andExpect(jsonPath("$.cartProducts").isEmpty());
+                    .andExpect(content().string("true"));;
         }
 
         @Test
@@ -248,12 +247,12 @@ public class CartControllerIntegrationTest {
         @Test
         void postCartProductTest() throws Exception {
 
-            //When
+            String jsonContent = JsonData.CARTPRODUCT.getJson();
+            System.out.println("JSON Content: " + jsonContent);
+
             mockMvc.perform(post("/carts/products")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(JsonData.PRODUCT.getJson()))
-
-                    //Then
+                            .content(jsonContent))
                     .andExpect(status().isCreated());
         }
 

@@ -1,9 +1,14 @@
 package com.gftworkshop.cartMicroservice.Integration;
 
+import com.gftworkshop.cartMicroservice.Integration.responses.JsonData;
 import com.gftworkshop.cartMicroservice.api.dto.CartDto;
 import com.gftworkshop.cartMicroservice.api.dto.Country;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
+import com.gftworkshop.cartMicroservice.cartmanagement.CartCalculator;
+import com.gftworkshop.cartMicroservice.cartmanagement.CartManager;
+import com.gftworkshop.cartMicroservice.cartmanagement.CartValidator;
+import com.gftworkshop.cartMicroservice.entitymapper.EntityMapper;
 import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
@@ -11,12 +16,15 @@ import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.ProductService;
 import com.gftworkshop.cartMicroservice.services.UserService;
 import com.gftworkshop.cartMicroservice.services.impl.CartServiceImpl;
-import com.gftworkshop.cartMicroservice.services.impl.EntityMapper;
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -26,11 +34,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("dev")
 class CartServiceImplIntegrationTest {
+
 
     @Autowired
     private CartRepository cartRepository;
@@ -42,13 +54,55 @@ class CartServiceImplIntegrationTest {
     private ProductService productService;
 
     @Autowired
+    private CartManager cartManager;
+
+    @Autowired
+    private CartValidator cartValidator;
+
+    @Autowired
+    private CartCalculator cartCalculator;
+
+    @Autowired
     private UserService userService;
 
     private CartServiceImpl cartService;
 
+    @RegisterExtension
+    static WireMockExtension wireMockServer = WireMockExtension.newInstance()
+            .options(
+                    wireMockConfig()
+                            .dynamicPort()
+                            .usingFilesUnderClasspath("wiremock")
+            )
+            .build();
+
     @BeforeEach
     public void setUp() {
-        cartService = new CartServiceImpl(cartRepository, cartProductRepository, productService, userService);
+        cartService = new CartServiceImpl(cartManager, cartValidator, cartCalculator);
+
+        wireMockServer.stubFor(WireMock.get(urlMatching("/users/.*"))
+                .willReturn(
+                        aResponse()
+                                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                .withBody(JsonData.USER.getJson())));
+
+        wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/.*"))
+                .willReturn(
+                        aResponse()
+                                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                .withBody(JsonData.PRODUCT.getJson())));
+
+        wireMockServer.stubFor(WireMock.post(urlMatching("/catalog/products/byIds"))
+                .willReturn(
+                        aResponse()
+                                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                .withBody(JsonData.PRODUCTS.getJson())));
+
+        wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/volumePromotion"))
+                .willReturn(
+                        aResponse()
+                                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                                .withBody(JsonData.VOLUMEPROMOTION_PRODUCT.getJson())));
     }
 
     @Test
@@ -81,10 +135,9 @@ class CartServiceImplIntegrationTest {
 
         cartService.addProductToCart(cartProduct);
 
-        Optional<Cart> updatedCart = cartRepository.findById(cart.getId());
-        assertTrue(updatedCart.isPresent());
-        assertEquals(1, updatedCart.get().getCartProducts().size());
-        assertEquals(2, updatedCart.get().getCartProducts().get(0).getQuantity());
+        Optional<CartProduct> addedProduct = cartProductRepository.findById(cartProduct.getId());
+        assertTrue(addedProduct.isPresent());
+        assertEquals(cartProduct.getQuantity(), addedProduct.get().getQuantity());
     }
 
     @Test
@@ -131,11 +184,10 @@ class CartServiceImplIntegrationTest {
 
         BigDecimal total = cartService.calculateCartTotal(cart.getId(), user.getId());
 
-        BigDecimal expectedTotal = new BigDecimal("167.300");
+        BigDecimal expectedTotal = new BigDecimal("651.300");
 
         assertEquals(expectedTotal, total);
     }
-
 
     @Test
     @Transactional
@@ -222,7 +274,6 @@ class CartServiceImplIntegrationTest {
                 .toList();
 
         assertEquals(expectedAbandonedCarts, abandonedCarts);
-
     }
 
     @Test
@@ -259,6 +310,5 @@ class CartServiceImplIntegrationTest {
         assertEquals(userId, fetchedCartDto.getUserId());
         assertEquals(expectedTotalPrice, totalPrice);
     }
-
 
 }

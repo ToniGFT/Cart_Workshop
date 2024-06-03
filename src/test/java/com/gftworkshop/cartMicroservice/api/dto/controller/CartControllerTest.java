@@ -176,7 +176,7 @@ class CartControllerTest {
             assertTrue(response.getHeaders().containsKey("Location"));
             assertEquals("/carts/" + cartId, response.getHeaders().getFirst("Location"));
 
-            assertEquals(cart, response.getBody());
+            assertEquals(true, response.getBody());
         }
 
 
@@ -260,5 +260,11 @@ class CartControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(carts, response.getBody());
         verify(cartService, times(1)).fetchAllCarts();
+    }
+
+    @Test
+    public void testGetShrek() throws Exception {
+        mockMvc.perform(get("/shrek"))
+                .andExpect(status().isOk());
     }
 }
