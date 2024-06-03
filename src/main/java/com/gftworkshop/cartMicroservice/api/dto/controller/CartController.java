@@ -34,10 +34,10 @@ public class CartController {
     }
 
     @PostMapping("/carts/{id}")
-    public ResponseEntity<CartDto> addCartByUserId(@PathVariable("id") String id) {
+    public ResponseEntity<Boolean> addCartByUserId(@PathVariable("id") String id) {
         Long idCart = Long.parseLong(id);
         CartDto createdCart = cartService.createCart(idCart);
-        return ResponseEntity.created(URI.create("/carts/" + createdCart.getId())).body(createdCart);
+        return ResponseEntity.created(URI.create("/carts/" + createdCart.getId())).body(Boolean.valueOf(true));
     }
 
 
