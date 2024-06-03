@@ -11,6 +11,7 @@ import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.ProductService;
 import com.gftworkshop.cartMicroservice.services.UserService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
+@AllArgsConstructor
 public class CartManager {
 
     private final CartRepository cartRepository;
@@ -30,16 +32,6 @@ public class CartManager {
     private final ProductService productService;
     private final UserService userService;
     private final CartCalculator cartCalculator;
-
-
-    public CartManager(CartRepository cartRepository, CartProductRepository cartProductRepository,
-                       ProductService productService, UserService userService, CartCalculator cartCalculator) {
-        this.cartRepository = cartRepository;
-        this.cartProductRepository = cartProductRepository;
-        this.productService = productService;
-        this.userService = userService;
-        this.cartCalculator = cartCalculator;
-    }
 
 
     public void handleCartProduct(CartProduct cartProduct) {

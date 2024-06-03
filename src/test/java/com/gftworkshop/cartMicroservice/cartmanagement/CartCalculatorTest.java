@@ -1,6 +1,5 @@
 package com.gftworkshop.cartMicroservice.cartmanagement;
 
-import com.gftworkshop.cartMicroservice.api.dto.CartProductDto;
 import com.gftworkshop.cartMicroservice.api.dto.Country;
 import com.gftworkshop.cartMicroservice.api.dto.Product;
 import com.gftworkshop.cartMicroservice.api.dto.User;
@@ -14,13 +13,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.util.AbstractMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @DisplayName("CartCalculator Unit Tests")
 class CartCalculatorTest {
@@ -41,62 +37,31 @@ class CartCalculatorTest {
     @Test
     @DisplayName("Test calculateCartTotal")
     void testCalculateCartTotal() {
-        // Given
-        Long cartId = 1L;
         Long userId = 1L;
+        Long cartId = 1L;
+        User user = User.builder().country(new Country(1L, 10.0)).id(userId).build();
+        List<CartProduct> cartProducts = List.of(
+                CartProduct.builder().productId(1L).quantity(1).price(new BigDecimal("10")).build(),
+                CartProduct.builder().productId(2L).quantity(1).price(new BigDecimal("20")).build()
+        );
+        Cart cart = Cart.builder().id(cartId).userId(userId).cartProducts(cartProducts).build();
 
-        User user = new User();
-        Country country = new Country(1L, 10.0);
-        user.setCountry(country);
-
-        CartProductDto cartProductDto1 = CartProductDto.builder().id(1L).productId(1L).build();
-        CartProductDto cartProductDto2 = CartProductDto.builder().id(2L).productId(2L).build();
-        List<CartProductDto> cartProductDtos = List.of(cartProductDto1, cartProductDto2);
-
-        Cart cart = new Cart();
-        cart.setCartProducts(List.of(
-                CartProduct.builder().id(1L).productId(1L).quantity(2).build(),
-                CartProduct.builder().id(2L).productId(2L).quantity(1).build()
-        ));
-
-        Product product1 = new Product(1L, "Product1", "Description1", BigDecimal.TEN, 2, 2.0);
-        Product product2 = new Product(2L, "Product2", "Description2", BigDecimal.valueOf(20), 1, 3.0);
-        List<Product> products = List.of(product1, product2);
-
-        when(userService.getUserById(userId)).thenReturn(user);
         when(cartRepository.findById(cartId)).thenReturn(Optional.of(cart));
-        when(productService.getProductByIdWithDiscountedPrice(cartProductDtos)).thenReturn(products);
+        when(userService.getUserById(userId)).thenReturn(user);
 
-        // Print mocked product prices for debugging
-        List<Product> mockedProducts = productService.getProductByIdWithDiscountedPrice(cartProductDtos);
-        System.out.println("Mocked product prices: " + mockedProducts.stream().map(Product::getPrice).toList());
+        Product product1 = Product.builder().id(1L).price(new BigDecimal("10")).weight(1.0).build();
+        Product product2 = Product.builder().id(2L).price(new BigDecimal("20")).weight(1.0).build();
+        List<Product> products = new ArrayList<>();
+        products.add(product1);
+        products.add(product2);
 
-        // Total product cost: 10 * 2 + 20 * 1 = 40
-        BigDecimal totalProductCost = BigDecimal.valueOf(40.0);
-        // Tax: 10% of 40 = 4
-        BigDecimal tax = BigDecimal.valueOf(4.0);
-        // Shipping cost: weight = 2 * 2 + 3 = 7 -> shipping cost = 10
-        BigDecimal shippingCost = BigDecimal.valueOf(10.0);
+        when(productService.getProductByIdWithDiscountedPrice(anyList())).thenReturn(products);
 
-        BigDecimal expectedTotal = totalProductCost.add(tax).add(shippingCost);
 
-        // When
-        BigDecimal totalProductCostCalculated = cartCalculator.computeProductTotal(products);
-        System.out.println("Total product cost calculated: " + totalProductCostCalculated);
+        BigDecimal expectedTotal = new BigDecimal("38.0"); // Total products = 10+20, Tax = 10%, Shipping = 5
+        BigDecimal cartTotal = cartCalculator.calculateCartTotal(cartId, userId);
 
-        BigDecimal taxCalculated = cartCalculator.computeTax(totalProductCostCalculated, user);
-        System.out.println("Tax calculated: " + taxCalculated);
-
-        double totalWeight = cartCalculator.computeTotalWeight(products);
-        System.out.println("Total weight calculated: " + totalWeight);
-
-        BigDecimal shippingCostCalculated = cartCalculator.computeShippingCost(totalWeight);
-        System.out.println("Shipping cost calculated: " + shippingCostCalculated);
-
-        BigDecimal total = cartCalculator.calculateCartTotal(cartId, userId);
-
-        // Then
-        assertEquals(expectedTotal, total);
+        assertEquals(expectedTotal, cartTotal);
     }
 
 

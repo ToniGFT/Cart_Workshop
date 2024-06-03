@@ -9,6 +9,7 @@ import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.ProductService;
 import com.gftworkshop.cartMicroservice.services.UserService;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -18,17 +19,12 @@ import java.util.List;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class CartCalculator {
 
     private final ProductService productService;
     private final UserService userService;
     private final CartRepository cartRepository;
-
-    public CartCalculator(ProductService productService, UserService userService, CartRepository cartRepository) {
-        this.productService = productService;
-        this.userService = userService;
-        this.cartRepository = cartRepository;
-    }
 
     public BigDecimal calculateCartTotal(Long cartId, Long userId) {
         User user = userService.getUserById(userId);

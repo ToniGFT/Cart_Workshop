@@ -43,25 +43,34 @@ class CartValidatorTest {
     void testValidateProductStockEnoughStock() {
         // Given
         Cart cart = Cart.builder().id(1L).build();
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setCart(cart); // Asigna un objeto Cart válido
-        cartProduct.setQuantity(2);
-        when(cartProductRepository.findByCartIdAndProductId(anyLong(), anyLong())).thenReturn(Optional.of(new CartProduct()));
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "Product", "Description", null, 5, null));
+        CartProduct cartProduct = CartProduct.builder()
+                .cart(cart)
+                .productId(1L)
+                .quantity(2)
+                .build();
+
+        // Mock
+        when(cartProductRepository.findByCartIdAndProductId(1L, 1L)).thenReturn(Optional.of(new CartProduct()));
+        when(productService.getProductById(1L)).thenReturn(new Product(1L, "Product", "Description", null, 5, null));
 
         // When / Then
         assertDoesNotThrow(() -> cartValidator.validateProductStock(cartProduct));
     }
 
-
     @Test
     @DisplayName("Test validateProductStock - not enough stock")
     void testValidateProductStockNotEnoughStock() {
         // Given
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setQuantity(10);
-        when(cartProductRepository.findByCartIdAndProductId(anyLong(), anyLong())).thenReturn(Optional.of(new CartProduct()));
-        when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "Product", "Description", null, 5, null));
+        Cart cart = Cart.builder().id(1L).build();
+        CartProduct cartProduct = CartProduct.builder()
+                .cart(cart)
+                .productId(1L)
+                .quantity(10)
+                .build();
+
+        // Mock
+        when(cartProductRepository.findByCartIdAndProductId(1L, 1L)).thenReturn(Optional.of(new CartProduct()));
+        when(productService.getProductById(1L)).thenReturn(new Product(1L, "Product", "Description", null, 5, null));
 
         // When / Then
         assertThrows(CartProductInvalidQuantityException.class, () -> cartValidator.validateProductStock(cartProduct));
@@ -71,29 +80,50 @@ class CartValidatorTest {
     @DisplayName("Test calculateTotalDesiredQuantity")
     void testCalculateTotalDesiredQuantity() {
         // Given
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setQuantity(2);
-        when(cartProductRepository.findByCartIdAndProductId(anyLong(), anyLong())).thenReturn(Optional.of(new CartProduct()));
+        Cart cart = Cart.builder().id(1L).build();
+        CartProduct existingCartProduct = CartProduct.builder()
+                .cart(cart)
+                .productId(1L)
+                .quantity(3)
+                .build();
+
+        CartProduct newCartProduct = CartProduct.builder()
+                .cart(cart)
+                .productId(1L)
+                .quantity(2)
+                .build();
+
+        // Mock
+        when(cartProductRepository.findByCartIdAndProductId(1L, 1L)).thenReturn(Optional.of(existingCartProduct));
 
         // When
-        int totalDesiredQuantity = cartValidator.calculateTotalDesiredQuantity(cartProduct);
+        int totalDesiredQuantity = cartValidator.calculateTotalDesiredQuantity(newCartProduct);
 
         // Then
-        assertEquals(2, totalDesiredQuantity);
+        assertEquals(5, totalDesiredQuantity);
     }
 
     @Test
     @DisplayName("Test getCurrentQuantity - cart product found")
     void testGetCurrentQuantityCartProductFound() {
         // Given
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setCart(new Cart());
-        cartProduct.setProductId(1L);
-        cartProduct.setQuantity(2);
-        when(cartProductRepository.findByCartIdAndProductId(anyLong(), anyLong())).thenReturn(Optional.of(cartProduct));
+        Cart cart = Cart.builder().id(1L).build();
+        CartProduct cartProductInRepo = CartProduct.builder()
+                .cart(cart)
+                .productId(1L)
+                .quantity(2)
+                .build();
+
+        CartProduct cartProductToCheck = CartProduct.builder()
+                .cart(cart)
+                .productId(1L)
+                .build();
+
+        // Mock
+        when(cartProductRepository.findByCartIdAndProductId(1L, 1L)).thenReturn(Optional.of(cartProductInRepo));
 
         // When
-        int currentQuantity = cartValidator.getCurrentQuantity(cartProduct);
+        int currentQuantity = cartValidator.getCurrentQuantity(cartProductToCheck);
 
         // Then
         assertEquals(2, currentQuantity);
@@ -103,10 +133,12 @@ class CartValidatorTest {
     @DisplayName("Test getCurrentQuantity - cart product not found")
     void testGetCurrentQuantityCartProductNotFound() {
         // Given
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setCart(new Cart());
-        cartProduct.setProductId(1L);
-        when(cartProductRepository.findByCartIdAndProductId(anyLong(), anyLong())).thenReturn(Optional.empty());
+        CartProduct cartProduct = CartProduct.builder()
+                .cart(Cart.builder().id(1L).build())
+                .productId(1L)
+                .build();
+
+        when(cartProductRepository.findByCartIdAndProductId(1L, 1L)).thenReturn(Optional.empty());
 
         // When
         int currentQuantity = cartValidator.getCurrentQuantity(cartProduct);
@@ -119,8 +151,7 @@ class CartValidatorTest {
     @DisplayName("Test getAvailableStock")
     void testGetAvailableStock() {
         // Given
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setProductId(1L);
+        CartProduct cartProduct = CartProduct.builder().productId(1L).build();
         when(productService.getProductById(anyLong())).thenReturn(new Product(1L, "Product", "Description", null, 5, null));
 
         // When
@@ -134,11 +165,13 @@ class CartValidatorTest {
     @DisplayName("Test validateCartProductsStock - enough stock")
     void testValidateCartProductsStockEnoughStock() {
         // Given
-        Cart cart = new Cart();
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setProductId(1L);
-        cartProduct.setQuantity(2);
-        cart.setCartProducts(Collections.singletonList(cartProduct));
+        CartProduct cartProduct = CartProduct.builder()
+                .productId(1L)
+                .quantity(2)
+                .build();
+        Cart cart = Cart.builder()
+                .cartProducts(Collections.singletonList(cartProduct))
+                .build();
         Product product = new Product(1L, "Product", "Description", null, 3, null);
         when(productService.findProductsByIds(anyList())).thenReturn(Collections.singletonList(product));
 
@@ -150,11 +183,13 @@ class CartValidatorTest {
     @DisplayName("Test validateCartProductsStock - not enough stock")
     void testValidateCartProductsStockNotEnoughStock() {
         // Given
-        Cart cart = new Cart();
-        CartProduct cartProduct = new CartProduct();
-        cartProduct.setProductId(1L);
-        cartProduct.setQuantity(5);
-        cart.setCartProducts(Collections.singletonList(cartProduct));
+        CartProduct cartProduct = CartProduct.builder()
+                .productId(1L)
+                .quantity(5)
+                .build();
+        Cart cart = Cart.builder()
+                .cartProducts(Collections.singletonList(cartProduct))
+                .build();
         Product product = new Product(1L, "Product", "Description", null, 3, null);
         when(productService.findProductsByIds(anyList())).thenReturn(Collections.singletonList(product));
 
@@ -166,12 +201,11 @@ class CartValidatorTest {
     @DisplayName("Test getProductMap")
     void testGetProductMap() {
         // Given
-        Cart cart = new Cart();
-        CartProduct cartProduct1 = new CartProduct();
-        cartProduct1.setProductId(1L);
-        CartProduct cartProduct2 = new CartProduct();
-        cartProduct2.setProductId(2L);
-        cart.setCartProducts(Arrays.asList(cartProduct1, cartProduct2));
+        CartProduct cartProduct1 = CartProduct.builder().productId(1L).build();
+        CartProduct cartProduct2 = CartProduct.builder().productId(2L).build();
+        Cart cart = Cart.builder()
+                .cartProducts(Arrays.asList(cartProduct1, cartProduct2))
+                .build();
         Product product1 = new Product(1L, "Product 1", "Description 1", null, 5, null);
         Product product2 = new Product(2L, "Product 2", "Description 2", null, 10, null);
         when(productService.findProductsByIds(anyList())).thenReturn(Arrays.asList(product1, product2));

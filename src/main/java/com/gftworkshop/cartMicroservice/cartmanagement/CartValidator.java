@@ -6,6 +6,7 @@ import com.gftworkshop.cartMicroservice.model.Cart;
 import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.services.ProductService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,15 +15,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CartValidator {
 
     private final ProductService productService;
     private final CartProductRepository cartProductRepository;
-
-    public CartValidator(ProductService productService, CartProductRepository cartProductRepository) {
-        this.productService = productService;
-        this.cartProductRepository = cartProductRepository;
-    }
 
     public void validateProductStock(CartProduct cartProduct) {
         int totalDesiredQuantity = calculateTotalDesiredQuantity(cartProduct);
