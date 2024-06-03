@@ -10,4 +10,5 @@ public class CartErrorMessages {
     public static final String NO_ABANDONED_CARTS_FOUND = "No abandoned carts found before ";
     public static final String FOUND_ABANDONED_CARTS = "Found {} abandoned carts before ";
     public static final String ABANDONED_CART = "Abandoned cart: {}, at ";
+    public static final String CART_NOT_FOUND = "Cart with ID not found";
 }

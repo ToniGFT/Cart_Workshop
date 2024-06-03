@@ -10,7 +10,6 @@ import com.gftworkshop.cartMicroservice.model.CartProduct;
 import com.gftworkshop.cartMicroservice.repositories.CartProductRepository;
 import com.gftworkshop.cartMicroservice.repositories.CartRepository;
 import com.gftworkshop.cartMicroservice.services.ProductService;
-import com.gftworkshop.cartMicroservice.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -30,9 +29,7 @@ public class CartManager {
     private final CartRepository cartRepository;
     private final CartProductRepository cartProductRepository;
     private final ProductService productService;
-    private final UserService userService;
     private final CartCalculator cartCalculator;
-
 
     public void handleCartProduct(CartProduct cartProduct) {
         Optional<CartProduct> existingCartProduct = findExistingCartProduct(cartProduct);
@@ -85,10 +82,10 @@ public class CartManager {
 
     public void logAbandonedCartsInfo(List<Cart> abandonedCarts, LocalDate thresholdDate) {
         if (abandonedCarts.isEmpty()) {
-            log.info("No abandoned carts found before {}", thresholdDate);
+            log.info(CartErrorMessages.NO_ABANDONED_CARTS_FOUND + "{}", thresholdDate);
         } else {
-            log.info("Found {} abandoned carts before {}", abandonedCarts.size(), thresholdDate);
-            abandonedCarts.forEach(cart -> log.debug("Abandoned cart: {}, at {}", cart.getId(), cart.getUpdatedAt()));
+            log.info(CartErrorMessages.FOUND_ABANDONED_CARTS + "{}", abandonedCarts.size(), thresholdDate);
+            abandonedCarts.forEach(cart -> log.debug(CartErrorMessages.ABANDONED_CART + "{}", cart.getId(), cart.getUpdatedAt()));
         }
     }
 
@@ -99,7 +96,7 @@ public class CartManager {
     public void ensureUserDoesNotAlreadyHaveCart(Long userId) {
         cartRepository.findByUserId(userId)
                 .ifPresent(cart -> {
-                    throw new UserWithCartException("User with ID " + userId + " already has a cart.");
+                    throw new UserWithCartException(CartErrorMessages.USER_ALREADY_HAS_CART + " ID " + userId + " already has a cart.");
                 });
     }
 
