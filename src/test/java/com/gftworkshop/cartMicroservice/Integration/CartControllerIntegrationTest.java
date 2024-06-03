@@ -43,6 +43,8 @@ public class CartControllerIntegrationTest {
             .build();
 
     private Long productId;
+    private Long cartProductId;
+    private Long cartId;
 
     @BeforeEach
     void setUp() {
@@ -54,6 +56,8 @@ public class CartControllerIntegrationTest {
                                 .withBody(JsonData.USER.getJson())));
 
         productId = 1L;
+        cartProductId = 1L;
+        cartId = 1L;
 
         wireMockServer.stubFor(WireMock.get(urlMatching("/catalog/products/" + productId))
                 .willReturn(
@@ -81,7 +85,7 @@ public class CartControllerIntegrationTest {
         @Test
         void getCartByIdTest() throws Exception {
 
-            mockMvc.perform(get("/carts/{id}", productId))
+            mockMvc.perform(get("/carts/{id}", cartId))
                     .andExpect(status().isOk());
         }
 
@@ -157,7 +161,6 @@ public class CartControllerIntegrationTest {
     class RemoveProductByIdEndpoint {
         @Test
         void removeCartProductByIdTest() throws Exception {
-            Long cartProductId = 3L;
 
             mockMvc.perform(delete("/carts/products/{id}", cartProductId))
                     .andExpect(status().isOk());
