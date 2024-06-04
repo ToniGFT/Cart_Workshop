@@ -55,8 +55,8 @@ public class CartValidator {
             Product product = productMap.get(cartProduct.getProductId());
             if (cartProduct.getQuantity() > product.getCurrentStock()) {
                 throw new CartProductInvalidQuantityException(
-                        "Not enough stock to add product to cart. Desired amount: " + cartProduct.getQuantity() +
-                                ". Actual stock: " + product.getCurrentStock());
+                        CartErrorMessages.NOT_ENOUGH_STOCK + cartProduct.getQuantity() +
+                                CartErrorMessages.ACTUAL_STOCK + product.getCurrentStock());
             }
         });
     }

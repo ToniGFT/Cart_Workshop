@@ -29,7 +29,7 @@ public class CartCalculator {
     public BigDecimal calculateCartTotal(Long cartId, Long userId) {
         User user = userService.getUserById(userId);
         Cart cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new CartNotFoundException("Cart with ID " + cartId + " not found"));
+                .orElseThrow(() -> new CartNotFoundException(CartErrorMessages.CART_NOT_FOUND + cartId));
 
         List<CartProductDto> cartProductDtos = EntityMapper.convertToDtoList(cart.getCartProducts());
         List<Product> products = productService.getProductByIdWithDiscountedPrice(cartProductDtos);
