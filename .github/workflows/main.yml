@@ -15,7 +15,7 @@ jobs:
       uses: actions/setup-java@v4
       with:
         java-version: '17'
-        distribution: 'temurin'  # Utiliza la distribución Temurin de AdoptOpenJDK
+        distribution: 'temurin'
  
     - name: Build and test with Maven
       run: mvn clean verify

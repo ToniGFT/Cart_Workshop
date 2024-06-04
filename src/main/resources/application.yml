@@ -1,6 +1,4 @@
 spring:
-  profile:
-    active: dev
   application:
     name: cartMicroservice
 
